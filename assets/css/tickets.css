@@ -1,0 +1,71 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+body{
+    padding: 8px;
+}
+.companyData{
+    text-align: right;
+    font-size: 7px;
+    margin-top: 15px;
+}
+.companyData{
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+img{
+    position: absolute;
+    width: 70px;
+    left: 10px;
+    top: 33px;
+}
+.title{
+    text-align: center;
+    padding: 10px;
+    font-size: 10px;
+}
+
+.data-info{
+    font-size: 8px;
+    text-align: center;
+    padding: 5px;
+}
+
+table,
+th, td, tr{
+    border-bottom: 1px solid black;
+    margin: 0 auto;
+    border-collapse: collapse;
+}
+
+table td, th{
+    font-size: 7px;
+    text-align: center;
+    padding: 3px;
+}
+
+.totalNumber1{
+    text-align: right;
+    font-size: 7px;
+    font-weight: bold;
+}
+.totalNumber2{
+    text-align: center;
+    font-size: 7px;
+    font-weight: bold;    
+}
+
+.message{
+    font-size: 7px;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.orderCancel{
+    text-align: center;
+    color: black;
+    margin-top: 5px;
+    font-size: 11px;
+}
