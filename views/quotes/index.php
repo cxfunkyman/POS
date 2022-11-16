@@ -4,13 +4,13 @@
     <div class="card-body">
         <nav>
             <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                <button class="nav-link active" id="nav-sales-tab" data-bs-toggle="tab" data-bs-target="#nav-sales" type="button" role="tab" aria-controls="nav-sales" aria-selected="true">Sales</button>
+                <button class="nav-link active" id="nav-quotes-tab" data-bs-toggle="tab" data-bs-target="#nav-quotes" type="button" role="tab" aria-controls="nav-quotes" aria-selected="true">Quotes</button>
                 <button class="nav-link" id="nav-record-tab" data-bs-toggle="tab" data-bs-target="#nav-record" type="button" role="tab" aria-controls="nav-record" aria-selected="false">Record</button>
             </div>
         </nav>
         <div class="tab-content" id="nav-tabContent">
-            <div class="tab-pane fade show active p-3" id="nav-sales" role="tabpanel" aria-labelledby="nav-sales-tab" tabindex="0">
-                <h5 class="card-title text-center"><i class="fas fa-coins"></i> New Sale</h5>
+            <div class="tab-pane fade show active p-3" id="nav-quotes" role="tabpanel" aria-labelledby="nav-quotes-tab" tabindex="0">
+                <h5 class="card-title text-center"><i class="fa-solid fa-file-invoice-dollar"></i> New Quote</h5>
                 <hr>
                 <div class="row mb-2">
                     <div class="col-md-6">
@@ -23,27 +23,15 @@
                             </label>
                         </div>
                     </div>
-                    <div class="col-md-3 mb-2">
-                        <div class="input-group">
-                            <span class="input-group-text">Serie</span>
-                            <input class="form-control" type="text" value="<?php echo $data['serie'][0]; ?>" disabled>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="btn-group-toggle float-end" data-toggle="buttons">
-                            <label class="btn btn-primary">
-                                <input type="checkbox" id="directPrint"> Direct Print
-                            </label>
-                        </div>
-                    </div>
+
                 </div>
-                <!-- the next input is for search sales with code/barcode-->
+                <!-- the next input is for search quotes with code/barcode-->
                 <div class="input-group mb-2" id="barcodeContainer">
                     <span class="input-group-text"><i class="fas fa-search"></i></span>
                     <input class="form-control" type="number" id="searchBarcodeInput" name="searchBarcodeInput" placeholder="Search by Code" autocomplete="off">
                 </div>
 
-                <!-- the next input is for search sales with names-->
+                <!-- the next input is for search quotes with names-->
                 <div class="input-group d-none mb-2" id="nameContainer">
                     <span class="input-group-text"><i class="fas fa-search"></i></span>
                     <input class="form-control" type="text" id="searchNameInput" name="searchNameInput" placeholder="Search by Name" autocomplete="off">
@@ -52,7 +40,7 @@
 
                 <!-- table to display the products -->
                 <div class="table-responsive">
-                    <table class="table table-bordered table-striped table-hover align-middle" id="tblSale" style="width: 100%;">
+                    <table class="table table-bordered table-striped table-hover align-middle" id="tblQuotes" style="width: 100%;">
                         <thead>
                             <tr>
                                 <th>Product</th>
@@ -87,12 +75,12 @@
                             <span class="input-group-text"><i class="fas fa-phone"></i></span>
                             <input class="form-control" type="number" id="phoneClient" placeholder="Phone Number" disabled>
                         </div>
+                    </div>
+                    <div class="col-md-4">
                         <label>Address</label>
                         <ul class="list-group mb-2">
                             <li class="list-group-item" id="addressClient"><i class="fas fa-home"></i></li>
                         </ul>
-                    </div>
-                    <div class="col-md-4">
                         <label>Seller</label>
                         <div class="input-group mb-2">
                             <span class="input-group-text"><i class="fas fa-user"></i></span>
@@ -103,17 +91,30 @@
                             <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
                             <input class="form-control" type="text" id="discount" placeholder="discount">
                         </div>
+                    </div>
+                    <div class="col-md-4">
                         <label>Total Amount</label>
                         <div class="input-group mb-2">
                             <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
                             <input class="form-control" type="text" id="totalAmount" placeholder="Total Amount" disabled>
                         </div>
-                        <div class="form-group mb-3">
+                        <div class="form-group mb-2">
                             <label for="payMethod">Payment Method</label>
                             <select id="payMethod" class="form-control">
                                 <option value="">Payment</option>
                                 <option value="CASH">Cash</option>
                                 <option value="CREDIT">Credit</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="quoteValidate">Offer Validity</label>
+                            <select id="quoteValidate" class="form-control">
+                                <option value="">Validity</option>
+                                <option value="5 DAYS">5 DAYS</option>
+                                <option value="10 DAYS">10 DAYS</option>
+                                <option value="15 DAYS">15 DAYS</option>
+                                <option value="20 DAYS">20 DAYS</option>
+                                <option value="30 DAYS">30 DAYS</option>
                             </select>
                         </div>
                         <div class="d-grid">
@@ -143,7 +144,7 @@
                                 <th>Time</th>
                                 <th>Total</th>
                                 <th>Client</th>
-                                <th>Purchase N°</th>
+                                <th>Validity</th>
                                 <th>Payment Method</th>
                                 <th></th>
                             </tr>

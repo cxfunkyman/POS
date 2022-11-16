@@ -34,7 +34,7 @@ class Credits extends Controller
             $data[$i]['deposit'] = number_format($deposits, 2);
             $data[$i]['remaining'] = number_format($remaining, 2);
             $data[$i]['sales'] = 'Nº: ' . $data[$i]['id_sale'];
-            $data[$i]['actions'] = '<a class="btn btn-danger" href="'.BASE_URL.'credits/reports/'.$data[$i]['id'].'" target="_blank"><i class="fas fa-file-pdf"></i></a>';
+            $data[$i]['actions'] = '<a class="btn btn-danger" href="' . BASE_URL . 'credits/reports/' . $data[$i]['id'] . '" target="_blank"><i class="fas fa-file-pdf"></i></a>';
         }
         echo json_encode($data, JSON_UNESCAPED_UNICODE);
         die();
@@ -71,7 +71,7 @@ class Credits extends Controller
         if (!empty($dataProducts)) {
             $idCredit = strClean($dataProducts['idCredit']);
             $depositAmount = strClean($dataProducts['depositAmount']);
-            $data = $this->model->regiterDeposit($idCredit, $depositAmount);
+            $data = $this->model->regiterDeposit($depositAmount, $idCredit, $_SESSION['idUser']);
             if ($data > 0) {
                 $res = array('msg' => 'DEPOSIT REGISTERED', 'type' => 'success');
             } else {
@@ -113,5 +113,15 @@ class Credits extends Controller
 
         // Output the generated PDF to Browser
         $dompdf->stream('report.pdf', array('Attachment' => false));
+    }
+    public function listRecordsCredits()
+    {
+        $data = $this->model->getRecordsCredits();
+
+        for ($i = 0; $i < count($data); $i++) {
+            $data[$i]['credit'] = 'Nº: ' . $data[$i]['id_credit'];
+ }
+        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        die();
     }
 }

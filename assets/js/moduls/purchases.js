@@ -162,13 +162,17 @@ function tblLoadProducts() {
                     btnDeleteProductTbl();
                     inputChangeQuantity();
                 } else {
-                    tblPurchase.innerHTML = '';
+                    totalAmount.value = '';
+                    tblPurchase.innerHTML = `<tr>
+                    <td colspan="5" class="text-center">EMPTY CART</td>
+                </tr>`;
                 }
             }
         }
-    } else {        
+    } else {  
+        totalAmount.value = '';      
         tblPurchase.innerHTML = `<tr>
-        <td colspan="4" class="text-center">EMPTY CART</td>
+        <td colspan="5" class="text-center">EMPTY CART</td>
     </tr>`;
     }
 }

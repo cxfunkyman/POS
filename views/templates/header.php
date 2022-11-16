@@ -24,7 +24,9 @@
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/dark-theme.css" />
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/semi-dark.css" />
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/header-colors.css" />
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/DataTables/datatables.min.css" />    
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/DataTables/datatables.min.css" />
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/plugins/fullcalendar/css/main.min.css" />
+    
     <title><?php echo TITLE . ' - ' . $data['title']; ?></title>
 </head>
 

@@ -121,6 +121,8 @@ class Sales extends Controller
     }
     public function reports($fields)
     {
+        ob_start();
+        
         $array = explode(',', $fields);
         $type = $array[0];
         $idSales = $array[1];

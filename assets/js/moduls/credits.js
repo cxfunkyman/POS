@@ -1,4 +1,5 @@
-let tblCredits;
+let tblCredits, tblRecordsCredits;
+
 const searchClientCredits = document.querySelector('#searchClientCredits');
 const idCredits = document.querySelector('#idCredits');
 const clientName = document.querySelector('#clientName');
@@ -17,6 +18,9 @@ const btnAddCancel = document.querySelector('#btnAddCancel');
 const newModalDeposit = document.querySelector('#newModalDeposit');
 const modalDeposit = new bootstrap.Modal('#modalDeposit');
 
+const fromInput = document.querySelector('#fromInput');
+const toInput = document.querySelector('#toInput');
+
 document.addEventListener('DOMContentLoaded', function () {
     //Load data with the plugin Datatable
     tblCredits = $('#tblCredits').DataTable({
@@ -25,8 +29,8 @@ document.addEventListener('DOMContentLoaded', function () {
             dataSrc: ''
         },
         columns: [
-            { data: 'amount' },
             { data: 'dates' },
+            { data: 'amount' },
             { data: 'name' },
             { data: 'remaining' },
             { data: 'deposit' },
@@ -76,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     //clean fields of modal to add deposit
     btnAddClean.addEventListener('click', function () {
-        clearFields();        
+        clearFields();
     });
     //Cancel and close modal to add deposit
     btnAddCancel.addEventListener('click', function () {
@@ -120,11 +124,50 @@ document.addEventListener('DOMContentLoaded', function () {
                         customAlert(res.type, res.msg);
                         modalDeposit.hide();
                         tblCredits.ajax.reload();
+                        setTimeout(() => {
+                            const route = base_url + 'credits/reports/' + idCredits.value;
+                            window.open(route, '_blank');
+                        }, 2000);
                     }
                 }
             }
         }
     });
+    //Load data with the plugin Datatable
+    tblRecordsCredits = $('#tblRecordsCredits').DataTable({
+        ajax: {
+            url: base_url + '/Credits/listRecordsCredits',
+            dataSrc: ''
+        },
+        columns: [
+            { data: 'dates' },
+            { data: 'deposits' },
+            { data: 'credit' }
+        ],
+        dom,
+        buttons,
+        responsive: true,
+        order: [[0, 'asc']]
+    });
+    //function for filtering the credits by date
+    fromInput.addEventListener('change', function () {
+        tblCredits.draw();
+    });
+    toInput.addEventListener('change', function () {
+        tblCredits.draw();
+    });
+    $.fn.dataTable.ext.search.push(
+        function (settings, data, dataIndex) {
+            const FilterStart = fromInput.value;
+            const FilterEnd = toInput.value;
+            const DataTableStart = data[0].trim();
+            const DataTableEnd = data[0].trim();
+            if (FilterStart == '' || FilterEnd == '') {
+                return true;
+            }
+            return !!(DataTableStart >= FilterStart && DataTableEnd <= FilterEnd);
+
+        });
 });
 function clearFields() {
     //for test

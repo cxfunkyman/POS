@@ -21,10 +21,10 @@ class CreditsModel extends Query
         $sql = "SELECT cr.*, cl.name, cl.phone_number, cl.address FROM credits cr INNER JOIN sales sl ON cr.id_sale = sl.id INNER JOIN clients cl ON sl.id_client = cl.id WHERE cl.name LIKE '%" . $value . "%' AND cr.status = 1 LIMIT 10";
         return $this->selectAll($sql);
     }
-    public function regiterDeposit($idCredit, $depositAmount)
+    public function regiterDeposit($depositAmount, $idCredit, $idUser)
     {
-        $sql = "INSERT INTO deposit(id_credit, deposits) VALUES(?,?)";
-        $array = array($idCredit, $depositAmount);
+        $sql = "INSERT INTO deposit(deposits, id_credit, id_user) VALUES(?,?,?)";
+        $array = array($depositAmount, $idCredit, $idUser);
         return $this->insert($sql, $array);
     }
     public function updateCredits($status, $idCredit)
@@ -46,6 +46,11 @@ class CreditsModel extends Query
     public function getAbonates($idCredit)
     {
         $sql = "SELECT * FROM deposit WHERE id_credit = $idCredit";
+        return $this->selectAll($sql);
+    }
+    public function getRecordsCredits()
+    {
+        $sql = "SELECT * FROM deposit WHERE deposits > 0";
         return $this->selectAll($sql);
     }
 }

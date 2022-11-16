@@ -89,6 +89,8 @@ class Purchases extends Controller
     }
     public function reports($fields)
     {
+        ob_start();
+        
         $array = explode(',', $fields);
         $type = $array[0];
         $idPurchases = $array[1];

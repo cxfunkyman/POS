@@ -23,12 +23,23 @@
             <div class="tab-pane fade show active mt-3" id="nav-credits" role="tabpanel" aria-labelledby="nav-credits-tab" tabindex="0">
                 <h5 class="card-title text-center"><i class="fas fa-credit-card"></i> Credits List</h5>
                 <hr>
+                <div class="d-flex justify-content-center mb-3">
+                    <div class="form-group">
+                        <label for="fromInput">From</label>
+                        <input id="fromInput" class="form-control" type="date">
+                    </div>
+                    &nbsp;&nbsp;
+                    <div class="form-group">
+                        <label for="toInput">To</label>
+                        <input id="toInput" class="form-control" type="date">
+                    </div>
+                </div>
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped table-hover align-middle nowrap" id="tblCredits" style="width: 100%;">
                         <thead>
                             <tr>
-                                <th>Amount</th>
                                 <th>Date</th>
+                                <th>Amount</th>
                                 <th>Client</th>
                                 <th>Remaining</th>
                                 <th>Deposit</th>
@@ -44,6 +55,19 @@
             </div>
             <div class="tab-pane fade p-3" id="nav-deposits" role="tabpanel" aria-labelledby="nav-deposits-tab" tabindex="0">
 
+            <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-hover align-middle nowrap" id="tblRecordsCredits" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Nº Credit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -120,21 +144,21 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row justify-content-between">
                     <div class="col-md-4 mb-2">
-                    <div class="d-grid">
-                    <button class="btn btn-primary" id="btnAddDeposit">Add Deposit</button>
-                </div>
+                        <div class="d-grid">
+                            <button class="btn btn-primary" id="btnAddDeposit">Add Deposit</button>
+                        </div>
                     </div>
                     <div class="col-md-4 mb-2">
-                    <div class="d-grid">
-                    <button class="btn btn-warning" id="btnAddClean">Clear Fields</button>
-                </div>
+                        <div class="d-grid">
+                            <button class="btn btn-warning" id="btnAddClean">Clear Fields</button>
+                        </div>
                     </div>
                     <div class="col-md-4 mb-2">
-                    <div class="d-grid">
-                    <button class="btn btn-danger" id="btnAddCancel">Cancel</button>
-                </div>
+                        <div class="d-grid">
+                            <button class="btn btn-danger" id="btnAddCancel">Cancel</button>
+                        </div>
                     </div>
                 </div>
             </div>

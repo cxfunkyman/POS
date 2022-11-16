@@ -103,7 +103,7 @@ function searchProduct(value) {
         if (this.readyState == 4 && this.status == 200) {
             const res = JSON.parse(this.responseText);
             //Just for test
-            console.log(res);
+            //console.log(res);
             if (!res.status) {
                 customAlert('warning', 'PRODUCT DOES NOT EXIST');
             } else {
@@ -136,7 +136,7 @@ function addLocalProduct(idProduct, quantity, currentStock) {
         }
         for (const element of cartList) {
             if (element['id'] == idProduct) {
-                element['quantity'] = parseInt(element['quantity'] + 1);
+                element['quantity'] = parseInt(element['quantity']) + 1;
                 localStorage.setItem(cartKey, JSON.stringify(cartList));
                 customAlert('success', 'PRODUCT ADDED');
                 tblLoadProducts();

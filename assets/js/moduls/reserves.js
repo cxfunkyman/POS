@@ -1,18 +1,56 @@
-const tblSale = document.querySelector('#tblSale tbody');
-//let tblRecords;
+// fullcalendar: https://fullcalendar.io/
+//               https://fullcalendar.io/docs/locale
+//               https://fullcalendar.io/docs/headerToolbar
+
+const tblReserves = document.querySelector('#tblReserves tbody');
 
 const searchClient = document.querySelector('#searchClient');
 const idClient = document.querySelector('#idClient');
+
+const nameClient = document.querySelector('#nameClient');
 const phoneClient = document.querySelector('#phoneClient');
 const addressClient = document.querySelector('#addressClient');
 const nameSeller = document.querySelector('#nameSeller');
-const nameClient = document.querySelector('#nameClient');
+//const totalAmount = document.querySelector('#totalAmount');
+const reserveDate = document.querySelector('#reserveDate');
+const withdrawDate = document.querySelector('#withdrawDate');
+const depositAmount = document.querySelector('#depositAmount');
+const dateColor = document.querySelector('#dateColor');
 
-const payMethod = document.querySelector('#payMethod');
-const discount = document.querySelector('#discount');
-const directPrint = document.querySelector('#directPrint');
+const modalReserve = new bootstrap.Modal('#modalReserve');
+
+
 
 document.addEventListener('DOMContentLoaded', function () {
+    var calendarEl = document.getElementById('calendar');
+    var today = new Date();
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        dateClick: function (info) {
+            today.setDate(today.getDate() + 0);
+            //Just for test
+            //console.log(info.dateStr);
+            //console.log(today.toLocaleDateString('en-CA'));
+            if (info.dateStr >= today.toLocaleDateString('en-CA')) {
+                //just for test
+                //console.log(info.dateStr);
+                reserveDate.value = info.dateStr;
+                withdrawDate.setAttribute('min', reserveDate.value);
+                clearFields();
+                //totalAmount.value = '';
+                modalReserve.show();
+            } else {
+                customAlert('warning', 'DATE CANNOT BE LESS THAN TODAY');
+            }
+        }
+    });
+    calendar.render();
+
+    //Load products from localStorage
     tblLoadProducts();
 
     //autocomplete clients
@@ -34,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
             //Just for test
             //console.log(ui.item);
             phoneClient.value = ui.item.phone;
-            addressClient.innerHTML = ui.item.address;
+            addressClient.value = ui.item.address;
             nameClient.value = ui.item.label;
             idClient.value = ui.item.id;
             searchClient.value = '';
@@ -42,10 +80,21 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    //complete the Sale
+    //clean fields of modal to add deposit
+    btnAddClean.addEventListener('click', function () {
+        clearFields();
+    });
+    //Cancel and close modal to add deposit
+    btnAddCancel.addEventListener('click', function () {
+        clearFields();
+        localStorage.removeItem(cartKey);
+        window.location.reload();
+        //modalReserve.hide();
+    });
+    //complete the reserves
     btnComplete.addEventListener('click', function () {
 
-        const cartListRow = document.querySelectorAll('#tblSale tr').length;
+        const cartListRow = document.querySelectorAll('#tblReserves tr').length;
         // for test only
         // console.log(cartListRow);
         // return;
@@ -56,10 +105,14 @@ document.addEventListener('DOMContentLoaded', function () {
             nameClient.value == ''
         ) {
             customAlert('warning', 'CLIENT REQUIRED');
-        } else if (payMethod.value == '') {
-            customAlert('warning', 'PAYMENT METHOD REQUIRED');
+        } else if (reserveDate.value == '') {
+            customAlert('warning', 'RESERVE DATE REQUIRED');
+        } else if (withdrawDate.value == '') {
+            customAlert('warning', 'WITHDRAW DATE REQUIRED');
+        } else if (depositAmount.value == '') {
+            customAlert('warning', 'DEPOSIT AMOUNT REQUIRED');
         } else {
-            const url = base_url + 'Sales/registerSale/';
+            const url = base_url + 'reserves/registerReserves/';
             //instaciate the object XMLHttpRequest
             const http = new XMLHttpRequest();
             //open connection this time POST
@@ -68,9 +121,10 @@ document.addEventListener('DOMContentLoaded', function () {
             http.send(JSON.stringify({
                 products: cartList,
                 idClient: idClient.value,
-                payMethod: payMethod.value,
-                discount: discount.value,
-                optionPrinter: directPrint.checked
+                reserveDate: reserveDate.value,
+                withdrawDate: withdrawDate.value,
+                depositAmount: depositAmount.value,
+                dateColor: dateColor.value
             }));
             //generarte ticket or invoice alert
             http.onreadystatechange = function () {
@@ -91,10 +145,10 @@ document.addEventListener('DOMContentLoaded', function () {
                             }).then((result) => {
                                 /* Read more about isConfirmed, isDenied below */
                                 if (result.isConfirmed) {
-                                    const route = base_url + 'sales/reports/tickets/' + res.idSale;
+                                    const route = base_url + 'quotes/reports/tickets/' + res.idQuote;
                                     window.open(route, '_blank');
                                 } else if (result.isDenied) {
-                                    const route = base_url + 'sales/reports/invoice/' + res.idSale;
+                                    const route = base_url + 'quotes/reports/invoice/' + res.idQuote;
                                     window.open(route, '_blank');
                                 }
                                 window.location.reload();
@@ -105,31 +159,11 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     })
-    //Load data with the plugin Datatable
-    tblRecords = $('#tblRecords').DataTable({
-        ajax: {
-            url: base_url + '/Sales/listSales',
-            dataSrc: ''
-        },
-        columns: [
-            { data: 'dates' },
-            { data: 'time_day' },
-            { data: 'total' },
-            { data: 'name' },
-            { data: 'serie' },
-            { data: 'pay_method' },
-            { data: 'actions' }
-        ],
-        dom,
-        buttons,
-        responsive: true,
-        order: [[0, 'desc']]
-    });
-})
+});
 //Load table with products
 function tblLoadProducts() {
     if (localStorage.getItem(cartKey) != null) {
-        //Jsut for test
+        //Just for test
         //console.log(localStorage.getItem(cartKey).length);
         const url = base_url + 'products/tblShowData/';
         //instaciate the object XMLHttpRequest
@@ -160,71 +194,34 @@ function tblLoadProducts() {
                         <td><button class="btn btn-danger btnDeleteProduct" data-id="${product.id}" type="button"><i class="fas fa-trash"></i></button></td>
                     </tr>`;
                     });
-                    tblSale.innerHTML = html;
+                    tblReserves.innerHTML = html;
                     totalAmount.value = res.totalSale;
                     btnDeleteProductTbl();
                     inputChangeQuantity();
                 } else {
                     totalAmount.value = '';
-                    tblSale.innerHTML = `<tr>
-                    <td colspan="5" class="text-center">EMPTY CART</td>
-                </tr>`;
+                    tblReserves.innerHTML = `<tr>
+                            <td colspan="5" class="text-center">EMPTY CART</td>
+                        </tr>`;
                 }
             }
         }
     } else {
         totalAmount.value = '';
-        tblSale.innerHTML = `<tr>
-        <td colspan="5" class="text-center">EMPTY CART</td>
-    </tr>`;
+        tblReserves.innerHTML = `<tr>
+                <td colspan="5" class="text-center">EMPTY CART</td>
+            </tr>`;
     }
 }
-function showReport(idSale) {
-    Swal.fire({
-        title: 'Do you want to generate an invoice?',
-        showDenyButton: true,
-        showCancelButton: true,
-        confirmButtonText: 'Ticket',
-        denyButtonText: `Invoice`,
-    }).then((result) => {
-        /* Read more about isConfirmed, isDenied below */
-        if (result.isConfirmed) {
-            const route = base_url + 'sales/reports/tickets/' + idSale;
-            window.open(route, '_blank');
-        } else if (result.isDenied) {
-            const route = base_url + 'sales/reports/invoice/' + idSale;
-            window.open(route, '_blank');
-        }
-    })
-}
-function deleteSale(idSale) {
-    Swal.fire({
-        title: 'Are you sure you want to cancel the order?',
-        text: "Products stock will be modify!.",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, cancel!'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            const url = base_url + 'sales/cancelSale/' + idSale;
-            //instaciate the object XMLHttpRequest
-            const http = new XMLHttpRequest();
-            //open connection this time POST
-            http.open('GET', url, true);
-            //send data
-            http.send();
-            //verify status
-            http.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    const res = JSON.parse(this.responseText);
-                    customAlert(res.type, res.msg)
-                    if (res.type == 'success') {
-                        tblRecords.ajax.reload();
-                    }
-                }
-            }
-        }
-    })
+function clearFields() {
+    //for test
+    //console.log('clear');
+    searchClient.value = "";
+    idClient.value = '';
+    nameClient.value = '';
+    phoneClient.value = '';
+    addressClient.value = '';
+    withdrawDate.value = '';
+    depositAmount.value = '';
+    searchClient.focus();
 }
