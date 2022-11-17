@@ -36,4 +36,19 @@ class ReservesModel extends Query
         );
         return $this->insert($sql, $arrData);
     }
+    public function getCompanies()
+    {
+        $sql = "SELECT * FROM configuration";
+        return $this->select($sql);
+    }
+    public function getReserves($idReserves)
+    {
+        $sql = "SELECT r.*, cl.identification, cl.num_identity, cl.name, cl.phone_number, cl.address FROM reserves r INNER JOIN clients cl ON r.id_client = cl.id WHERE r.id = $idReserves";
+        return $this->select($sql);
+    }
+    public function getCalendarReserves()
+    {
+        $sql = "SELECT r.*, cl.num_identity, cl.name FROM reserves r INNER JOIN clients cl ON r.id_client = cl.id";
+        return $this->selectAll($sql);
+    }
 }

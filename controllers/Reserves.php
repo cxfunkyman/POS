@@ -1,5 +1,8 @@
 <?php
+require 'vendor/autoload.php';
 
+// reference the Dompdf namespace
+use Dompdf\Dompdf;
 class Reserves extends Controller
 {
     private $idUser;
@@ -28,7 +31,7 @@ class Reserves extends Controller
 
             $createdDate = date('Y-m-d H:i:s');
             $reserveDate = $dataReserves['reserveDate'] . ' ' . date('H:i:s');
-            $withdrawDate = $dataReserves['withdrawDate'] . ' ' . date('H:i:s');
+            $withdrawDate = $dataReserves['withdrawDate'] . ' 23:59:59'; //change here depending fo the hour where the business close
             $depositAmount = $dataReserves['depositAmount'];
             $color = $dataReserves['dateColor'];
             $subTotalAmount = 0;
@@ -77,6 +80,58 @@ class Reserves extends Controller
             $res = array('msg' => 'EMPTY CART', 'type' => 'warning');
         }
         echo json_encode($res);
+        die();
+    }
+    public function reports($fields)
+    {
+        ob_start();
+        
+        $array = explode(',', $fields);
+        $type = $array[0];
+        $idReserves = $array[1];
+
+        $data['title'] = 'Statements';
+        $data['companies'] = $this->model->getCompanies();
+        $data['reserves'] = $this->model->getReserves($idReserves);
+        if (empty($data['reserves'])) {
+            echo 'Page not Found';
+            
+            exit;
+        }
+        $this->views->getView('reserves', $type, $data);
+        $html = ob_get_clean();
+        // instantiate and use the dompdf class
+        $dompdf = new Dompdf();
+
+        $options = $dompdf->getOptions();
+        $options->set('isJavascriptEnabled', true);
+        $options->set('isRemoteEnabled', true);
+        $dompdf->setOptions($options);
+
+        $dompdf->loadHtml($html);
+        // (Optional) Setup the paper size and orientation
+        if ($type == 'tickets') {
+            $dompdf->setPaper(array(0, 0, 130, 841), 'portrait');
+        } else {
+            $dompdf->setPaper('A4', 'vertical');
+        }
+        // Render the HTML as PDF
+        $dompdf->render();
+
+        // Output the generated PDF to Browser
+        $dompdf->stream('report.pdf', array('Attachment' => false));
+    }
+    public function listCalendarReserves()
+    {
+        $data = $this->model->getCalendarReserves();
+        for ($i=0; $i < count($data); $i++) {
+            $data[$i]['title'] = $data[$i]['name'] . ' - ' . $data[$i]['num_identity'];
+            $data[$i]['color'] = $data[$i]['color'];
+            $data[$i]['start'] = $data[$i]['dates_reserves'];
+            $data[$i]['end'] = $data[$i]['dates_withdraw'];
+
+        }
+        echo json_encode($data);
         die();
     }
 }

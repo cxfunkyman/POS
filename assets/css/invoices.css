@@ -25,6 +25,10 @@ table{
     width: 30%;
     margin: 10px;
 }
+.invoicePurchase1{
+    width: 33%;
+    margin: 10px;
+}
 
 .invoiceReport{
     font-size: 14px;
@@ -100,17 +104,30 @@ table, th, td{
 
 .totalNumberTitle{
     text-align: right;
+    font-weight: bold;
 }
 
 .totalNumberResult{
-    text-align: center;    
+    text-align: center;  
+    font-weight: bold;  
+}
+.totalNumberTitle1{
+    text-align: right;
+    font-weight: bold;
+}
+
+.totalNumberResult1{
+    text-align: center; 
+    font-weight: bold;   
 }
 .totalNumberTitleAbonate{
     text-align: right;
+    font-weight: bold;
 }
 
 .totalNumberResultAbonate{
-    text-align: center;    
+    text-align: center;  
+    font-weight: bold;  
 }
 .summaryTbl{
     text-align: center;

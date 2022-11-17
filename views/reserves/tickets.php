@@ -18,9 +18,9 @@
     </div>
     <h5 class="title">Client information</h5>
     <div class="data-info">
-        <p><strong><?php echo $data['quotes']['identification'] ?>: </strong><?php echo $data['quotes']['num_identity'] ?></p>
-        <p><strong>Name: </strong><?php echo $data['quotes']['name'] ?></p>
-        <p><strong>Phone Number: </strong><?php echo $data['quotes']['phone_number'] ?></p>
+        <p><strong><?php echo $data['reserves']['identification'] ?>: </strong><?php echo $data['reserves']['num_identity'] ?></p>
+        <p><strong>Name: </strong><?php echo $data['reserves']['name'] ?></p>
+        <p><strong>Phone Number: </strong><?php echo $data['reserves']['phone_number'] ?></p>
     </div>
     <h5 class="title">Sale Details</h5>
     <table>
@@ -34,14 +34,13 @@
         </thead>
         <tbody>
             <?php
-            $products = json_decode($data['quotes']['products'], true);
-            //TAX INCLUDE
-            $subTotal = $data['quotes']['subtotal'];
-            $discount = $data['quotes']['discount_amount'];
-            $tps = $data['quotes']['quote_tps'];
-            $tvq = $data['quotes']['quote_tvq'];
-            $total = $data['quotes']['total'];
+            $products = json_decode($data['reserves']['products'], true);
 
+            $total = $data['reserves']['total'];
+            $dates_reserves = $data['reserves']['dates_reserves'];
+            $dates_withdraw = $data['reserves']['dates_withdraw'];
+            $payment = $data['reserves']['payment'];
+            
             foreach ($products as $product) { ?>
                 <tr>
                     <td><?php echo $product['quantity']; ?></td>
@@ -51,31 +50,24 @@
                 </tr>
             <?php } ?>
             <tr>
-                <td class="totalNumber1" colspan="3">Discount</td>
-                <td class="totalNumber2">$ <?php echo number_format($discount, 2); ?></td>
-            </tr>
-            <tr>
-                <td class="totalNumber1" colspan="3">SubTotal</td>
-                <td class="totalNumber2">$ <?php echo number_format($subTotal, 2); ?></td>
-            </tr>
-            <tr>
-                <td class="totalNumber1" colspan="3">TPS %</td>
-                <td class="totalNumber2">$ <?php echo number_format($tps, 2); ?></td>
-            </tr>
-            <tr>
-                <td class="totalNumber1" colspan="3">TVQ %</td>
-                <td class="totalNumber2">$ <?php echo number_format($tvq, 2); ?></td>
+                <td class="totalNumber1" colspan="3">Payment</td>
+                <td class="totalNumber2">$ <?php echo number_format($payment, 2); ?></td>
             </tr>
             <tr>
                 <td class="totalNumber1" colspan="3">Total</td>
                 <td class="totalNumber2">$ <?php echo number_format($total, 2); ?></td>
             </tr>
+            <tr>
+                <td class="totalNumberLabel" colspan="2">Reserve Date</td>
+                <td class="totalNumber" colspan="2"><?php echo $dates_reserves; ?></td>
+            </tr>
+            <tr>
+                <td class="totalNumberLabel" colspan="2">Withdraw Date</td>
+                <td class="totalNumber" colspan="2"><?php echo $dates_withdraw; ?></td>
+            </tr>
         </tbody>
     </table>
     <div class="message">
-        <h4>Validity Period: <?php echo $data['quotes']['validity']; ?></h4>
-        <h4>Payment Method: <?php echo $data['quotes']['pay_method']; ?></h4>
-        <br>
         <?php echo $data['companies']['message']; ?>
     </div>
 </body>

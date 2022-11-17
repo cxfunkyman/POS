@@ -48,12 +48,22 @@ table td, th{
 
 .totalNumber1{
     text-align: right;
-    font-size: 7px;
+    font-size: 6px;
     font-weight: bold;
 }
 .totalNumber2{
     text-align: center;
-    font-size: 7px;
+    font-size: 6px;
+    font-weight: bold;    
+}
+.totalNumberLabel{
+    text-align: right;
+    font-size: 6px;
+    font-weight: bold;
+}
+.totalNumber{
+    text-align: right;
+    font-size: 6px;
     font-weight: bold;    
 }
 

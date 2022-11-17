@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
+        events: base_url + 'reserves/listCalendarReserves',
         dateClick: function (info) {
             today.setDate(today.getDate() + 0);
             //Just for test
@@ -40,8 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 //console.log(info.dateStr);
                 reserveDate.value = info.dateStr;
                 withdrawDate.setAttribute('min', reserveDate.value);
-                clearFields();
-                //totalAmount.value = '';
+                clearFields();                
                 modalReserve.show();
             } else {
                 customAlert('warning', 'DATE CANNOT BE LESS THAN TODAY');
@@ -145,10 +145,10 @@ document.addEventListener('DOMContentLoaded', function () {
                             }).then((result) => {
                                 /* Read more about isConfirmed, isDenied below */
                                 if (result.isConfirmed) {
-                                    const route = base_url + 'quotes/reports/tickets/' + res.idQuote;
+                                    const route = base_url + 'reserves/reports/tickets/' + res.idReserve;
                                     window.open(route, '_blank');
                                 } else if (result.isDenied) {
-                                    const route = base_url + 'quotes/reports/invoice/' + res.idQuote;
+                                    const route = base_url + 'reserves/reports/invoice/' + res.idReserve;
                                     window.open(route, '_blank');
                                 }
                                 window.location.reload();
