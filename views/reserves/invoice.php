@@ -71,9 +71,10 @@
         <tbody>
             <?php
             $products = json_decode($data['reserves']['products'], true);
-            
+
             $total = $data['reserves']['total'];
             $payment = $data['reserves']['payment'];
+            $remaining = $data['reserves']['remaining'];
 
             foreach ($products as $product) { ?>
                 <tr class="summaryTbl">
@@ -89,6 +90,10 @@
                 <td class="totalNumberResult">$ <?php echo number_format($payment, 2); ?></td>
             </tr>
             <tr>
+                <td class="totalNumberTitle" colspan="3">Remaining</td>
+                <td class="totalNumberResult">$ <?php echo number_format($remaining, 2); ?></td>
+            </tr>
+            <tr>
                 <td class="totalNumberTitle" colspan="3">Total</td>
                 <td class="totalNumberResult">$ <?php echo number_format($total, 2); ?></td>
             </tr>
@@ -97,6 +102,13 @@
     <div class="message">
         <?php echo $data['companies']['message']; ?>
     </div>
+    <?php if ($data['reserves']['status'] == 0) { ?>
+        <h2 class="orderCancel">-PRODUCTS DELIVERED-</h2>
+    <?php } else if ($data['reserves']['status'] == 1) { ?>
+        <h2 class="orderCancel">-PRODUCTS TO COLLECT-</h2>
+    <?php } else { ?>
+        <h2 class="orderCancel">-ORDER CANCELLED-</h2>
+    <?php } ?>
 </body>
 
 </html>

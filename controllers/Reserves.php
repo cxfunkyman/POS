@@ -3,6 +3,7 @@ require 'vendor/autoload.php';
 
 // reference the Dompdf namespace
 use Dompdf\Dompdf;
+
 class Reserves extends Controller
 {
     private $idUser;
@@ -29,7 +30,8 @@ class Reserves extends Controller
 
         if (!empty($dataReserves['products'])) {
 
-            $createdDate = date('Y-m-d H:i:s');
+            $dateCreated = date('Y-m-d');
+            $timeCreated = date('H:i:s');
             $reserveDate = $dataReserves['reserveDate'] . ' ' . date('H:i:s');
             $withdrawDate = $dataReserves['withdrawDate'] . ' 23:59:59'; //change here depending fo the hour where the business close
             $depositAmount = $dataReserves['depositAmount'];
@@ -58,14 +60,18 @@ class Reserves extends Controller
                     array_push($array['products'], $data);
                     $subTotalAmount += $subTotal;
                 }
-                $totalAmount = $subTotalAmount - $depositAmount;
+                $totalAmount = $subTotalAmount;
+                $totalReamaining = $totalAmount - $depositAmount;
                 $productData = json_encode($array['products']);
                 $reserves = $this->model->regReserveOrder(
                     $productData,
                     $reserveDate,
+                    $dateCreated,
+                    $timeCreated,
                     $withdrawDate,
                     $depositAmount,
                     $totalAmount,
+                    $totalReamaining,
                     $color,
                     $idClient,
                     $this->idUser
@@ -85,7 +91,7 @@ class Reserves extends Controller
     public function reports($fields)
     {
         ob_start();
-        
+
         $array = explode(',', $fields);
         $type = $array[0];
         $idReserves = $array[1];
@@ -95,7 +101,7 @@ class Reserves extends Controller
         $data['reserves'] = $this->model->getReserves($idReserves);
         if (empty($data['reserves'])) {
             echo 'Page not Found';
-            
+
             exit;
         }
         $this->views->getView('reserves', $type, $data);
@@ -124,14 +130,66 @@ class Reserves extends Controller
     public function listCalendarReserves()
     {
         $data = $this->model->getCalendarReserves();
-        for ($i=0; $i < count($data); $i++) {
-            $data[$i]['title'] = $data[$i]['name'] . ' - ' . $data[$i]['num_identity'];
-            $data[$i]['color'] = $data[$i]['color'];
-            $data[$i]['start'] = $data[$i]['dates_reserves'];
-            $data[$i]['end'] = $data[$i]['dates_withdraw'];
-
+        for ($i = 0; $i < count($data); $i++) {
+                $status = ($data[$i]['status'] == 0) ? 'Completed' : 'Pending';
+                $data[$i]['title'] =  $status . ' - ' . $data[$i]['name'] . ' - ' . $data[$i]['num_identity'];
+                $data[$i]['color'] = $data[$i]['colors'];
+                $data[$i]['start'] = $data[$i]['dates_reserves'];
+                $data[$i]['end'] = $data[$i]['dates_withdraw'];
+            
         }
         echo json_encode($data);
+        die();
+    }
+    public function listRecordReserves()
+    {
+        $data = $this->model->getCalendarReserves();
+        for ($i = 0; $i < count($data); $i++) {
+                if ($data[$i]['status'] == 0) {
+                    $data[$i]['status'] = '<span class="badge bg-success" style="color: black; font-size: 14px;">Completed</span>';
+                } else if ($data[$i]['status'] == 2) {
+                    $data[$i]['status'] = '<span class="badge bg-danger" style="color: black; font-size: 14px;">Cancelled</span>';
+                } else {
+                    $data[$i]['status'] = '<span class="badge bg-warning" style="color: black; font-size: 14px;">Pending</span>';
+                }
+                $data[$i]['client'] = '<span class="badge" style="color: black; font-size: 14px; background: ' . $data[$i]['colors'] . ';">' . $data[$i]['name'] . '</span>';
+                $data[$i]['actions'] = '<a class="btn btn-danger" href="#" onclick="showReport(' . $data[$i]['id'] . ')"><i class="fas fa-file-pdf"></i></a>';
+           
+        }
+        echo json_encode($data);
+        die();
+    }
+    public function deliveryShowData($idReserve)
+    {
+        $data = $this->model->getDataReserves($idReserve);
+        echo json_encode($data);
+        die();
+    }
+    public function processDelivery($idReserve)
+    {
+        $importData = $this->model->getDataReserves($idReserve);
+        $data = $this->model->setProcessDelivery($importData['total'], 0, 0, $idReserve);
+
+        if ($data > 0) {
+            $res = array('msg' => 'DELIVERY PROCESSED', 'type' => 'success');
+        } else {
+            $res = array('msg' => 'ERROR DELIVERY WAS NOT PROCESSED', 'type' => 'error');
+        }
+
+        echo json_encode($res, JSON_UNESCAPED_UNICODE);
+        die();
+    }
+    public function deleteReserve($idReserves)
+    {
+        $data = $this->model->cancelReserve(0, 0, 2, $idReserves);
+
+        if ($data > 0) {
+            $res = array('msg' => 'RESERVE CANCELLED', 'type' => 'success');
+        } else {
+            $res = array('msg' => 'ERROR DELIVERY WAS NOT CANCELLED', 'type' => 'error');
+        }
+
+        echo json_encode($res, JSON_UNESCAPED_UNICODE);
         die();
     }
 }

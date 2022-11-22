@@ -40,6 +40,7 @@
             $dates_reserves = $data['reserves']['dates_reserves'];
             $dates_withdraw = $data['reserves']['dates_withdraw'];
             $payment = $data['reserves']['payment'];
+            $remaining = $data['reserves']['remaining'];
             
             foreach ($products as $product) { ?>
                 <tr>
@@ -52,6 +53,10 @@
             <tr>
                 <td class="totalNumber1" colspan="3">Payment</td>
                 <td class="totalNumber2">$ <?php echo number_format($payment, 2); ?></td>
+            </tr>
+            <tr>
+                <td class="totalNumber1" colspan="3">Remaining</td>
+                <td class="totalNumber2">$ <?php echo number_format($remaining, 2); ?></td>
             </tr>
             <tr>
                 <td class="totalNumber1" colspan="3">Total</td>
@@ -70,6 +75,13 @@
     <div class="message">
         <?php echo $data['companies']['message']; ?>
     </div>
+    <?php if ($data['reserves']['status'] == 0) { ?>
+        <h4 class="orderCancel">-PRODUCTS DELIVERED-</h4>
+    <?php } else if ($data['reserves']['status'] == 1) { ?>
+        <h4 class="orderCancel">-PRODUCTS TO COLLECT-</h4>
+    <?php } else { ?>
+        <h4 class="orderCancel">-ORDER CANCELLED-</h4>
+    <?php } ?>
 </body>
 
 </html>

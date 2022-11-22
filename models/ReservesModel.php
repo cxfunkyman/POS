@@ -14,22 +14,28 @@ class ReservesModel extends Query
     }
     public function regReserveOrder(
         $productData,
+        $dateCreated,
+        $timeCreated,
         $reserveDate,
         $withdrawDate,
         $depositAmount,
         $totalAmount,
+        $totalReamaining,
         $color,
         $idClient,
         $idUser
     )
     {
-        $sql = "INSERT INTO reserves (products, dates_reserves, dates_withdraw, payment, total, color, id_client, id_user) VALUES (?,?,?,?,?,?,?,?)";
+        $sql = "INSERT INTO reserves (products, dates, time_day, dates_reserves, dates_withdraw, payment, total, remaining, colors, id_client, id_user) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
         $arrData = array(
             $productData,
+            $dateCreated,
+            $timeCreated,
             $reserveDate,
             $withdrawDate,
             $depositAmount,
             $totalAmount,
+            $totalReamaining,
             $color,
             $idClient,
             $idUser
@@ -50,5 +56,22 @@ class ReservesModel extends Query
     {
         $sql = "SELECT r.*, cl.num_identity, cl.name FROM reserves r INNER JOIN clients cl ON r.id_client = cl.id";
         return $this->selectAll($sql);
+    }
+    public function getDataReserves($idReserves)
+    {
+        $sql = "SELECT r.*, cl.identification, cl.num_identity, cl.name, cl.phone_number, cl.address FROM reserves r INNER JOIN clients cl ON r.id_client = cl.id WHERE r.id = $idReserves";
+        return $this->select($sql);
+    }
+    public function setProcessDelivery($deposit, $remaining, $status, $idReserves)
+    {
+        $sql = "UPDATE reserves SET payment = ?, remaining = ?, status = ? WHERE id = ?";
+        $array = array($deposit, $remaining, $status, $idReserves);
+        return $this->save($sql, $array);
+    }
+    public function cancelReserve($deposit, $remaining, $status, $idReserves)
+    {
+        $sql = "UPDATE reserves SET payment = ?, remaining = ?, status = ? WHERE id = ?";
+        $array = array($deposit, $remaining, $status, $idReserves);
+        return $this->save($sql, $array);
     }
 }

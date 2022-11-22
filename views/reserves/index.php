@@ -28,6 +28,27 @@
                         <input id="toInput" class="form-control" type="date">
                     </div>
                 </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-hover align-middle nowrap" id="tblRecords" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Name</th>
+                                <th>ID</th>
+                                <th>Deposit</th>
+                                <th>Remaining</th>
+                                <th>total</th>
+                                <th>Reserve Date</th>
+                                <th>Withdraw Date</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -162,6 +183,52 @@
                             <div class="d-grid">
                                 <button class="btn btn-outline-danger" id="btnAddCancel">Cancel</button>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="modalDelivery" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="my-modal-title" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Process Delivery</h5>
+                <button class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="idReserves">
+                <label>Client</label>
+                <div class="input-group mb-2">
+                    <span class="input-group-text"><i class="fa-solid fa-image-portrait"></i></span>
+                    <input class="form-control" type="text" id="clientDelivery" disabled>
+                </div>
+                <label>Deposit Amount</label>
+                <div class="input-group mb-2">
+                    <span class="input-group-text"><i class="fa-solid fa-circle-dollar-to-slot"></i></span>
+                    <input class="form-control" type="text" id="clientDeposit" disabled>
+                </div>
+                <label>Total Amount</label>
+                <div class="input-group mb-2">
+                    <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                    <input class="form-control" type="text" id="clientTotal" disabled>
+                </div>
+                <label>Pending Amount</label>
+                <div class="input-group mb-3">
+                    <span class="input-group-text"><i class="fa-solid fa-hand-holding-dollar"></i></span>
+                    <input class="form-control" type="text" id="clientPending" disabled>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-1">
+                        <div class="d-grid">
+                            <button class="btn btn-primary" id="btnProcess" type="button">Process</button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-1">
+                        <div class="d-grid">
+                            <button class="btn btn-danger" id="btnCancelReserve" type="button">Cancel Order</button>
                         </div>
                     </div>
                 </div>
