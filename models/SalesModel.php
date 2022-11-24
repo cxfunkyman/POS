@@ -1,10 +1,11 @@
 <?php
 
-class SalesModel extends Query {
+class SalesModel extends Query
+{
 
     public function __construct()
     {
-       parent::__construct();
+        parent::__construct();
     }
     public function getSaleList($idSale)
     {
@@ -25,8 +26,7 @@ class SalesModel extends Query {
         $serie,
         $idClient,
         $idUser
-    )
-    {
+    ) {
         $sql = "INSERT INTO sales (products, subtotal, total, sale_tps, sale_tvq, dates, time_day, pay_method, discount, discount_amount, serie, id_client, id_user)
          VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
         $array = array(
@@ -91,7 +91,21 @@ class SalesModel extends Query {
         $array = array(2, $idSale);
         return $this->save($sql, $array);
     }
-
-
+    //For inventory movement
+    public function registerInvMovement(
+        $movement,
+        $actionSale,
+        $quantity,
+        $currentDate,
+        $currentTime,
+        $code,
+        $photo,
+        $idProduct,
+        $idUser
+    ) {
+        $sql = "INSERT INTO inventory (movement, action, quantity, dates, time_day, code, photo, id_product, id_user)
+         VALUES (?,?,?,?,?,?,?,?,?)";
+        $array = array($movement, $actionSale, $quantity, $currentDate, $currentTime, $code, $photo, $idProduct, $idUser);
+        return $this->insert($sql, $array);
+    }
 }
-?>

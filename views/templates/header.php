@@ -140,7 +140,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="<?php echo BASE_URL . 'invKardex'; ?>">
+                    <a href="<?php echo BASE_URL . 'inventory'; ?>">
                         <div class="parent-icon"><i class="fa-solid fa-file-lines"></i>
                         </div>
                         <div class="menu-title">Inventory & Kardex</div>

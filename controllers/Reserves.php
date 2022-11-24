@@ -65,9 +65,9 @@ class Reserves extends Controller
                 $productData = json_encode($array['products']);
                 $reserves = $this->model->regReserveOrder(
                     $productData,
-                    $reserveDate,
                     $dateCreated,
                     $timeCreated,
+                    $reserveDate,
                     $withdrawDate,
                     $depositAmount,
                     $totalAmount,
@@ -77,6 +77,19 @@ class Reserves extends Controller
                     $this->idUser
                 );
                 if ($reserves > 0) {
+                    $actionSale = 'OUT PRODUCT';
+                    $currentDate = date('Y-m-d');
+                    $currentTime = date('H:i:s');
+                    foreach ($dataReserves['products'] as $product) {
+                        $result = $this->model->getReserveList($product['id']);
+                        //update stock
+                        $newQuantity = $result['quantity'] - $product['quantity'];
+                        $this->model->updateQuantity($newQuantity, $product['id']);
+                        //inventory movement
+                        $movement = 'Reserve N°: ' . $reserves;
+                        $quantity = -$product['quantity'];
+                        $this->model->registerInvMovement($movement, $actionSale, $quantity, $currentDate, $currentTime, $result['code'], $result['photo'], $product['id'], $this->idUser);
+                    }
                     $res = array('msg' => 'RESERVE ORDER GENERATED', 'type' => 'success', 'idReserve' => $reserves);
                 } else {
                     $res = array('msg' => 'RESERVE ORDER NOT GENERATED', 'type' => 'error');
@@ -131,12 +144,18 @@ class Reserves extends Controller
     {
         $data = $this->model->getCalendarReserves();
         for ($i = 0; $i < count($data); $i++) {
-                $status = ($data[$i]['status'] == 0) ? 'Completed' : 'Pending';
-                $data[$i]['title'] =  $status . ' - ' . $data[$i]['name'] . ' - ' . $data[$i]['num_identity'];
-                $data[$i]['color'] = $data[$i]['colors'];
-                $data[$i]['start'] = $data[$i]['dates_reserves'];
-                $data[$i]['end'] = $data[$i]['dates_withdraw'];
-            
+            $status = ($data[$i]['status'] == 0) ? 'Completed' : 'Pending';
+            if ($data[$i]['status'] == 0) {
+                $status = 'Completed';
+            } else if ($data[$i]['status'] == 1) {
+                $status = 'Pending';
+            } else {
+                $status = 'Cancelled';
+            }            
+            $data[$i]['title'] =  $status . ' - ' . $data[$i]['name'] . ' - ' . $data[$i]['num_identity'];
+            $data[$i]['color'] = $data[$i]['colors'];
+            $data[$i]['start'] = $data[$i]['dates_reserves'];
+            $data[$i]['end'] = $data[$i]['dates_withdraw'];
         }
         echo json_encode($data);
         die();
@@ -145,16 +164,15 @@ class Reserves extends Controller
     {
         $data = $this->model->getCalendarReserves();
         for ($i = 0; $i < count($data); $i++) {
-                if ($data[$i]['status'] == 0) {
-                    $data[$i]['status'] = '<span class="badge bg-success" style="color: black; font-size: 14px;">Completed</span>';
-                } else if ($data[$i]['status'] == 2) {
-                    $data[$i]['status'] = '<span class="badge bg-danger" style="color: black; font-size: 14px;">Cancelled</span>';
-                } else {
-                    $data[$i]['status'] = '<span class="badge bg-warning" style="color: black; font-size: 14px;">Pending</span>';
-                }
-                $data[$i]['client'] = '<span class="badge" style="color: black; font-size: 14px; background: ' . $data[$i]['colors'] . ';">' . $data[$i]['name'] . '</span>';
-                $data[$i]['actions'] = '<a class="btn btn-danger" href="#" onclick="showReport(' . $data[$i]['id'] . ')"><i class="fas fa-file-pdf"></i></a>';
-           
+            if ($data[$i]['status'] == 0) {
+                $data[$i]['status'] = '<span class="badge bg-success" style="color: black; font-size: 14px;">Completed</span>';
+            } else if ($data[$i]['status'] == 2) {
+                $data[$i]['status'] = '<span class="badge bg-danger" style="color: black; font-size: 14px;">Cancelled</span>';
+            } else {
+                $data[$i]['status'] = '<span class="badge bg-warning" style="color: black; font-size: 14px;">Pending</span>';
+            }
+            $data[$i]['client'] = '<span class="badge" style="color: black; font-size: 14px; background: ' . $data[$i]['colors'] . ';">' . $data[$i]['name'] . '</span>';
+            $data[$i]['actions'] = '<a class="btn btn-danger" href="#" onclick="showReport(' . $data[$i]['id'] . ')"><i class="fas fa-file-pdf"></i></a>';
         }
         echo json_encode($data);
         die();
@@ -184,6 +202,22 @@ class Reserves extends Controller
         $data = $this->model->cancelReserve(0, 0, 2, $idReserves);
 
         if ($data > 0) {
+            $actionSale = 'IN PRODUCT';
+            $currentDate = date('Y-m-d');
+            $currentTime = date('H:i:s');
+            $resultReserve = $this->model->getReserves($idReserves);
+            $stockSale = json_decode($resultReserve['products'], true);
+
+            foreach ($stockSale as $product) {
+                $result = $this->model->getReserveList($product['id']);
+                //update stock
+                $newQuantity = $result['quantity'] + $product['quantity'];
+                $this->model->updateQuantity($newQuantity, $product['id']);
+                //inventory movement
+                $movement = 'Reserve N°: ' . $idReserves;
+                $quantity = $product['quantity'];
+                $this->model->registerInvMovement($movement, $actionSale, $quantity, $currentDate, $currentTime, $result['code'], $result['photo'], $product['id'], $this->idUser);
+            }
             $res = array('msg' => 'RESERVE CANCELLED', 'type' => 'success');
         } else {
             $res = array('msg' => 'ERROR DELIVERY WAS NOT CANCELLED', 'type' => 'error');

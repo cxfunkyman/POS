@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (this.readyState == 4 && this.status == 200) {
                     const res = JSON.parse(this.responseText);
 
-                    console.log(this.responseText);
+                    //console.log(this.responseText);
                     customAlert(res.type, res.msg);
                     if (res.type == 'success') {
                         localStorage.removeItem(cartKey);

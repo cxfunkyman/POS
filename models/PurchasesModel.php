@@ -1,6 +1,7 @@
 <?php
 
-class PurchasesModel extends Query {
+class PurchasesModel extends Query 
+{
 
     public function __construct()
     {
@@ -67,6 +68,14 @@ class PurchasesModel extends Query {
         $sql = "UPDATE purchases SET status = ? WHERE id = ?";
         $array = array(0, $idPurchase);
         return $this->save($sql, $array);
+    }
+    //For inventory movement
+    public function registerInvMovement($movement, $actionPurchase, $quantity, $currentDate, $currentTime, $code, $photo, $idProduct, $idUser)
+    {
+        $sql = "INSERT INTO inventory (movement, action, quantity, dates, time_day, code, photo, id_product, id_user)
+         VALUES (?,?,?,?,?,?,?,?,?)";
+        $array = array($movement, $actionPurchase, $quantity, $currentDate, $currentTime, $code, $photo, $idProduct, $idUser);
+        return $this->insert($sql, $array);
     }
 }
 

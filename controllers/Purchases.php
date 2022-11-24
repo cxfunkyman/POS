@@ -31,7 +31,7 @@ class Purchases extends Controller
 
         if (!empty($dataProducts['products'])) {
             //$index = $dataProducts['purchaseNumber'];
-           // $serieCode = $this->randomNumbers($index, 1, 8);
+            // $serieCode = $this->randomNumbers($index, 1, 8);
 
             $currentDate = date('Y-m-d');
             $currentTime = date('H:i:s');
@@ -76,6 +76,12 @@ class Purchases extends Controller
                     $this->idUser
                 );
                 if ($purchase > 0) {
+                    $actionPurchase = 'IN INVENTORY';
+                    foreach ($dataProducts['products'] as $product) {
+                        $result = $this->model->getProductList($product['id']);
+                        $movement = 'Purchase N°: ' . $purchase;
+                        $this->model->registerInvMovement($movement, $actionPurchase, $product['quantity'], $currentDate, $currentTime, $result['code'], $result['photo'], $product['id'], $this->idUser);
+                    }
                     $res = array('msg' => 'PURCHASE GENERATED', 'type' => 'success', 'idPurchase' => $purchase);
                 } else {
                     $res = array('msg' => 'PURCHASE NOT GENERATED', 'type' => 'error');
@@ -90,7 +96,7 @@ class Purchases extends Controller
     public function reports($fields)
     {
         ob_start();
-        
+
         $array = explode(',', $fields);
         $type = $array[0];
         $idPurchases = $array[1];
@@ -149,6 +155,9 @@ class Purchases extends Controller
         if (isset($_GET) && is_numeric($idPurchase)) {
             $data = $this->model->dropOrder($idPurchase);
             if ($data > 0) {
+                $currentDate = date('Y-m-d');
+                $currentTime = date('H:i:s');
+                $actionPurchase = 'OUT INVENTORY';
                 $resultPurchase = $this->model->getPurchases($idPurchase);
                 $stockPurchase = json_decode($resultPurchase['products'], true);
                 foreach ($stockPurchase as $product) {
@@ -156,6 +165,10 @@ class Purchases extends Controller
                     //update stock
                     $newQuantity = $result['quantity'] - $product['quantity'];
                     $this->model->updateQuantity($newQuantity, $product['id']);
+                    //inventory movement
+                    $quantity = -$product['quantity'];
+                    $movement = 'Return Purchase N°: ' . $idPurchase;
+                    $this->model->registerInvMovement($movement, $actionPurchase, $quantity, $currentDate, $currentTime, $result['code'], $result['photo'], $product['id'], $this->idUser);
                 }
 
                 $res = array('msg' => 'ORDER CANCELLED', 'type' => 'success');

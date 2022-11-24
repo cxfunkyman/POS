@@ -24,8 +24,7 @@ class ReservesModel extends Query
         $color,
         $idClient,
         $idUser
-    )
-    {
+    ) {
         $sql = "INSERT INTO reserves (products, dates, time_day, dates_reserves, dates_withdraw, payment, total, remaining, colors, id_client, id_user) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
         $arrData = array(
             $productData,
@@ -72,6 +71,29 @@ class ReservesModel extends Query
     {
         $sql = "UPDATE reserves SET payment = ?, remaining = ?, status = ? WHERE id = ?";
         $array = array($deposit, $remaining, $status, $idReserves);
+        return $this->save($sql, $array);
+    }
+    //For inventory movement
+    public function registerInvMovement(
+        $movement,
+        $actionReserve,
+        $quantity,
+        $currentDate,
+        $currentTime,
+        $code,
+        $photo,
+        $idProduct,
+        $idUser
+    ) {
+        $sql = "INSERT INTO inventory (movement, action, quantity, dates, time_day, code, photo, id_product, id_user)
+             VALUES (?,?,?,?,?,?,?,?,?)";
+        $array = array($movement, $actionReserve, $quantity, $currentDate, $currentTime, $code, $photo, $idProduct, $idUser);
+        return $this->insert($sql, $array);
+    }
+    public function updateQuantity($newQuantity, $idProduct)
+    {
+        $sql = "UPDATE products SET quantity = ? WHERE id = ?";
+        $array = array($newQuantity, $idProduct);
         return $this->save($sql, $array);
     }
 }

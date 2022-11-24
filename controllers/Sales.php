@@ -69,9 +69,6 @@ class Sales extends Controller
                     $subTotal = $result['sale_price'] * $product['quantity'];
                     array_push($array['products'], $data);
                     $subTotalPrice += $subTotal;
-
-                    $newQuantity = $result['quantity'] - $product['quantity'];
-                    $this->model->updateQuantity($newQuantity, $result['id']);
                 }
                 if ($discount != null || $discount != 0) {
                     $discountAmount = ($subTotalPrice * ($discount / 100));
@@ -100,6 +97,17 @@ class Sales extends Controller
                     $this->idUser
                 );
                 if ($sale > 0) {
+                    $actionSale = 'OUT PRODUCT';
+                    foreach ($dataSales['products'] as $product) {
+                        $result = $this->model->getSaleList($product['id']);
+                        //update stock
+                        $newQuantity = $result['quantity'] - $product['quantity'];
+                        $this->model->updateQuantity($newQuantity, $product['id']);
+                        //inventory movement
+                        $movement = 'Sale N°: ' . $sale;
+                        $quantity = -$product['quantity'];
+                        $this->model->registerInvMovement($movement, $actionSale, $quantity, $currentDate, $currentTime, $result['code'], $result['photo'], $product['id'], $this->idUser);
+                    }
                     if ($payMethod == 'CREDIT') {
                         $amountSale = $totalPrice;
                         $this->model->registerCredit($amountSale, $currentDate, $currentTime, $sale);
@@ -110,7 +118,7 @@ class Sales extends Controller
 
                     $res = array('msg' => 'SALE GENERATED', 'type' => 'success', 'idSale' => $sale);
                 } else {
-                    $res = array('msg' => 'SALE NOT GENERATED', 'type' => 'error');
+                    $res = array('msg' => 'SALE WAS NOT GENERATED', 'type' => 'error');
                 }
             }
         } else {
@@ -122,7 +130,7 @@ class Sales extends Controller
     public function reports($fields)
     {
         ob_start();
-        
+
         $array = explode(',', $fields);
         $type = $array[0];
         $idSales = $array[1];
@@ -189,6 +197,9 @@ class Sales extends Controller
         if (isset($_GET) && is_numeric($idSale)) {
             $data = $this->model->dropSaleOrder($idSale);
             if ($data > 0) {
+                $currentDate = date('Y-m-d');
+                $currentTime = date('H:i:s');
+                $actionSale = 'IN PRODUCT';
                 $resultSale = $this->model->getSales($idSale);
                 $stockSale = json_decode($resultSale['products'], true);
                 foreach ($stockSale as $product) {
@@ -196,6 +207,9 @@ class Sales extends Controller
                     //update stock
                     $newQuantity = $result['quantity'] + $product['quantity'];
                     $this->model->updateQuantity($newQuantity, $product['id']);
+                    //inventory movement
+                    $movement = 'Return Sale N°: ' . $idSale;
+                    $this->model->registerInvMovement($movement, $actionSale, $product['quantity'], $currentDate, $currentTime, $result['code'], $result['photo'], $product['id'], $this->idUser);
                 }
                 if ($resultSale['pay_method'] == 'CREDIT') {
                     $this->model->cancelCredit($idSale);
@@ -256,7 +270,7 @@ class Sales extends Controller
         //print products and show the total
         $printer->setJustification(Printer::JUSTIFY_CENTER);
         $printer->text('Sale datails' . "\n\n");
-        
+
         $products = json_decode($sale['products'], true);
         foreach ($products as $product) {
             //Align left for QTY and name
