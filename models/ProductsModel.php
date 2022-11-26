@@ -4,24 +4,24 @@ class ProductsModel extends Query
 {
     public function __construct()
      {
-        parent::__construct();    
+        parent::__construct();
      }
     public function getProducts($status)
-    {        
+    {
         $sql = "SELECT p.*, m.measure, c.category FROM products p INNER JOIN measures m ON p.id_measure = m.id INNER JOIN categories c ON p.id_category = c.id WHERE p.status = '$status'";
-        return $this->selectAll($sql);        
+        return $this->selectAll($sql);
     }
     public function regProduct(
-        $p_Code,
-        $p_Description,
-        $p_Price,
-        $s_Price,
-        $p_Measure,
-        $p_Category,
-        $p_Photo
+        $pCode,
+        $pDescription,
+        $pPrice,
+        $sPrice,
+        $pMeasure,
+        $pCategory,
+        $pPhoto
         )
     {
-        $sql = "INSERT INTO products ( 
+        $sql = "INSERT INTO products (
         code,
         `description`,
         purchase_price,
@@ -31,13 +31,13 @@ class ProductsModel extends Query
         photo) VALUES (?,?,?,?,?,?,?)";
 
         $array = array(
-            $p_Code,
-            $p_Description,
-            $p_Price,
-            $s_Price,
-            $p_Measure,
-            $p_Category,
-            $p_Photo
+            $pCode,
+            $pDescription,
+            $pPrice,
+            $sPrice,
+            $pMeasure,
+            $pCategory,
+            $pPhoto
         );
                 
         return $this->insert($sql, $array);
@@ -48,7 +48,7 @@ class ProductsModel extends Query
             $sql = "SELECT id FROM products WHERE $field = '$value'";
         } else {
             $sql = "SELECT id FROM products WHERE $field = '$value' AND id != $id";
-        } 
+        }
         return $this->select($sql);
     }
     public function eraseProduct($status, $idProduct)
@@ -63,24 +63,24 @@ class ProductsModel extends Query
         return $this->select($sql);
     }
     public function modProduct(
-        $p_Code,
-        $p_Description,
-        $p_Price,
-        $s_Price,
-        $p_Measure,
-        $p_Category,
+        $pCode,
+        $pDescription,
+        $pPrice,
+        $sPrice,
+        $pMeasure,
+        $pCategory,
         $photoDirectory,
         $id
     )
     {
         $sql = "UPDATE products SET code=?, `description`=?, purchase_price=?, sale_price=?, id_measure=?, id_category=?, photo=? WHERE id=?";
         $array = array(
-            $p_Code,
-            $p_Description,
-            $p_Price,
-            $s_Price,
-            $p_Measure,
-            $p_Category,
+            $pCode,
+            $pDescription,
+            $pPrice,
+            $sPrice,
+            $pMeasure,
+            $pCategory,
             $photoDirectory,
             $id
         );
@@ -89,12 +89,12 @@ class ProductsModel extends Query
     }
     public function getProductData($table)
     {
-        $sql = "SELECT * FROM $table WHERE status = 1";                
+        $sql = "SELECT * FROM $table WHERE status = 1";
         return $this->selectAll($sql);
     }
     public function searchBarcode($value)
     {
-        $sql = "SELECT id, quantity FROM products WHERE code = '$value'";
+        $sql = "SELECT id, description AS product, quantity FROM products WHERE code = '$value'";
         return $this->select($sql);
     }
     public function searchPName($value)
@@ -103,4 +103,3 @@ class ProductsModel extends Query
         return $this->selectAll($sql);
     }
 }
-?>

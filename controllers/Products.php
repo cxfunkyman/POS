@@ -204,7 +204,7 @@ class Products extends Controller
     }
     //function for searching by product name from purchases.js
     public function searchByName()
-    {
+    {         
         $array = array();
         $value = $_GET['term'];
         $data = $this->model->searchPName($value);

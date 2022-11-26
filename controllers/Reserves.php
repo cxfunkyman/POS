@@ -77,18 +77,24 @@ class Reserves extends Controller
                     $this->idUser
                 );
                 if ($reserves > 0) {
-                    $actionSale = 'OUT PRODUCT';
+                    $actionSale = 'OUT INVENTORY';
                     $currentDate = date('Y-m-d');
                     $currentTime = date('H:i:s');
+
                     foreach ($dataReserves['products'] as $product) {
                         $result = $this->model->getReserveList($product['id']);
+
+                        //inventory movement
+                        $actualStock = $result['quantity'] - $product['quantity'];
+                        $oldStock = $result['quantity'];
+                        $quantity = -$product['quantity'];
+                        $movement = 'Reserve Pending N°: ' . $reserves;
+
+                        $this->model->registerInvMovement($movement, $actionSale, $quantity, $oldStock, $actualStock, $currentDate, $currentTime, $result['code'], $result['photo'], $product['id'], $this->idUser);
+
                         //update stock
                         $newQuantity = $result['quantity'] - $product['quantity'];
                         $this->model->updateQuantity($newQuantity, $product['id']);
-                        //inventory movement
-                        $movement = 'Reserve N°: ' . $reserves;
-                        $quantity = -$product['quantity'];
-                        $this->model->registerInvMovement($movement, $actionSale, $quantity, $currentDate, $currentTime, $result['code'], $result['photo'], $product['id'], $this->idUser);
                     }
                     $res = array('msg' => 'RESERVE ORDER GENERATED', 'type' => 'success', 'idReserve' => $reserves);
                 } else {
@@ -151,7 +157,7 @@ class Reserves extends Controller
                 $status = 'Pending';
             } else {
                 $status = 'Cancelled';
-            }            
+            }
             $data[$i]['title'] =  $status . ' - ' . $data[$i]['name'] . ' - ' . $data[$i]['num_identity'];
             $data[$i]['color'] = $data[$i]['colors'];
             $data[$i]['start'] = $data[$i]['dates_reserves'];
@@ -185,15 +191,21 @@ class Reserves extends Controller
     }
     public function processDelivery($idReserve)
     {
+        $currentDate = date('Y-m-d');
+        $currentTime = date('H:i:s');
+        $lastMove = 'Reserve Pending N°: ' . $idReserve;
+        $movement = 'Reserve Delivered N°: ' . $idReserve;
         $importData = $this->model->getDataReserves($idReserve);
         $data = $this->model->setProcessDelivery($importData['total'], 0, 0, $idReserve);
+        $result = $this->model->updateInvMovement($movement, $currentDate, $currentTime, $lastMove);
 
-        if ($data > 0) {
-            $res = array('msg' => 'DELIVERY PROCESSED', 'type' => 'success');
-        } else {
-            $res = array('msg' => 'ERROR DELIVERY WAS NOT PROCESSED', 'type' => 'error');
+        if ($result > 0) {
+            if ($data > 0) {
+                $res = array('msg' => 'DELIVERY PROCESSED', 'type' => 'success');
+            } else {
+                $res = array('msg' => 'ERROR DELIVERY WAS NOT PROCESSED', 'type' => 'error');
+            }
         }
-
         echo json_encode($res, JSON_UNESCAPED_UNICODE);
         die();
     }
@@ -202,7 +214,7 @@ class Reserves extends Controller
         $data = $this->model->cancelReserve(0, 0, 2, $idReserves);
 
         if ($data > 0) {
-            $actionSale = 'IN PRODUCT';
+            $actionSale = 'IN INVENTORY';
             $currentDate = date('Y-m-d');
             $currentTime = date('H:i:s');
             $resultReserve = $this->model->getReserves($idReserves);
@@ -210,13 +222,18 @@ class Reserves extends Controller
 
             foreach ($stockSale as $product) {
                 $result = $this->model->getReserveList($product['id']);
+
+                //inventory movement
+                $actualStock = $result['quantity'] + $product['quantity'];
+                $oldStock = $result['quantity'];
+                $quantity = $product['quantity'];
+                $movement = 'Reserve Cancelled N°: ' . $idReserves;
+
+                $this->model->registerInvMovement($movement, $actionSale, $quantity, $oldStock, $actualStock, $currentDate, $currentTime, $result['code'], $result['photo'], $product['id'], $this->idUser);
+
                 //update stock
                 $newQuantity = $result['quantity'] + $product['quantity'];
                 $this->model->updateQuantity($newQuantity, $product['id']);
-                //inventory movement
-                $movement = 'Reserve N°: ' . $idReserves;
-                $quantity = $product['quantity'];
-                $this->model->registerInvMovement($movement, $actionSale, $quantity, $currentDate, $currentTime, $result['code'], $result['photo'], $product['id'], $this->idUser);
             }
             $res = array('msg' => 'RESERVE CANCELLED', 'type' => 'success');
         } else {

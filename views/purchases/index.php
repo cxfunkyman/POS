@@ -23,7 +23,7 @@
                 <!-- the next input is for search purchases with code/barcode-->
                 <div class="input-group mb-2" id="barcodeContainer">
                     <span class="input-group-text"><i class="fas fa-search"></i></span>
-                    <input class="form-control" type="number" id="searchBarcodeInput" name="searchBarcodeInput" placeholder="Search by Code" autocomplete="off">
+                    <input class="form-control" type="number" id="searchBarcodeInput" name="searchBarcodeInput" placeholder="Search by Code and press ENTER" autocomplete="off">
                 </div>
 
                 <!-- the next input is for search purchases with names-->

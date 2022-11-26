@@ -67,6 +67,13 @@ class ReservesModel extends Query
         $array = array($deposit, $remaining, $status, $idReserves);
         return $this->save($sql, $array);
     }
+    //Just to change the status of the reserve in the inventory
+    public function updateInvMovement($movement, $currentDate, $currentTime, $lastMove)
+    {
+        $sql = "UPDATE inventory SET movement = ?, dates = ?, time_day = ? WHERE movement LIKE '%" . $lastMove . "%'";
+        $array = array($movement, $currentDate, $currentTime);
+        return $this->save($sql, $array);
+    }
     public function cancelReserve($deposit, $remaining, $status, $idReserves)
     {
         $sql = "UPDATE reserves SET payment = ?, remaining = ?, status = ? WHERE id = ?";
@@ -74,20 +81,11 @@ class ReservesModel extends Query
         return $this->save($sql, $array);
     }
     //For inventory movement
-    public function registerInvMovement(
-        $movement,
-        $actionReserve,
-        $quantity,
-        $currentDate,
-        $currentTime,
-        $code,
-        $photo,
-        $idProduct,
-        $idUser
-    ) {
-        $sql = "INSERT INTO inventory (movement, action, quantity, dates, time_day, code, photo, id_product, id_user)
-             VALUES (?,?,?,?,?,?,?,?,?)";
-        $array = array($movement, $actionReserve, $quantity, $currentDate, $currentTime, $code, $photo, $idProduct, $idUser);
+    public function registerInvMovement($movement, $actionReserve, $quantity, $oldStock, $actualStock, $currentDate, $currentTime, $code, $photo, $idProduct, $idUser)
+    {
+        $sql = "INSERT INTO inventory (movement, action, quantity, old_stock, actual_stock, dates, time_day, code, photo, id_product, id_user)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+        $array = array($movement, $actionReserve, $quantity, $oldStock, $actualStock, $currentDate, $currentTime, $code, $photo, $idProduct, $idUser);
         return $this->insert($sql, $array);
     }
     public function updateQuantity($newQuantity, $idProduct)

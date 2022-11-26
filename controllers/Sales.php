@@ -97,16 +97,22 @@ class Sales extends Controller
                     $this->idUser
                 );
                 if ($sale > 0) {
-                    $actionSale = 'OUT PRODUCT';
+                    $actionSale = 'OUT INVENTORY';
+
                     foreach ($dataSales['products'] as $product) {
                         $result = $this->model->getSaleList($product['id']);
+
+                        //inventory movement
+                        $actualStock = $result['quantity'] - $product['quantity'];
+                        $oldStock = $result['quantity'];
+                        $quantity = -$product['quantity'];
+                        $movement = 'Sale N°: ' . $sale;
+
+                        $this->model->registerInvMovement($movement, $actionSale, $quantity, $oldStock, $actualStock, $currentDate, $currentTime, $result['code'], $result['photo'], $product['id'], $this->idUser);
+
                         //update stock
                         $newQuantity = $result['quantity'] - $product['quantity'];
                         $this->model->updateQuantity($newQuantity, $product['id']);
-                        //inventory movement
-                        $movement = 'Sale N°: ' . $sale;
-                        $quantity = -$product['quantity'];
-                        $this->model->registerInvMovement($movement, $actionSale, $quantity, $currentDate, $currentTime, $result['code'], $result['photo'], $product['id'], $this->idUser);
                     }
                     if ($payMethod == 'CREDIT') {
                         $amountSale = $totalPrice;
@@ -199,17 +205,23 @@ class Sales extends Controller
             if ($data > 0) {
                 $currentDate = date('Y-m-d');
                 $currentTime = date('H:i:s');
-                $actionSale = 'IN PRODUCT';
+                $actionSale = 'IN INVENTORY';
                 $resultSale = $this->model->getSales($idSale);
                 $stockSale = json_decode($resultSale['products'], true);
+
                 foreach ($stockSale as $product) {
                     $result = $this->model->getSaleList($product['id']);
+                    
+                    $actualStock = $result['quantity'] + $product['quantity'];
+                    $oldStock = $result['quantity'];
+                    $quantity = $product['quantity'];
+                    //inventory movement
+                    $movement = 'Return Sale N°: ' . $idSale;
+                    $this->model->registerInvMovement($movement, $actionSale, $quantity, $oldStock, $actualStock, $currentDate, $currentTime, $result['code'], $result['photo'], $product['id'], $this->idUser);
+
                     //update stock
                     $newQuantity = $result['quantity'] + $product['quantity'];
                     $this->model->updateQuantity($newQuantity, $product['id']);
-                    //inventory movement
-                    $movement = 'Return Sale N°: ' . $idSale;
-                    $this->model->registerInvMovement($movement, $actionSale, $product['quantity'], $currentDate, $currentTime, $result['code'], $result['photo'], $product['id'], $this->idUser);
                 }
                 if ($resultSale['pay_method'] == 'CREDIT') {
                     $this->model->cancelCredit($idSale);

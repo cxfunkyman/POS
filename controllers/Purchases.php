@@ -53,9 +53,6 @@ class Purchases extends Controller
                     $subTotal = $result['purchase_price'] * $product['quantity'];
                     array_push($array['products'], $data);
                     $subTotalPrice += $subTotal;
-                    //update stock
-                    $newQuantity = $result['quantity'] + $product['quantity'];
-                    $this->model->updateQuantity($newQuantity, $result['id']);
                 }
 
                 $tps = $subTotalPrice * 0.05;
@@ -79,8 +76,14 @@ class Purchases extends Controller
                     $actionPurchase = 'IN INVENTORY';
                     foreach ($dataProducts['products'] as $product) {
                         $result = $this->model->getProductList($product['id']);
+                        $actualStock = $result['quantity'] + $product['quantity'];
+                        $oldStock = $result['quantity'];
                         $movement = 'Purchase N°: ' . $purchase;
-                        $this->model->registerInvMovement($movement, $actionPurchase, $product['quantity'], $currentDate, $currentTime, $result['code'], $result['photo'], $product['id'], $this->idUser);
+                        $this->model->registerInvMovement($movement, $actionPurchase, $product['quantity'], $oldStock, $actualStock, $currentDate, $currentTime, $result['code'], $result['photo'], $product['id'], $this->idUser);
+
+                        //update stock
+                        $newQuantity = $result['quantity'] + $product['quantity'];
+                        $this->model->updateQuantity($newQuantity, $result['id']);
                     }
                     $res = array('msg' => 'PURCHASE GENERATED', 'type' => 'success', 'idPurchase' => $purchase);
                 } else {
@@ -154,6 +157,7 @@ class Purchases extends Controller
     {
         if (isset($_GET) && is_numeric($idPurchase)) {
             $data = $this->model->dropOrder($idPurchase);
+
             if ($data > 0) {
                 $currentDate = date('Y-m-d');
                 $currentTime = date('H:i:s');
@@ -162,13 +166,18 @@ class Purchases extends Controller
                 $stockPurchase = json_decode($resultPurchase['products'], true);
                 foreach ($stockPurchase as $product) {
                     $result = $this->model->getProductList($product['id']);
+
+                    //inventory movement
+                    $actualStock = $result['quantity'] - $product['quantity'];
+                    $oldStock = $result['quantity'];
+                    $quantity = -$product['quantity'];
+                    $movement = 'Return Purchase N°: ' . $idPurchase;
+
+                    $this->model->registerInvMovement($movement, $actionPurchase, $quantity, $oldStock, $actualStock, $currentDate, $currentTime, $result['code'], $result['photo'], $product['id'], $this->idUser);
+
                     //update stock
                     $newQuantity = $result['quantity'] - $product['quantity'];
                     $this->model->updateQuantity($newQuantity, $product['id']);
-                    //inventory movement
-                    $quantity = -$product['quantity'];
-                    $movement = 'Return Purchase N°: ' . $idPurchase;
-                    $this->model->registerInvMovement($movement, $actionPurchase, $quantity, $currentDate, $currentTime, $result['code'], $result['photo'], $product['id'], $this->idUser);
                 }
 
                 $res = array('msg' => 'ORDER CANCELLED', 'type' => 'success');

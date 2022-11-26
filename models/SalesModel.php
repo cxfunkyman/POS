@@ -92,20 +92,11 @@ class SalesModel extends Query
         return $this->save($sql, $array);
     }
     //For inventory movement
-    public function registerInvMovement(
-        $movement,
-        $actionSale,
-        $quantity,
-        $currentDate,
-        $currentTime,
-        $code,
-        $photo,
-        $idProduct,
-        $idUser
-    ) {
-        $sql = "INSERT INTO inventory (movement, action, quantity, dates, time_day, code, photo, id_product, id_user)
-         VALUES (?,?,?,?,?,?,?,?,?)";
-        $array = array($movement, $actionSale, $quantity, $currentDate, $currentTime, $code, $photo, $idProduct, $idUser);
+    public function registerInvMovement($movement, $actionSale, $quantity, $oldStock, $actualStock, $currentDate, $currentTime, $code, $photo, $idProduct, $idUser)
+    {
+        $sql = "INSERT INTO inventory (movement, action, quantity, old_stock, actual_stock, dates, time_day, code, photo, id_product, id_user)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+        $array = array($movement, $actionSale, $quantity, $oldStock, $actualStock, $currentDate, $currentTime, $code, $photo, $idProduct, $idUser);
         return $this->insert($sql, $array);
     }
 }

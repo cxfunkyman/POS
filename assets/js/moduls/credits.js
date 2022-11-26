@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
         dom,
         buttons,
         responsive: true,
-        order: [[5, 'asc']]
+        order: [[1, 'asc']]
     });
     //autocomplete clients
     $("#searchClientCredits").autocomplete({

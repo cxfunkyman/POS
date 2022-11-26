@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
         minLength: 2,
         select: function (event, ui) {
             //Just for test
-            //console.log(ui.item);
+            //console.log(ui.item.id);
             addLocalProduct(ui.item.id, 1, ui.item.stock);
             searchNameInput.value = '';
             searchNameInput.focus();

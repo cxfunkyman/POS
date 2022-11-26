@@ -60,7 +60,6 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Reserve Produts</h5>
-                <button class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                 </button>
             </div>
             <div class="modal-body">
@@ -79,7 +78,7 @@
                         <!-- the next input is for search quotes with code/barcode-->
                         <div class="input-group mb-2" id="barcodeContainer">
                             <span class="input-group-text"><i class="fas fa-search"></i></span>
-                            <input class="form-control" type="number" id="searchBarcodeInput" name="searchBarcodeInput" placeholder="Search by Code" autocomplete="off">
+                            <input class="form-control" type="number" id="searchBarcodeInput" name="searchBarcodeInput" placeholder="Search by Code and press ENTER" autocomplete="off">
                         </div>
 
                         <!-- the next input is for search quotes with names-->
