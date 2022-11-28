@@ -46,6 +46,3 @@ class CategoriesModel extends Query
         return $this->save($sql, $array);
     }
 }
-?>
-
-

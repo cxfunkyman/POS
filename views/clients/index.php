@@ -44,7 +44,7 @@
             <div class="tab-pane fade p-3" id="nav-new" role="tabpanel" aria-labelledby="nav-new-tab" tabindex="0">
                 <form id="clientForm" autocomplete="off">
                     <input type='hidden' id='idClient' name='idClient'>
-                    <div class="row mb-3">                        
+                    <div class="row mb-3">
                             <div class="col-md-2 mb-3">
                                 <label for="clientID">Identity<span class="text-danger"> *</span></label>
                                 <select id="clientID" class="form-control" name="clientID">
@@ -105,7 +105,6 @@
         </div>
     </div>
 </div>
-
 
 
 <?php include_once 'views/templates/footer.php'; ?>

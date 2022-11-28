@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function () {
         minLength: 2,
         select: function (event, ui) {
             //Just for test
-            //console.log(ui.item.id);
+            console.log(ui.item);
             reportKardex(ui.item.id);
         }
     });
@@ -280,7 +280,7 @@ function searchCodeProduct(value) {
                 customAlert('warning', 'PRODUCT DOES NOT EXIST');
             } else {
                 //Just for test
-                // console.log(res);
+                 console.log(res);
                 // return;
                 reportKardex(res.data.id);
             }
