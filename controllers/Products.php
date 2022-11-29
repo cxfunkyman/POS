@@ -39,12 +39,13 @@ class Products extends Controller
             $s_Price = strClean($_POST['s_Price']);
             $p_Measure = strClean($_POST['p_Measure']);
             $p_Category = strClean($_POST['p_Category']);
+           
             $p_Photo = $_FILES['p_Photo'];
             $actualPhoto = strClean($_POST['actualPhoto']);
             $namePhoto = $p_Photo['name'];
             $tmpPhoto = $p_Photo['tmp_name'];
+            
             $photoDirectory = null;
-
             if (!empty($namePhoto)) {
                 $p_Date = date('YmdHis');
                 $photoDirectory = 'assets/images/products/' . $p_Date . '.jpg';

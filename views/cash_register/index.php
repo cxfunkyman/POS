@@ -5,7 +5,7 @@
         <div class="alert alert-<?php echo (!empty($data['cashRegister'])) == 1 ? 'success' : 'danger'; ?> border-0 bg-<?php echo (!empty($data['cashRegister'])) == 1 ? 'success' : 'danger'; ?> alert-dismissible fade show py-2">
             <div class="d-flex align-items-center">
                 <div class="font-35 text-white"><i class="fa-solid fa-<?php echo (!empty($data['cashRegister'])) == 1 ? 'lock-open' : 'lock'; ?>"></i>
-                </div> 
+                </div>
                 <div class="ms-3">
                     <h6 class="mb-0 text-dark">Cash Register <?php echo (!empty($data['cashRegister'])) == 1 ? 'Open' : 'Close'; ?></h6>
                     <div class="text-dark">A simple success alert—check it out!</div>
@@ -45,9 +45,8 @@
                                 <th>Opening Date</th>
                                 <th>Closing Date</th>
                                 <th>Final Amount</th>
-                                <th>Total Sales</th>
+                                <th>Total Sale</th>
                                 <th>User</th>
-                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -60,10 +59,37 @@
             </div>
 
             <div class="tab-pane fade p-3" id="nav-newExpense" role="tabpanel" aria-labelledby="nav-newExpense-tab" tabindex="0">
-                <div class="input-group">
-                    <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
-                    <input class="form-control" type="text" name="" placeholder="Recipient's text">
-                </div>
+
+                <form id="expenseForm">
+                <input type='hidden' id='actualPhoto' name='actualPhoto'>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="description">Expense Amount <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                                <input class="form-control" type="number" id="expenseAmount" name="expenseAmount" placeholder="Expense Amount">
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <label for="description">Description</label>
+                            <div class="form-group">
+                                <textarea id="description" class="form-control" name="description" rows="3" placeholder="Description"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label for="expensePhoto">Photo (Optional)</label>
+                            <div class="form-group">
+                                <input id="expensePhoto" class="form-control" type="file" name="expensePhoto">
+                            </div>
+                            <br>
+                            <div id="containerPreview">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="float-end">
+                        <button class="btn btn-primary" type="submit" id="btnRegisterExpense">Register</button>
+                    </div>
+                </form>
             </div>
 
             <div class="tab-pane fade p-3" id="nav-expenseHistory" role="tabpanel" aria-labelledby="nav-expenseHistory-tab" tabindex="0">

@@ -9,7 +9,7 @@ class CategoriesModel extends Query
     public function getCategories($status)
     {        
         $sql = "SELECT * FROM categories WHERE `status` = '$status'";
-        return $this->selectAll($sql);        
+        return $this->selectAll($sql);
     }
     public function regCategory($categoryName)
     {
