@@ -123,6 +123,7 @@ function editClient(idClient) {
     }
 }
 function clearErrorFields() {
+    
     errorClientID.textContent = '';
     errorClientIDNumb.textContent = '';
     errorClientName.textContent = '';

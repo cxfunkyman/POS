@@ -8,7 +8,7 @@
                 </div>
                 <div class="ms-3">
                     <h6 class="mb-0 text-dark">Cash Register <?php echo (!empty($data['cashRegister'])) == 1 ? 'Open' : 'Close'; ?></h6>
-                    <div class="text-dark">A simple success alert—check it out!</div>
+                    <div class="text-dark">WELCOME!</div>
                 </div>
             </div>
         </div>
@@ -27,6 +27,7 @@
             </div>
         </div>
         <hr>
+        <?php if ((!empty($data['cashRegister']))) { ?> 
         <nav>
             <div class="nav nav-tabs" id="nav-tab" role="tablist">
                 <button class="nav-link active" id="nav-opening-tab" data-bs-toggle="tab" data-bs-target="#nav-opening" type="button" role="tab" aria-controls="nav-opening" aria-selected="true">Opening and Closing</button>
@@ -50,20 +51,17 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td></td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-
             <div class="tab-pane fade p-3" id="nav-newExpense" role="tabpanel" aria-labelledby="nav-newExpense-tab" tabindex="0">
 
                 <form id="expenseForm">
-                <input type='hidden' id='actualPhoto' name='actualPhoto'>
+                    <input type='hidden' id='actualPhoto' name='actualPhoto'>
                     <div class="row">
                         <div class="col-md-4">
+                            <input type="hidden" id="id">
                             <label for="description">Expense Amount <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
@@ -99,22 +97,26 @@
                             <tr>
                                 <th>Amount</th>
                                 <th>Description</th>
+                                <th>Time & Date</th>
+                                <th>User</th>
                                 <th>Photo</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td></td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
             <div class="tab-pane fade p-3" id="nav-cashMovements" role="tabpanel" aria-labelledby="nav-cashMovements-tab" tabindex="0">
-
+                <div class="chart-container-1">
+                    <canvas id="movementGraph"></canvas>
+                </div>
+                <ul class="list-group list-group-flush" id="listMoveGraph">
+                </ul>
             </div>
         </div>
+        <?php }  ?>
     </div>
 </div>
 

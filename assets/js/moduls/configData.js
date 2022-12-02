@@ -23,8 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     'heading', '|',
                     'bold', 'italic',
                     'outdent', 'indent', '|',
-                    'undo', 'redo',
-                    'alignment', '|',
+                    'undo', 'redo', '|',
                     'link', 'blockQuote', 'insertTable', 'mediaEmbed'
                 ],
                 shouldNotGroupWhenFull: true

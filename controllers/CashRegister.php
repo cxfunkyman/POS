@@ -62,36 +62,100 @@ class CashRegister extends Controller
                 $res = array('msg' => 'DESCRIPTION IS REQUIRED', 'type' => 'warning');
             } else {
                 $amount = strClean($_POST['expenseAmount']);
-                $description = strClean($_POST['description']);
-                
-                $expensePhoto = $_FILES['expensePhoto'];
-                $actualPhoto = strClean($_POST['actualPhoto']);
-                $namePhoto = $expensePhoto['name'];
-                $tmpPhoto = $expensePhoto['tmp_name'];
-    
-                $photoDirectory = null;
-                if (!empty($namePhoto)) {
-                    $dates = date('YmdHis');
-                    $photoDirectory = 'assets/images/expenses/' . $dates . '.jpg';
-                } else if (!empty($actualPhoto) && empty($namePhoto)) {
-                    $photoDirectory = $actualPhoto;
-                }
-                $data = $this->model->regExpenses($amount, $description, $photoDirectory, $this->idUser);
-    
-                if ($data > 0) {
-                    if (!empty($namePhoto)) {
-                        move_uploaded_file($tmpPhoto, $photoDirectory);
-                    }
-                    $res = array('msg' => 'EXPENSE REGISTERED', 'type' => 'success');
+                $verifyExpense = $this->getData();
+                if ($amount >= $verifyExpense['balance'] || $amount >= $verifyExpense['safeCash']) {
+                    $res = array('msg' => 'THERE IS NO MONEY TO EXPENSES', 'type' => 'warning');
                 } else {
-                    $res = array('msg' => 'ERROR EXPENSE WAS NOT REGISTERED', 'type' => 'error');
+                    $description = strClean($_POST['description']);
+
+                    $expensePhoto = $_FILES['expensePhoto'];
+                    $actualPhoto = strClean($_POST['actualPhoto']);
+                    $namePhoto = $expensePhoto['name'];
+                    $tmpPhoto = $expensePhoto['tmp_name'];
+
+                    $photoDirectory = null;
+                    if (!empty($namePhoto)) {
+                        $dates = date('YmdHis');
+                        $photoDirectory = 'assets/images/expenses/' . $dates . '.jpg';
+                    } else if (!empty($actualPhoto) && empty($namePhoto)) {
+                        $photoDirectory = $actualPhoto;
+                    }
+                    $data = $this->model->regExpenses($amount, $description, $photoDirectory, $this->idUser);
+
+                    if ($data > 0) {
+                        if (!empty($namePhoto)) {
+                            move_uploaded_file($tmpPhoto, $photoDirectory);
+                        }
+                        $res = array('msg' => 'EXPENSE REGISTERED', 'type' => 'success');
+                    } else {
+                        $res = array('msg' => 'ERROR EXPENSE WAS NOT REGISTERED', 'type' => 'error');
+                    }
                 }
-                
             }
         } else {
             $res = array('msg' => 'ERROR, EXPENSE WAS NOT REGISTERED', 'type' => 'error');
         }
         echo json_encode($res);
         die();
+    }
+    public function listExpenseHistory()
+    {
+        $data = $this->model->getExpenseHistory();
+        if (!empty($data)) {
+            for ($i = 0; $i < count($data); $i++) {
+                $data[$i]['photo'] = '<a href="' . BASE_URL . $data[$i]['photo'] . '" target="_blank">
+                <img class="img-thumbnail" src="' . BASE_URL . $data[$i]['photo'] . '" width="100">
+                </a>';
+            }
+        }
+        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        die();
+    }
+    //for cash movementgraph representation
+    public function cashMovement()
+    {
+        $data = $this->getData();
+        $data['currency'] = CURRENCY;
+        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        die();
+    }
+    public function getData()
+    {
+        $consultReserves = $this->model->getCashReserves($this->idUser);
+        $reserves = ($consultReserves['total'] != null) ? $consultReserves['total'] : 0;
+
+        $consultSales = $this->model->getCashSales($this->idUser);
+        $sales = ($consultSales['total'] != null) ? $consultSales['total'] : 0;
+
+        $consultDeposits = $this->model->getCashDeposits($this->idUser);
+        $deposits = ($consultDeposits['total'] != null) ? $consultDeposits['total'] : 0;
+
+        $consultPurchases = $this->model->getCashPurchase($this->idUser);
+        $purchases = ($consultPurchases['total'] != null) ? $consultPurchases['total'] : 0;
+
+        $consultExpenses = $this->model->getCashExpense($this->idUser);
+        $expenses = ($consultExpenses['total'] != null) ? $consultExpenses['total'] : 0;
+
+        $consultCredits = $this->model->getCashCredits($this->idUser);
+        $credits = ($consultCredits['total'] != null) ? $consultCredits['total'] : 0;
+
+        $initialAmount = $this->model->verifyIfOpen($this->idUser);
+
+        $data['outcome'] = $purchases + $expenses;
+        $data['income'] = $sales + $deposits + $reserves;
+        $data['initialAmount'] = ((!empty($initialAmount['initial_amount'])) ? $initialAmount['initial_amount'] : 0);
+        $data['credits'] = $credits;
+        $data['expenses'] = $expenses;
+        $data['balance'] = (($data['income'] + $data['initialAmount']) - ($data['outcome'] + $data['expenses']));
+        $data['safeCash'] = ($data['balance'] * 0.85);
+
+        $data['outcomeDecimal'] = number_format($data['outcome'], 2);
+        $data['incomeDecimal'] = number_format($data['income'], 2);
+        $data['initialAmountDecimal'] = number_format($data['initialAmount'], 2);
+        $data['creditsDecimal'] = number_format($data['credits'], 2);
+        $data['expensesDecimal'] = number_format($data['expenses'], 2);
+        $data['balanceDecimal'] = number_format($data['balance'], 2);
+
+        return $data;
     }
 }

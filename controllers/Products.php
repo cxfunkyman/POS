@@ -196,7 +196,7 @@ class Products extends Controller
     {
         $array = array('status' => false, 'data' => '');
         $data = $this->model->searchBarcode($value);
-        if(!empty($data)){
+        if (!empty($data)){
             $array['status'] = true;
             $array['data'] = $data;
         }

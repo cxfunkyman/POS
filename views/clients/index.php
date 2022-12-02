@@ -93,7 +93,7 @@
                                     <textarea id="clientAddress" class="form-control" name="clientAddress" rows="3" placeholder="Address"></textarea>
                                 </div>
                                 <span id="errorClientAddress" class="text-danger"></span>
-                            </div>                        
+                            </div>
                     </div>
                     <div class="text-end">
                         <button class="btn btn-danger" type="button" id="btnClientNew">New</button>

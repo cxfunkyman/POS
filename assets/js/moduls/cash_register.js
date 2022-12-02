@@ -1,4 +1,4 @@
-let tblOpenClose, tblExpenseHistory;
+let tblOpenClose, tblExpenseHistory, myChart;
 
 //New expense
 const expenseForm = document.querySelector('#expenseForm');
@@ -7,6 +7,8 @@ const description = document.querySelector('#description');
 const expensePhoto = document.querySelector('#expensePhoto');
 const containerPreview = document.querySelector('#containerPreview');
 const actualPhoto = document.querySelector('#actualPhoto');
+const id = '#id';
+const movementGraph = document.querySelector('#movementGraph');
 
 const btnRegisterExpense = document.querySelector('#btnRegisterExpense');
 
@@ -38,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     //Just for testing
                     //console.log(this.responseText); 
                     const res = JSON.parse(this.responseText);
-                    customAlert(res.type, res.msg);
+                    customAlert(res.type, res.msg);                    
                     window.location.reload();
                 }
             }
@@ -47,86 +49,221 @@ document.addEventListener('DOMContentLoaded', () => {
     btnCancel.addEventListener('click', function () {
         modalRegister.hide();
         initialAmount.value = '';
-    })
-    //Load data with the plugin Datatable
-    tblOpenClose = $('#tblOpenClose').DataTable({
-        ajax: {
-            url: base_url + '/CashRegister/listOpenClose',
-            dataSrc: ''
-        },
-        columns: [
-            { data: 'initial_amount' },
-            { data: 'opening_date' },
-            { data: 'closing_date' },
-            { data: 'final_amount' },
-            { data: 'total_sale' },
-            { data: 'name' }
-        ],
-        dom,
-        buttons,
-        responsive: true,
-        order: [[0, 'asc']]
-    })
+    });
+    //verify if the cash register is open
+    if (expenseForm && movementGraph) {
 
-    //Inicialize the ckeditor5 editor
-    ClassicEditor
-        .create(document.querySelector('#description'), {
-            toolbar: {
-                items: [
-                    'selectAll', '|',
-                    'heading', '|',
-                    'bold', 'italic',
-                    'outdent', 'indent', '|',
-                    'undo', 'redo', '|',
-                    'link', 'blockQuote', 'insertTable', 'mediaEmbed'
-                ],
-                shouldNotGroupWhenFull: true
+        //Load data with the plugin Datatable
+        tblOpenClose = $('#tblOpenClose').DataTable({
+            ajax: {
+                url: base_url + '/CashRegister/listOpenClose',
+                dataSrc: ''
             },
+            columns: [
+                { data: 'initial_amount' },
+                { data: 'opening_date' },
+                { data: 'closing_date' },
+                { data: 'final_amount' },
+                { data: 'total_sale' },
+                { data: 'name' }
+            ],
+            dom,
+            buttons,
+            responsive: true,
+            order: [[0, 'asc']]
         })
-        .catch(error => {
-            console.error(error);
+
+        //Inicialize the ckeditor5 editor
+        ClassicEditor
+            .create(document.querySelector('#description'), {
+                toolbar: {
+                    items: [
+                        'selectAll', '|',
+                        'heading', '|',
+                        'bold', 'italic',
+                        'outdent', 'indent', '|',
+                        'undo', 'redo', '|',
+                        'link', 'blockQuote', 'insertTable', 'mediaEmbed'
+                    ],
+                    shouldNotGroupWhenFull: true
+                },
+            })
+            .catch(error => {
+                console.error(error);
+            })
+
+        //Register expense
+        expenseForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (expenseAmount.value == '') {
+                customAlert('warning', 'EXPENSE IS REQUIRED');
+            } else if (description.value == '') {
+                customAlert('warning', 'DESCRIPTION IS REQUIRED');
+            } else {
+                const url = base_url + 'CashRegister/registerExpense';
+                insertRegistry(url, this, tblExpenseHistory, btnRegisterExpense, false, id);
+                delPreview();
+                graphMovement();
+                // setTimeout(() => {
+                //     window.location.reload();
+                // }, 2000);
+            }
         })
 
-    //Register expense
-    expenseForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-        if (expenseAmount.value == '') {
-            customAlert('warning', 'EXPENSE IS REQUIRED');
-        } else if (description.value == '') {
-            customAlert('warning', 'DESCRIPTION IS REQUIRED');
-        } else {
-            const url = base_url + 'CashRegister/registerExpense';
-            insertRegistry(url, this, null, btnRegisterExpense, false, null);
-            delPreview();
-            // setTimeout(() => {
-            //     window.location.reload();
-            // }, 2000);
-        }
-    })
+        //Preview selected photo
+        expensePhoto.addEventListener('change', function (e) {
+            if (e.target.files[0].type == 'image/png' ||
+                e.target.files[0].type == 'image/jpg' ||
+                e.target.files[0].type == 'image/jpeg') {
 
-    //Preview selected photo
-    expensePhoto.addEventListener('change', function (e) {
-        if (e.target.files[0].type == 'image/png' ||
-            e.target.files[0].type == 'image/jpg' ||
-            e.target.files[0].type == 'image/jpeg') {
+                const url = e.target.files[0];
+                const tmpUrl = URL.createObjectURL(url);
+                containerPreview.innerHTML = `<img class="img-thumbnail" src="${tmpUrl}" width="200">
+                    <button class="btn btn-danger" type="button" onclick="delPreview()"><i class="fas fa-trash"></i></button>`;
+            } else {
+                expensePhoto.value = '';
+                customAlert('warning', 'ONLY JPG, JPEG AND PNG IMAGES ARE ACEPTED')
+            }
+        })
 
-            const url = e.target.files[0];
-            const tmpUrl = URL.createObjectURL(url);
-            containerPreview.innerHTML = `<img class="img-thumbnail" src="${tmpUrl}" width="200">
-                <button class="btn btn-danger" type="button" onclick="delPreview()"><i class="fas fa-trash"></i></button>`;
-        } else {
-            expensePhoto.value = '';
-            customAlert('warning', 'ONLY JPG, JPEG AND PNG IMAGES ARE ACEPTED')
-        }
-    })
-
-
-
-
+        //Load data with the plugin Datatable
+        tblExpenseHistory = $('#tblExpenseHistory').DataTable({
+            ajax: {
+                url: base_url + '/CashRegister/listExpenseHistory',
+                dataSrc: ''
+            },
+            columns: [
+                { data: 'amount' },
+                { data: 'description' },
+                { data: 'dates' },
+                { data: 'name' },
+                { data: 'photo' }
+            ],
+            dom,
+            buttons,
+            responsive: true,
+            order: [[2, 'asc']]
+        })
+        graphMovement();
+    }
 })
 
 function delPreview() {
     expensePhoto.value = '';
     containerPreview.innerHTML = '';
     actualPhoto.value = '';
+}
+
+function graphMovement() {
+
+    const url = base_url + 'CashRegister/cashMovement';
+    //instaciate the object XMLHttpRequest
+    const http = new XMLHttpRequest();
+    //open connection this time POST - GET
+    http.open('GET', url, true);
+    //send data
+    http.send();
+    //verify status
+    http.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            //Just for testing
+            //console.log(this.responseText);
+            const res = JSON.parse(this.responseText);
+
+            if (myChart) {
+                myChart.destroy();
+            }
+
+            const ctx = document.getElementById("movementGraph").getContext('2d');
+
+            const gradientStroke1 = ctx.createLinearGradient(0, 0, 0, 300);
+            gradientStroke1.addColorStop(0, '#0c62e0');
+            gradientStroke1.addColorStop(1, '#0c62e0');
+
+            const gradientStroke2 = ctx.createLinearGradient(0, 0, 0, 300);
+            gradientStroke2.addColorStop(0, '#128e0a');
+            gradientStroke2.addColorStop(1, '#128e0a');
+
+            const gradientStroke3 = ctx.createLinearGradient(0, 0, 0, 300);
+            gradientStroke3.addColorStop(0, '#e4ad07');
+            gradientStroke3.addColorStop(1, '#e4ad07');
+
+            const gradientStroke4 = ctx.createLinearGradient(0, 0, 0, 300);
+            gradientStroke4.addColorStop(0, '#e20e22');
+            gradientStroke4.addColorStop(1, '#e20e22');
+
+            const gradientStroke5 = ctx.createLinearGradient(0, 0, 0, 300);
+            gradientStroke5.addColorStop(0, '#515a62');
+            gradientStroke5.addColorStop(1, '#515a62');
+
+            const gradientStroke6 = ctx.createLinearGradient(0, 0, 0, 300);
+            gradientStroke6.addColorStop(0, '#0bb2d3');
+            gradientStroke6.addColorStop(1, '#0bb2d3');
+
+            myChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ["Initial Amount", "Income", "Expenses", "Outcome", "Credits", "Balance"],
+                    datasets: [{
+                        backgroundColor: [
+                            gradientStroke1,
+                            gradientStroke2,
+                            gradientStroke3,
+                            gradientStroke4,
+                            gradientStroke5,
+                            gradientStroke6
+                        ],
+
+                        hoverBackgroundColor: [
+                            gradientStroke1,
+                            gradientStroke2,
+                            gradientStroke3,
+                            gradientStroke4,
+                            gradientStroke5,
+                            gradientStroke6
+                        ],
+
+                        data: [res.initialAmount, res.income, res.expenses, res.outcome, res.credits, res.balance],
+                        borderWidth: [1, 1, 1, 1, 1, 1]
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    cutoutPercentage: 0,
+                    legend: {
+                        position: 'bottom',
+                        display: false,
+                        labels: {
+                            boxWidth: 8
+                        }
+                    },
+                    tooltips: {
+                        displayColors: false,
+                    },
+                }
+            });
+
+            let html = `<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
+                    <div><i class="fas fa-key"></i> Initial Amount </div> <span class="badge bg-primary rounded-pill" style="color: black; font-size: 15px;">${res.currency + res.initialAmountDecimal}</span>
+                </li>
+                <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
+                    <div><i class="fas fa-arrow-up"></i> Income </div> <span class="badge bg-success rounded-pill" style="color: black; font-size: 15px;">${res.currency + res.incomeDecimal}</span>
+                </li>
+                <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
+                    <div><i class="fas fa-hand-holding-dollar"></i> Expenses </div> <span class="badge bg-warning rounded-pill" style="color: black; font-size: 15px;">${res.currency + res.expensesDecimal}</span>
+                </li>
+                <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
+                    <div><i class="fas fa-arrow-down"></i> Outcome </div> <span class="badge bg-danger rounded-pill" style="color: black; font-size: 15px;">${res.currency + res.outcomeDecimal}</span>
+                </li>
+                <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
+                    <div><i class="fas fa-credit-card"></i> Credits </div> <span class="badge bg-secondary rounded-pill" style="color: black; font-size: 15px;">${res.currency + res.creditsDecimal}</span>
+                </li>
+                <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
+                    <div><i class="fas fa-dollar-sign"></i> Balance </div> <span class="badge bg-info rounded-pill" style="color: black; font-size: 15px;">${res.currency + res.balanceDecimal}</span>
+                </li>`;
+            document.querySelector('#listMoveGraph').innerHTML = html;
+
+        }
+    }
+
 }
