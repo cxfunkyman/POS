@@ -27,95 +27,106 @@
             </div>
         </div>
         <hr>
-        <?php if ((!empty($data['cashRegister']))) { ?> 
-        <nav>
-            <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                <button class="nav-link active" id="nav-opening-tab" data-bs-toggle="tab" data-bs-target="#nav-opening" type="button" role="tab" aria-controls="nav-opening" aria-selected="true">Opening and Closing</button>
-                <button class="nav-link" id="nav-newExpense-tab" data-bs-toggle="tab" data-bs-target="#nav-newExpense" type="button" role="tab" aria-controls="nav-newExpense" aria-selected="false">New Expense</button>
-                <button class="nav-link" id="nav-expenseHistory-tab" data-bs-toggle="tab" data-bs-target="#nav-expenseHistory" type="button" role="tab" aria-controls="nav-expenseHistory" aria-selected="false">Expense History</button>
-                <button class="nav-link" id="nav-cashMovements-tab" data-bs-toggle="tab" data-bs-target="#nav-cashMovements" type="button" role="tab" aria-controls="nav-cashMovements" aria-selected="false">Cash Movements</button>
-            </div>
-        </nav>
-        <div class="tab-content" id="nav-tabContent">
-            <div class="tab-pane fade show active mt-3" id="nav-opening" role="tabpanel" aria-labelledby="nav-opening-tab" tabindex="0">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped table-hover align-middle nowrap" id="tblOpenClose" style="width: 100%;">
-                        <thead>
-                            <tr>
-                                <th>Initial Amount</th>
-                                <th>Opening Date</th>
-                                <th>Closing Date</th>
-                                <th>Final Amount</th>
-                                <th>Total Sale</th>
-                                <th>User</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+        <?php if ((!empty($data['cashRegister']))) { ?>
+            <nav>
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    <button class="nav-link active" id="nav-opening-tab" data-bs-toggle="tab" data-bs-target="#nav-opening" type="button" role="tab" aria-controls="nav-opening" aria-selected="true">Opening and Closing</button>
+                    <button class="nav-link" id="nav-newExpense-tab" data-bs-toggle="tab" data-bs-target="#nav-newExpense" type="button" role="tab" aria-controls="nav-newExpense" aria-selected="false">New Expense</button>
+                    <button class="nav-link" id="nav-expenseHistory-tab" data-bs-toggle="tab" data-bs-target="#nav-expenseHistory" type="button" role="tab" aria-controls="nav-expenseHistory" aria-selected="false">Expense History</button>
+                    <button class="nav-link" id="nav-cashMovements-tab" data-bs-toggle="tab" data-bs-target="#nav-cashMovements" type="button" role="tab" aria-controls="nav-cashMovements" aria-selected="false">Cash Movements</button>
                 </div>
-            </div>
-            <div class="tab-pane fade p-3" id="nav-newExpense" role="tabpanel" aria-labelledby="nav-newExpense-tab" tabindex="0">
+            </nav>
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active mt-3" id="nav-opening" role="tabpanel" aria-labelledby="nav-opening-tab" tabindex="0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover align-middle nowrap" id="tblOpenClose" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>Initial Amount</th>
+                                    <th>Opening Date</th>
+                                    <th>Closing Date</th>
+                                    <th>Final Amount</th>
+                                    <th>Total Sale</th>
+                                    <th>User</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-pane fade p-3" id="nav-newExpense" role="tabpanel" aria-labelledby="nav-newExpense-tab" tabindex="0">
 
-                <form id="expenseForm">
-                    <input type='hidden' id='actualPhoto' name='actualPhoto'>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <input type="hidden" id="id">
-                            <label for="description">Expense Amount <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
-                                <input class="form-control" type="number" id="expenseAmount" name="expenseAmount" placeholder="Expense Amount">
+                    <form id="expenseForm">
+                        <input type='hidden' id='actualPhoto' name='actualPhoto'>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <input type="hidden" id="id">
+                                <label for="description">Expense Amount <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                                    <input class="form-control" type="number" id="expenseAmount" name="expenseAmount" placeholder="Expense Amount">
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <label for="description">Description</label>
+                                <div class="form-group">
+                                    <textarea id="description" class="form-control" name="description" rows="3" placeholder="Description"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <label for="expensePhoto">Photo (Optional)</label>
+                                <div class="form-group">
+                                    <input id="expensePhoto" class="form-control" type="file" name="expensePhoto">
+                                </div>
+                                <br>
+                                <div id="containerPreview">
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-8">
-                            <label for="description">Description</label>
-                            <div class="form-group">
-                                <textarea id="description" class="form-control" name="description" rows="3" placeholder="Description"></textarea>
-                            </div>
+                        <div class="float-end">
+                            <button class="btn btn-primary" type="submit" id="btnRegisterExpense">Register</button>
                         </div>
-                        <div class="col-md-12">
-                            <label for="expensePhoto">Photo (Optional)</label>
-                            <div class="form-group">
-                                <input id="expensePhoto" class="form-control" type="file" name="expensePhoto">
-                            </div>
-                            <br>
-                            <div id="containerPreview">
-                            </div>
+                    </form>
+                </div>
+
+                <div class="tab-pane fade p-3" id="nav-expenseHistory" role="tabpanel" aria-labelledby="nav-expenseHistory-tab" tabindex="0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover align-middle nowrap" id="tblExpenseHistory" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>Amount</th>
+                                    <th>Description</th>
+                                    <th>Time & Date</th>
+                                    <th>User</th>
+                                    <th>Photo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade p-3" id="nav-cashMovements" role="tabpanel" aria-labelledby="nav-cashMovements-tab" tabindex="0">
+                    <div class="d-flex align-items-center">
+                        <div></div>
+                        <div class="dropdown ms-auto">
+                            <a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="<?php echo BASE_URL . 'cashRegister/reports' ?>" target="_blank"><i class="fas fa-file-pdf text-danger" style="color: rgb(0, 255, 0)"></i> Report</a>
+                                </li>
+                            </ul>
                         </div>
                     </div>
-                    <div class="float-end">
-                        <button class="btn btn-primary" type="submit" id="btnRegisterExpense">Register</button>
+                    <div class="chart-container-1">
+                        <canvas id="movementGraph"></canvas>
                     </div>
-                </form>
-            </div>
-
-            <div class="tab-pane fade p-3" id="nav-expenseHistory" role="tabpanel" aria-labelledby="nav-expenseHistory-tab" tabindex="0">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped table-hover align-middle nowrap" id="tblExpenseHistory" style="width: 100%;">
-                        <thead>
-                            <tr>
-                                <th>Amount</th>
-                                <th>Description</th>
-                                <th>Time & Date</th>
-                                <th>User</th>
-                                <th>Photo</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+                    <ul class="list-group list-group-flush" id="listMoveGraph">
+                    </ul>
                 </div>
             </div>
-
-            <div class="tab-pane fade p-3" id="nav-cashMovements" role="tabpanel" aria-labelledby="nav-cashMovements-tab" tabindex="0">
-                <div class="chart-container-1">
-                    <canvas id="movementGraph"></canvas>
-                </div>
-                <ul class="list-group list-group-flush" id="listMoveGraph">
-                </ul>
-            </div>
-        </div>
         <?php }  ?>
     </div>
 </div>

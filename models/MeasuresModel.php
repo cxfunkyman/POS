@@ -8,7 +8,7 @@ class MeasuresModel extends Query
     }
     public function getMeasures($status)
     {        
-        $sql = "SELECT * FROM measures WHERE `status` = $status";        
+        $sql = "SELECT * FROM measures WHERE `status` = $status";
         return $this->selectAll($sql);
     }
     public function regMeasures($measureName, $shortName)

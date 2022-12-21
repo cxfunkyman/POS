@@ -4,7 +4,7 @@ class Connection
     private $conn;
 
     public function __construct()
-    {        
+    {
         $pdo = "mysql:host=".HOST.";dbname=".DBNAME.";".CHARSET;
 
         try {

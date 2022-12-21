@@ -1,8 +1,8 @@
 <?php
-//require 'vendor/autoload.php';
+require 'vendor/autoload.php';
 
-// reference the Dompdf namespace
-//use Dompdf\Dompdf;
+//reference the Dompdf namespace
+use Dompdf\Dompdf;
 
 class CashRegister extends Controller
 {
@@ -124,8 +124,11 @@ class CashRegister extends Controller
         $consultReserves = $this->model->getCashReserves($this->idUser);
         $reserves = ($consultReserves['total'] != null) ? $consultReserves['total'] : 0;
 
-        $consultSales = $this->model->getCashSales($this->idUser);
+        $consultSales = $this->model->getCashSales('total', $this->idUser);
         $sales = ($consultSales['total'] != null) ? $consultSales['total'] : 0;
+
+        $consultDiscount = $this->model->getCashSales('discount_amount', $this->idUser);
+        $discount = ($consultDiscount['total'] != null) ? $consultDiscount['total'] : 0;
 
         $consultDeposits = $this->model->getCashDeposits($this->idUser);
         $deposits = ($consultDeposits['total'] != null) ? $consultDeposits['total'] : 0;
@@ -148,6 +151,7 @@ class CashRegister extends Controller
         $data['expenses'] = $expenses;
         $data['balance'] = (($data['income'] + $data['initialAmount']) - ($data['outcome'] + $data['expenses']));
         $data['safeCash'] = ($data['balance'] * 0.85);
+        $data['discount'] = $discount;
 
         $data['outcomeDecimal'] = number_format($data['outcome'], 2);
         $data['incomeDecimal'] = number_format($data['income'], 2);
@@ -155,7 +159,42 @@ class CashRegister extends Controller
         $data['creditsDecimal'] = number_format($data['credits'], 2);
         $data['expensesDecimal'] = number_format($data['expenses'], 2);
         $data['balanceDecimal'] = number_format($data['balance'], 2);
+        $data['discountDecimal'] = number_format($data['discount'], 2);
 
         return $data;
+    }
+    public function reports()
+    {
+        ob_start();
+
+        $data['title'] = 'Reports';
+        $data['companies'] = $this->model->getCompanies();
+        $data['movements'] = $this->getData();
+        //Just for testing
+        // print_r($data['movements']);
+        // exit;
+        if (empty($data['movements']['initialAmount'])) {
+            echo 'Page not Found';
+            exit;
+        }
+        $this->views->getView('cash_register', 'report', $data);
+        $html = ob_get_clean();
+        // instantiate and use the dompdf class
+        $dompdf = new Dompdf();
+
+        $options = $dompdf->getOptions();
+        $options->set('isJavascriptEnabled', true);
+        $options->set('isRemoteEnabled', true);
+        $dompdf->setOptions($options);
+
+        $dompdf->loadHtml($html);
+        // (Optional) Setup the paper size and orientation
+        $dompdf->setPaper('A4', 'vertical');
+
+        // Render the HTML as PDF
+        $dompdf->render();
+
+        // Output the generated PDF to Browser
+        $dompdf->stream('report.pdf', array('Attachment' => false));
     }
 }

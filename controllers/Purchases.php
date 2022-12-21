@@ -5,12 +5,13 @@ use Dompdf\Dompdf;
 
 class Purchases extends Controller
 {
-    private $idUser;
+    private $idUser, $cashRegister;
 
     public function __construct()
     {
         parent::__construct();
-        session_start();
+        require_once 'controllers/cashRegister.php';
+        $this->cashRegister = new CashRegister();
         $this->idUser = $_SESSION['id_user'];
     }
     public function index()
@@ -23,6 +24,9 @@ class Purchases extends Controller
     }
     public function registerOrder()
     {
+        // Just for testing
+        // print_r($this->cashRegister->getData());
+        // exit;
         $json = file_get_contents('php://input');
         $dataProducts = json_decode($json, true);
         $totalPrice = 0;
@@ -43,6 +47,9 @@ class Purchases extends Controller
             } else if (empty($purchaseNumber)) {
                 $res = array('msg' => 'PURCHASE NUMBER REQUIRED', 'type' => 'warning');
             } else {
+
+                $balance = $this->cashRegister->getData();
+
                 foreach ($dataProducts['products'] as $product) {
 
                     $result = $this->model->getProductList($product['id']);
@@ -54,40 +61,43 @@ class Purchases extends Controller
                     array_push($array['products'], $data);
                     $subTotalPrice += $subTotal;
                 }
+                if ($balance['balance'] > $subTotalPrice) {
+                    $tps = $subTotalPrice * 0.05;
+                    $tvq = $subTotalPrice * 0.09975;
+                    $totalPrice = $subTotalPrice + $tps + $tvq;
 
-                $tps = $subTotalPrice * 0.05;
-                $tvq = $subTotalPrice * 0.09975;
-                $totalPrice = $subTotalPrice + $tps + $tvq;
+                    $productData = json_encode($array['products']);
+                    $purchase = $this->model->regProductOrder(
+                        $productData,
+                        $subTotalPrice,
+                        $totalPrice,
+                        $tps,
+                        $tvq,
+                        $currentDate,
+                        $currentTime,
+                        $purchaseNumber,
+                        $idSupplier,
+                        $this->idUser
+                    );
+                    if ($purchase > 0) {
+                        $actionPurchase = 'IN INVENTORY';
+                        foreach ($dataProducts['products'] as $product) {
+                            $result = $this->model->getProductList($product['id']);
+                            $actualStock = $result['quantity'] + $product['quantity'];
+                            $oldStock = $result['quantity'];
+                            $movement = 'Purchase N°: ' . $purchase;
+                            $this->model->registerInvMovement($movement, $actionPurchase, $product['quantity'], $oldStock, $actualStock, $currentDate, $currentTime, $result['code'], $result['photo'], $product['id'], $this->idUser);
 
-                $productData = json_encode($array['products']);
-                $purchase = $this->model->regProductOrder(
-                    $productData,
-                    $subTotalPrice,
-                    $totalPrice,
-                    $tps,
-                    $tvq,
-                    $currentDate,
-                    $currentTime,
-                    $purchaseNumber,
-                    $idSupplier,
-                    $this->idUser
-                );
-                if ($purchase > 0) {
-                    $actionPurchase = 'IN INVENTORY';
-                    foreach ($dataProducts['products'] as $product) {
-                        $result = $this->model->getProductList($product['id']);
-                        $actualStock = $result['quantity'] + $product['quantity'];
-                        $oldStock = $result['quantity'];
-                        $movement = 'Purchase N°: ' . $purchase;
-                        $this->model->registerInvMovement($movement, $actionPurchase, $product['quantity'], $oldStock, $actualStock, $currentDate, $currentTime, $result['code'], $result['photo'], $product['id'], $this->idUser);
-
-                        //update stock
-                        $newQuantity = $result['quantity'] + $product['quantity'];
-                        $this->model->updateQuantity($newQuantity, $result['id']);
+                            //update stock
+                            $newQuantity = $result['quantity'] + $product['quantity'];
+                            $this->model->updateQuantity($newQuantity, $result['id']);
+                        }
+                        $res = array('msg' => 'PURCHASE GENERATED', 'type' => 'success', 'idPurchase' => $purchase);
+                    } else {
+                        $res = array('msg' => 'PURCHASE NOT GENERATED', 'type' => 'error');
                     }
-                    $res = array('msg' => 'PURCHASE GENERATED', 'type' => 'success', 'idPurchase' => $purchase);
                 } else {
-                    $res = array('msg' => 'PURCHASE NOT GENERATED', 'type' => 'error');
+                    $res = array('msg' => 'CANNOT COMPLETE THIS ORDER, BALANCE AVAILABLE: '.CURRENCY.$balance['balanceDecimal'], 'type' => 'error');
                 }
             }
         } else {

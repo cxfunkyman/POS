@@ -140,7 +140,7 @@ function tblLoadProducts() {
             if (this.readyState == 4 && this.status == 200) {
                 const res = JSON.parse(this.responseText);
                 //Just for test
-                //console.log(this.responseText);
+                //console.log(res);
                 //addLocalProduct(res.id, 1);
 
                 let html = '';

@@ -1,5 +1,4 @@
 <?php
-
 class Query extends Connection
 {
     private $pdo, $conn;

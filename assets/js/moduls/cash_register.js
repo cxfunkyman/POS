@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     //Just for testing
                     //console.log(this.responseText); 
                     const res = JSON.parse(this.responseText);
-                    customAlert(res.type, res.msg);                    
+                    customAlert(res.type, res.msg);
                     window.location.reload();
                 }
             }
@@ -177,33 +177,37 @@ function graphMovement() {
             const ctx = document.getElementById("movementGraph").getContext('2d');
 
             const gradientStroke1 = ctx.createLinearGradient(0, 0, 0, 300);
-            gradientStroke1.addColorStop(0, '#0c62e0');
-            gradientStroke1.addColorStop(1, '#0c62e0');
+            gradientStroke1.addColorStop(0, '#008cff');
+            gradientStroke1.addColorStop(1, '#008cff');
 
             const gradientStroke2 = ctx.createLinearGradient(0, 0, 0, 300);
-            gradientStroke2.addColorStop(0, '#128e0a');
-            gradientStroke2.addColorStop(1, '#128e0a');
+            gradientStroke2.addColorStop(0, '#15ca21b0');
+            gradientStroke2.addColorStop(1, '#15ca21b0');
 
             const gradientStroke3 = ctx.createLinearGradient(0, 0, 0, 300);
-            gradientStroke3.addColorStop(0, '#e4ad07');
-            gradientStroke3.addColorStop(1, '#e4ad07');
+            gradientStroke3.addColorStop(0, '#e61c1c');
+            gradientStroke3.addColorStop(1, '#e61c1c');
 
             const gradientStroke4 = ctx.createLinearGradient(0, 0, 0, 300);
-            gradientStroke4.addColorStop(0, '#e20e22');
-            gradientStroke4.addColorStop(1, '#e20e22');
+            gradientStroke4.addColorStop(0, '#ddeb21');
+            gradientStroke4.addColorStop(1, '#ddeb21');
 
             const gradientStroke5 = ctx.createLinearGradient(0, 0, 0, 300);
-            gradientStroke5.addColorStop(0, '#515a62');
-            gradientStroke5.addColorStop(1, '#515a62');
+            gradientStroke5.addColorStop(0, '#00ffc873');
+            gradientStroke5.addColorStop(1, '#00ffc873');
 
             const gradientStroke6 = ctx.createLinearGradient(0, 0, 0, 300);
-            gradientStroke6.addColorStop(0, '#0bb2d3');
-            gradientStroke6.addColorStop(1, '#0bb2d3');
+            gradientStroke6.addColorStop(0, '#a6a808');
+            gradientStroke6.addColorStop(1, '#a6a808');
+
+            const gradientStroke7 = ctx.createLinearGradient(0, 0, 0, 300);
+            gradientStroke7.addColorStop(0, '#c720b1');
+            gradientStroke7.addColorStop(1, '#c720b1');
 
             myChart = new Chart(ctx, {
                 type: 'pie',
                 data: {
-                    labels: ["Initial Amount", "Income", "Expenses", "Outcome", "Credits", "Balance"],
+                    labels: ["Initial Amount", "Income", "Expenses", "Discounts", "Outcome", "Credits", "Balance"],
                     datasets: [{
                         backgroundColor: [
                             gradientStroke1,
@@ -211,7 +215,8 @@ function graphMovement() {
                             gradientStroke3,
                             gradientStroke4,
                             gradientStroke5,
-                            gradientStroke6
+                            gradientStroke6,
+                            gradientStroke7
                         ],
 
                         hoverBackgroundColor: [
@@ -220,11 +225,12 @@ function graphMovement() {
                             gradientStroke3,
                             gradientStroke4,
                             gradientStroke5,
-                            gradientStroke6
+                            gradientStroke6,
+                            gradientStroke7
                         ],
 
-                        data: [res.initialAmount, res.income, res.expenses, res.outcome, res.credits, res.balance],
-                        borderWidth: [1, 1, 1, 1, 1, 1]
+                        data: [res.initialAmount, res.income, res.expenses, res.discount, res.outcome, res.credits, res.balance],
+                        borderWidth: [1, 1, 1, 1, 1, 1, 1]
                     }]
                 },
                 options: {
@@ -244,22 +250,25 @@ function graphMovement() {
             });
 
             let html = `<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
-                    <div><i class="fas fa-key"></i> Initial Amount </div> <span class="badge bg-primary rounded-pill" style="color: black; font-size: 15px;">${res.currency + res.initialAmountDecimal}</span>
+                    <div><i class="fas fa-key"></i> Initial Amount </div> <span class="badge bg-graph1 rounded-pill" style="color: black; font-size: 15px;">${res.currency + res.initialAmountDecimal}</span>
                 </li>
                 <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
-                    <div><i class="fas fa-arrow-up"></i> Income </div> <span class="badge bg-success rounded-pill" style="color: black; font-size: 15px;">${res.currency + res.incomeDecimal}</span>
+                    <div><i class="fas fa-arrow-up"></i> Income </div> <span class="badge bg-graph2 rounded-pill" style="color: black; font-size: 15px;">${res.currency + res.incomeDecimal}</span>
                 </li>
                 <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
-                    <div><i class="fas fa-hand-holding-dollar"></i> Expenses </div> <span class="badge bg-warning rounded-pill" style="color: black; font-size: 15px;">${res.currency + res.expensesDecimal}</span>
+                    <div><i class="fas fa-hand-holding-dollar"></i> Expenses </div> <span class="badge bg-graph3 rounded-pill" style="color: black; font-size: 15px;">${res.currency + res.expensesDecimal}</span>
                 </li>
                 <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
-                    <div><i class="fas fa-arrow-down"></i> Outcome </div> <span class="badge bg-danger rounded-pill" style="color: black; font-size: 15px;">${res.currency + res.outcomeDecimal}</span>
+                    <div><i class="fas fa-circle-dollar-to-slot"></i> Discount </div> <span class="badge bg-graph4 rounded-pill" style="color: black; font-size: 15px;">${res.currency + res.discountDecimal}</span>
                 </li>
                 <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
-                    <div><i class="fas fa-credit-card"></i> Credits </div> <span class="badge bg-secondary rounded-pill" style="color: black; font-size: 15px;">${res.currency + res.creditsDecimal}</span>
+                    <div><i class="fas fa-arrow-down"></i> Outcome </div> <span class="badge bg-graph5 rounded-pill" style="color: black; font-size: 15px;">${res.currency + res.outcomeDecimal}</span>
                 </li>
                 <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
-                    <div><i class="fas fa-dollar-sign"></i> Balance </div> <span class="badge bg-info rounded-pill" style="color: black; font-size: 15px;">${res.currency + res.balanceDecimal}</span>
+                    <div><i class="fas fa-credit-card"></i> Credits </div> <span class="badge bg-graph6 rounded-pill" style="color: black; font-size: 15px;">${res.currency + res.creditsDecimal}</span>
+                </li>
+                <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
+                    <div><i class="fas fa-dollar-sign"></i> Balance </div> <span class="badge bg-graph7 rounded-pill" style="color: black; font-size: 15px;">${res.currency + res.balanceDecimal}</span>
                 </li>`;
             document.querySelector('#listMoveGraph').innerHTML = html;
 

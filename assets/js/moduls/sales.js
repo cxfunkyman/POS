@@ -79,27 +79,34 @@ document.addEventListener('DOMContentLoaded', function () {
                     //for test
                     //console.log(this.responseText);
                     customAlert(res.type, res.msg);
-                    if (res.type == 'success') {
-                        localStorage.removeItem(cartKey);
+                    if (res.msg == 'CASH REGISTER IS CLOSE') {
                         setTimeout(() => {
-                            Swal.fire({
-                                title: 'Do you want to generate an invoice?',
-                                showDenyButton: true,
-                                showCancelButton: true,
-                                confirmButtonText: 'Ticket',
-                                denyButtonText: `Invoice`,
-                            }).then((result) => {
-                                /* Read more about isConfirmed, isDenied below */
-                                if (result.isConfirmed) {
-                                    const route = base_url + 'sales/reports/tickets/' + res.idSale;
-                                    window.open(route, '_blank');
-                                } else if (result.isDenied) {
-                                    const route = base_url + 'sales/reports/invoice/' + res.idSale;
-                                    window.open(route, '_blank');
-                                }
-                                window.location.reload();
-                            })
+                            localStorage.removeItem(cartKey);
+                            window.location.reload();
                         }, 2000);
+                    } else {
+                        if (res.type == 'success') {
+                            localStorage.removeItem(cartKey);
+                            setTimeout(() => {
+                                Swal.fire({
+                                    title: 'Do you want to generate an invoice?',
+                                    showDenyButton: true,
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Ticket',
+                                    denyButtonText: `Invoice`,
+                                }).then((result) => {
+                                    /* Read more about isConfirmed, isDenied below */
+                                    if (result.isConfirmed) {
+                                        const route = base_url + 'sales/reports/tickets/' + res.idSale;
+                                        window.open(route, '_blank');
+                                    } else if (result.isDenied) {
+                                        const route = base_url + 'sales/reports/invoice/' + res.idSale;
+                                        window.open(route, '_blank');
+                                    }
+                                    window.location.reload();
+                                })
+                            }, 2000);
+                        }
                     }
                 }
             }

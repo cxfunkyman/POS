@@ -91,6 +91,12 @@ class SalesModel extends Query
         $array = array(2, $idSale);
         return $this->save($sql, $array);
     }
+    // Verify if cash register is open or close
+    public function verifyIfOpen($idUser)
+    {
+        $sql = "SELECT * FROM cash_register WHERE status = 1 AND id_user = $idUser";
+        return $this->select($sql);
+    }
     //For inventory movement
     public function registerInvMovement($movement, $actionSale, $quantity, $oldStock, $actualStock, $currentDate, $currentTime, $code, $photo, $idProduct, $idUser)
     {

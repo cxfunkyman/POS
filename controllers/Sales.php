@@ -59,72 +59,77 @@ class Sales extends Controller
             } else if (empty($payMethod)) {
                 $res = array('msg' => 'PAYMENT METHOD REQUIRED', 'type' => 'warning');
             } else {
-                foreach ($dataSales['products'] as $product) {
-
-                    $result = $this->model->getSaleList($product['id']);
-                    $data['id'] = $result['id'];
-                    $data['name'] = $result['description'];
-                    $data['sale_price'] = $result['sale_price'];
-                    $data['quantity'] = $product['quantity'];
-                    $subTotal = $result['sale_price'] * $product['quantity'];
-                    array_push($array['products'], $data);
-                    $subTotalPrice += $subTotal;
-                }
-                if ($discount != null || $discount != 0) {
-                    $discountAmount = ($subTotalPrice * ($discount / 100));
-                    $priceSubtotal = $subTotalPrice - $discountAmount;
+                $verifyOpenCash = $this->model->verifyIfOpen($this->idUser);
+                if (empty($verifyOpenCash['initial_amount'])) {
+                    $res = array('msg' => 'CASH REGISTER IS CLOSE', 'type' => 'warning');
                 } else {
-                    $priceSubtotal = $subTotalPrice;
-                }
-                $tps = $priceSubtotal * 0.05;
-                $tvq = $priceSubtotal * 0.09975;
-                $totalPrice = $priceSubtotal + $tps + $tvq;
-
-                $productData = json_encode($array['products']);
-                $sale = $this->model->regSaleOrder(
-                    $productData,
-                    $priceSubtotal,
-                    $totalPrice,
-                    $tps,
-                    $tvq,
-                    $currentDate,
-                    $currentTime,
-                    $payMethod,
-                    $discount,
-                    $discountAmount,
-                    $serie[0],
-                    $idClient,
-                    $this->idUser
-                );
-                if ($sale > 0) {
-                    $actionSale = 'OUT INVENTORY';
-
                     foreach ($dataSales['products'] as $product) {
+
                         $result = $this->model->getSaleList($product['id']);
-
-                        //inventory movement
-                        $actualStock = $result['quantity'] - $product['quantity'];
-                        $oldStock = $result['quantity'];
-                        $quantity = -$product['quantity'];
-                        $movement = 'Sale N°: ' . $sale;
-
-                        $this->model->registerInvMovement($movement, $actionSale, $quantity, $oldStock, $actualStock, $currentDate, $currentTime, $result['code'], $result['photo'], $product['id'], $this->idUser);
-
-                        //update stock
-                        $newQuantity = $result['quantity'] - $product['quantity'];
-                        $this->model->updateQuantity($newQuantity, $product['id']);
+                        $data['id'] = $result['id'];
+                        $data['name'] = $result['description'];
+                        $data['sale_price'] = $result['sale_price'];
+                        $data['quantity'] = $product['quantity'];
+                        $subTotal = $result['sale_price'] * $product['quantity'];
+                        array_push($array['products'], $data);
+                        $subTotalPrice += $subTotal;
                     }
-                    if ($payMethod == 'CREDIT') {
-                        $amountSale = $totalPrice;
-                        $this->model->registerCredit($amountSale, $currentDate, $currentTime, $sale);
+                    if ($discount != null || $discount != 0) {
+                        $discountAmount = ($subTotalPrice * ($discount / 100));
+                        $priceSubtotal = $subTotalPrice - $discountAmount;
+                    } else {
+                        $priceSubtotal = $subTotalPrice;
                     }
-                    if ($dataSales['optionPrinter']) {
-                        $this->paperPrint($sale);
-                    }
+                    $tps = $priceSubtotal * 0.05;
+                    $tvq = $priceSubtotal * 0.09975;
+                    $totalPrice = $priceSubtotal + $tps + $tvq;
 
-                    $res = array('msg' => 'SALE GENERATED', 'type' => 'success', 'idSale' => $sale);
-                } else {
-                    $res = array('msg' => 'SALE WAS NOT GENERATED', 'type' => 'error');
+                    $productData = json_encode($array['products']);
+                    $sale = $this->model->regSaleOrder(
+                        $productData,
+                        $priceSubtotal,
+                        $totalPrice,
+                        $tps,
+                        $tvq,
+                        $currentDate,
+                        $currentTime,
+                        $payMethod,
+                        $discount,
+                        $discountAmount,
+                        $serie[0],
+                        $idClient,
+                        $this->idUser
+                    );
+                    if ($sale > 0) {
+                        $actionSale = 'OUT INVENTORY';
+
+                        foreach ($dataSales['products'] as $product) {
+                            $result = $this->model->getSaleList($product['id']);
+
+                            //inventory movement
+                            $actualStock = $result['quantity'] - $product['quantity'];
+                            $oldStock = $result['quantity'];
+                            $quantity = -$product['quantity'];
+                            $movement = 'Sale N°: ' . $sale;
+
+                            $this->model->registerInvMovement($movement, $actionSale, $quantity, $oldStock, $actualStock, $currentDate, $currentTime, $result['code'], $result['photo'], $product['id'], $this->idUser);
+
+                            //update stock
+                            $newQuantity = $result['quantity'] - $product['quantity'];
+                            $this->model->updateQuantity($newQuantity, $product['id']);
+                        }
+                        if ($payMethod == 'CREDIT') {
+                            $amountSale = $totalPrice;
+                            $this->model->registerCredit($amountSale, $currentDate, $currentTime, $sale);
+                        }
+                        if ($dataSales['optionPrinter']) {
+                            $this->paperPrint($sale);
+                        }
+
+                        $res = array('msg' => 'SALE GENERATED', 'type' => 'success', 'idSale' => $sale);
+                    } else {
+                        $res = array('msg' => 'SALE WAS NOT GENERATED', 'type' => 'error');
+                    }
                 }
             }
         } else {
@@ -211,7 +216,7 @@ class Sales extends Controller
 
                 foreach ($stockSale as $product) {
                     $result = $this->model->getSaleList($product['id']);
-                    
+
                     $actualStock = $result['quantity'] + $product['quantity'];
                     $oldStock = $result['quantity'];
                     $quantity = $product['quantity'];

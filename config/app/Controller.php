@@ -1,5 +1,5 @@
 <?php
-class Controller 
+class Controller
 {
     public function __construct()
     {
@@ -10,8 +10,7 @@ class Controller
     {
         $model = get_class($this) . 'Model';
         $route = 'models/' . $model . '.php';
-        if(file_exists($route))
-        {
+        if(file_exists($route)) {
             require_once $route;
             $this->model = new $model();
         }

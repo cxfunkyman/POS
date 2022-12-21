@@ -1,11 +1,11 @@
 <?php
 
-class PurchasesModel extends Query 
+class PurchasesModel extends Query
 {
 
     public function __construct()
     {
-       parent::__construct();
+        parent::__construct();
     }
     public function getProductList($idProduct)
     {
@@ -23,8 +23,7 @@ class PurchasesModel extends Query
         $purchaseNumber,
         $idSupplier,
         $idUser
-    )
-    {
+    ) {
         $sql = "INSERT INTO purchases (products, subtotal, total, purchase_tps, purchase_tvq, dates, time_day, serie, id_supplier, id_user)
          VALUES (?,?,?,?,?,?,?,?,?,?)";
         $array = array(
@@ -77,8 +76,37 @@ class PurchasesModel extends Query
         $array = array($movement, $actionPurchase, $quantity, $oldStock, $actualStock, $currentDate, $currentTime, $code, $photo, $idProduct, $idUser);
         return $this->insert($sql, $array);
     }
+
+    // income movement
+    public function getCashSales($field, $idUser)
+    {
+        $sql = "SELECT SUM($field) AS total FROM sales WHERE pay_method = 'CASH' AND id_user = $idUser";
+        return $this->select($sql);
+    }
+    public function getCashReserves($idUser)
+    {
+        $sql = "SELECT SUM(payment) AS total FROM reserves WHERE id_user = $idUser";
+        return $this->select($sql);
+    }
+    public function getCashDeposits($idUser)
+    {
+        $sql = "SELECT SUM(deposits) AS total FROM deposit WHERE id_user = $idUser";
+        return $this->select($sql);
+    }
+    public function getCashCredits($idUser)
+    {
+        $sql = "SELECT SUM(cr.amount) AS total FROM credits cr INNER JOIN sales sl ON cr.id_sale = sl.id AND sl.id_user = $idUser";
+        return $this->select($sql);
+    }
+    //outcome movement
+    public function getCashExpense($idUser)
+    {
+        $sql = "SELECT SUM(amount) AS total FROM expenses WHERE id_user = $idUser";
+        return $this->select($sql);
+    }
+    public function getCashPurchase($idUser)
+    {
+        $sql = "SELECT SUM(total) AS total FROM purchases WHERE id_user = $idUser";
+        return $this->select($sql);
+    }
 }
-
-
-
-?>
