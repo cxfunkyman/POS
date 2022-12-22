@@ -96,6 +96,7 @@ class Reserves extends Controller
                         $newQuantity = $result['quantity'] - $product['quantity'];
                         $this->model->updateQuantity($newQuantity, $product['id']);
                     }
+                    $this->model->registerDetail($depositAmount, $reserves, $this->idUser);
                     $res = array('msg' => 'RESERVE ORDER GENERATED', 'type' => 'success', 'idReserve' => $reserves);
                 } else {
                     $res = array('msg' => 'RESERVE ORDER NOT GENERATED', 'type' => 'error');
@@ -185,7 +186,7 @@ class Reserves extends Controller
     }
     public function deliveryShowData($idReserve)
     {
-        $data = $this->model->getDataReserves($idReserve);
+        $data = $this->model->getReserves($idReserve);
         echo json_encode($data);
         die();
     }
@@ -195,12 +196,14 @@ class Reserves extends Controller
         $currentTime = date('H:i:s');
         $lastMove = 'Reserve Pending N°: ' . $idReserve;
         $movement = 'Reserve Delivered N°: ' . $idReserve;
-        $importData = $this->model->getDataReserves($idReserve);
+        $importData = $this->model->getReserves($idReserve);
         $data = $this->model->setProcessDelivery($importData['total'], 0, 0, $idReserve);
         $result = $this->model->updateInvMovement($movement, $currentDate, $currentTime, $lastMove);
 
         if ($result > 0) {
             if ($data > 0) {
+                $this->model->updateReserveDetails($importData['total'], $this->idUser, $idReserve);
+                
                 $res = array('msg' => 'DELIVERY PROCESSED', 'type' => 'success');
             } else {
                 $res = array('msg' => 'ERROR DELIVERY WAS NOT PROCESSED', 'type' => 'error');
@@ -211,7 +214,7 @@ class Reserves extends Controller
     }
     public function deleteReserve($idReserves)
     {
-        $data = $this->model->cancelReserve(0, 0, 2, $idReserves);
+        $data = $this->model->setProcessDelivery(0, 0, 2, $idReserves);
 
         if ($data > 0) {
             $actionSale = 'IN INVENTORY';
@@ -235,6 +238,8 @@ class Reserves extends Controller
                 $newQuantity = $result['quantity'] + $product['quantity'];
                 $this->model->updateQuantity($newQuantity, $product['id']);
             }
+            $this->model->updateReserveDetails(0, $this->idUser, $idReserves);
+
             $res = array('msg' => 'RESERVE CANCELLED', 'type' => 'success');
         } else {
             $res = array('msg' => 'ERROR DELIVERY WAS NOT CANCELLED', 'type' => 'error');

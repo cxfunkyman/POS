@@ -56,15 +56,17 @@ class ReservesModel extends Query
         $sql = "SELECT r.*, cl.num_identity, cl.name FROM reserves r INNER JOIN clients cl ON r.id_client = cl.id";
         return $this->selectAll($sql);
     }
-    public function getDataReserves($idReserves)
-    {
-        $sql = "SELECT r.*, cl.identification, cl.num_identity, cl.name, cl.phone_number, cl.address FROM reserves r INNER JOIN clients cl ON r.id_client = cl.id WHERE r.id = $idReserves";
-        return $this->select($sql);
-    }
     public function setProcessDelivery($deposit, $remaining, $status, $idReserves)
     {
         $sql = "UPDATE reserves SET payment = ?, remaining = ?, status = ? WHERE id = ?";
         $array = array($deposit, $remaining, $status, $idReserves);
+        return $this->save($sql, $array);
+    }
+    // Update reserves details
+    public function updateReserveDetails($deposit, $idUser, $idReserves)
+    {
+        $sql = "UPDATE detail_reserve SET amount = ?, id_user = ? WHERE id_reserves = ?";
+        $array = array($deposit, $idUser, $idReserves);
         return $this->save($sql, $array);
     }
     //Just to change the status of the reserve in the inventory
@@ -72,12 +74,6 @@ class ReservesModel extends Query
     {
         $sql = "UPDATE inventory SET movement = ?, dates = ?, time_day = ? WHERE movement LIKE '%" . $lastMove . "%'";
         $array = array($movement, $currentDate, $currentTime);
-        return $this->save($sql, $array);
-    }
-    public function cancelReserve($deposit, $remaining, $status, $idReserves)
-    {
-        $sql = "UPDATE reserves SET payment = ?, remaining = ?, status = ? WHERE id = ?";
-        $array = array($deposit, $remaining, $status, $idReserves);
         return $this->save($sql, $array);
     }
     //For inventory movement
@@ -93,5 +89,12 @@ class ReservesModel extends Query
         $sql = "UPDATE products SET quantity = ? WHERE id = ?";
         $array = array($newQuantity, $idProduct);
         return $this->save($sql, $array);
+    }
+    // Register reserves details
+    public function registerDetail($depositAmount, $idReserves, $idUser)
+    {
+        $sql = "INSERT INTO detail_reserve (amount, id_reserves, id_user) VALUES (?,?,?)";
+        $array = array($depositAmount, $idReserves, $idUser);
+        return $this->insert($sql, $array);
     }
 }

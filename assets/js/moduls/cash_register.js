@@ -21,6 +21,7 @@ const btnCancel = document.querySelector('#btnCancel');
 
 //Modal btn open cash register
 document.addEventListener('DOMContentLoaded', () => {
+    initialAmount.focus();
     btnOpenRegister.addEventListener('click', function () {
         if (initialAmount.value == '') {
             customAlert('warning', 'AMOUNT IS REQUIRED');
@@ -41,7 +42,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     //console.log(this.responseText); 
                     const res = JSON.parse(this.responseText);
                     customAlert(res.type, res.msg);
-                    window.location.reload();
+                    if (res.type == 'success') {
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1500);
+                    }
                 }
             }
         }
@@ -65,7 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 { data: 'closing_date' },
                 { data: 'final_amount' },
                 { data: 'total_sale' },
-                { data: 'name' }
+                { data: 'name' },
+                { data: 'action' }
             ],
             dom,
             buttons,
@@ -275,4 +281,40 @@ function graphMovement() {
         }
     }
 
+}
+
+function closeCashRegister() {
+    Swal.fire({
+        title: 'Are you sure you want to close?',
+        text: "Cash register movements will start from cero.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, close it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const url = base_url + 'CashRegister/closeCashRegister';
+            //instaciate the object XMLHttpRequest
+            const http = new XMLHttpRequest();
+            //open connection this time POST
+            http.open('GET', url, true);
+            //send data
+            http.send();
+            //verify status
+            http.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    // Just for testing
+                    //console.log(this.responseText);
+                    const res = JSON.parse(this.responseText);
+                    if (res.type == 'success') {
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1500);
+                    }
+                    customAlert(res.type, res.msg);
+                }
+            }
+        }
+    })
 }

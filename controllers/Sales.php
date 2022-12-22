@@ -120,7 +120,7 @@ class Sales extends Controller
                         }
                         if ($payMethod == 'CREDIT') {
                             $amountSale = $totalPrice;
-                            $this->model->registerCredit($amountSale, $currentDate, $currentTime, $sale);
+                            $this->model->registerCredit($amountSale, $currentDate, $currentTime, $sale, $this->idUser);
                         }
                         if ($dataSales['optionPrinter']) {
                             $this->paperPrint($sale);

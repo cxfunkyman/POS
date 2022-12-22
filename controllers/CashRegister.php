@@ -50,6 +50,9 @@ class CashRegister extends Controller
     public function listOpenClose()
     {
         $data = $this->model->getOpenClose();
+        for ($i = 0; $i < count($data); $i++) {
+            $data[$i]['action'] = '<a href="' . BASE_URL . 'CashRegister/historyReport/' . $data[$i]['id'] . '" target="_blank" class="btn btn-danger"><i class="fas fa-file-pdf"></i></a>';
+        }
         echo json_encode($data, JSON_UNESCAPED_UNICODE);
         die();
     }
@@ -144,14 +147,14 @@ class CashRegister extends Controller
 
         $initialAmount = $this->model->verifyIfOpen($this->idUser);
 
-        $data['outcome'] = $purchases + $expenses;
-        $data['income'] = $sales + $deposits + $reserves;
-        $data['initialAmount'] = ((!empty($initialAmount['initial_amount'])) ? $initialAmount['initial_amount'] : 0);
-        $data['credits'] = $credits;
-        $data['expenses'] = $expenses;
-        $data['balance'] = (($data['income'] + $data['initialAmount']) - ($data['outcome'] + $data['expenses']));
-        $data['safeCash'] = ($data['balance'] * 0.85);
-        $data['discount'] = $discount;
+        $data['outcome'] = number_format($purchases + $expenses, 2, '.', '');
+        $data['income'] = number_format($sales + $deposits + $reserves, 2, '.', '');
+        $data['initialAmount'] = ((!empty($initialAmount['initial_amount'])) ? number_format($initialAmount['initial_amount'], 2, '.', '') : 0);
+        $data['credits'] = number_format($credits, 2, '.', '');
+        $data['expenses'] = number_format($expenses, 2, '.', '');
+        $data['balance'] = number_format((($data['income'] + $data['initialAmount']) - ($data['outcome'] + $data['expenses'])), 2, '.', '');
+        $data['safeCash'] = number_format(($data['balance'] * 0.85), 2, '.', '');
+        $data['discount'] = number_format($discount, 2, '.', '');
 
         $data['outcomeDecimal'] = number_format($data['outcome'], 2);
         $data['incomeDecimal'] = number_format($data['income'], 2);
@@ -168,12 +171,84 @@ class CashRegister extends Controller
         ob_start();
 
         $data['title'] = 'Reports';
+        $data['actual'] = true;
         $data['companies'] = $this->model->getCompanies();
         $data['movements'] = $this->getData();
         //Just for testing
         // print_r($data['movements']);
         // exit;
         if (empty($data['movements']['initialAmount'])) {
+            echo 'Page not Found';
+            exit;
+        }
+        $this->views->getView('cash_register', 'report', $data);
+        $html = ob_get_clean();
+        // instantiate and use the dompdf class
+        $dompdf = new Dompdf();
+
+        $options = $dompdf->getOptions();
+        $options->set('isJavascriptEnabled', true);
+        $options->set('isRemoteEnabled', true);
+        $dompdf->setOptions($options);
+
+        $dompdf->loadHtml($html);
+        // (Optional) Setup the paper size and orientation
+        $dompdf->setPaper('A4', 'vertical');
+
+        // Render the HTML as PDF
+        $dompdf->render();
+
+        // Output the generated PDF to Browser
+        $dompdf->stream('report.pdf', array('Attachment' => false));
+    }
+    public function closeCashRegister()
+    {
+        $data = $this->getData();
+        // Just for testing
+        //print_r($data);
+        $closeDate = date('Y-m-d H:i:s');
+        $finalAmount = $data['income'];
+        $sales = $this->model->getCRegisterSales($this->idUser);
+        $totalSales = $sales['total'];
+        $outCome = $data['outcome'];
+        $expenses = $data['expenses'];
+
+        $result = $this->model->cashRegisterClose($closeDate, $finalAmount, $totalSales, $outCome, $expenses, $this->idUser);
+        if ($result > 0) {
+            $this->model->updateOpenCRegister('deposit', $this->idUser);
+            $this->model->updateOpenCRegister('purchases', $this->idUser);
+            $this->model->updateOpenCRegister('sales', $this->idUser);
+            $this->model->updateOpenCRegister('expenses', $this->idUser);
+            $this->model->updateOpenCRegister('detail_reserve', $this->idUser);
+            $this->model->updateOpenCRegister('credits', $this->idUser);
+
+            $res = array('msg' => 'CASH REGISTER CLOSED', 'type' => 'success');
+        } else {
+            $res = array('msg' => 'ERROR CLOSING CASH REGISTER', 'type' => 'error');
+        }
+        echo json_encode($res, JSON_UNESCAPED_UNICODE);
+        die();
+    }
+    public function historyReport($idCashRegister)
+    {
+        ob_start();
+
+        $data['title'] = 'Report Cash Register: '. $idCashRegister;
+        $data['actual'] = false;
+        $data['idCRegister'] = $idCashRegister;
+
+        $data['companies'] = $this->model->getCompanies();
+        $data['move'] = $this->getData();
+        $dataCRegister = $this->model->getHistoryData($idCashRegister);
+        $data['movements']['initialAmountDecimal'] = number_format($dataCRegister['initial_amount'], 2);
+        $data['movements']['incomeDecimal'] = number_format($dataCRegister['final_amount'], 2);
+        $data['movements']['expensesDecimal'] = number_format($dataCRegister['expenses'], 2);
+        $data['movements']['outcomeDecimal'] = number_format($dataCRegister['outcome'], 2);
+        $data['movements']['balanceDecimal'] = number_format(($dataCRegister['initial_amount'] + $dataCRegister['final_amount'] - $dataCRegister['outcome'] - $dataCRegister['expenses']), 2);
+        //Just for testing
+        // print_r($data['movements']);
+        // exit;
+        if (empty($data['movements']['initialAmountDecimal'])) {
             echo 'Page not Found';
             exit;
         }

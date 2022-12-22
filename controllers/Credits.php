@@ -6,11 +6,12 @@ use Dompdf\Dompdf;
 
 class Credits extends Controller
 {
-
+    private $idUser;
     public function __construct()
     {
         parent::__construct();
         session_start();
+        $this->idUser = $_SESSION['id_user'];
     }
     public function index()
     {
@@ -71,7 +72,7 @@ class Credits extends Controller
         if (!empty($dataProducts)) {
             $idCredit = strClean($dataProducts['idCredit']);
             $depositAmount = strClean($dataProducts['depositAmount']);
-            $data = $this->model->regiterDeposit($depositAmount, $idCredit, $_SESSION['idUser']);
+            $data = $this->model->regiterDeposit($depositAmount, $idCredit, $this->idUser);
             if ($data > 0) {
                 $res = array('msg' => 'DEPOSIT REGISTERED', 'type' => 'success');
             } else {

@@ -41,35 +41,55 @@ class CashRegisterModel extends Query
     // income movement
     public function getCashSales($field, $idUser)
     {
-        $sql = "SELECT SUM($field) AS total FROM sales WHERE pay_method = 'CASH' AND id_user = $idUser";
+        $sql = "SELECT SUM($field) AS total FROM sales WHERE pay_method = 'CASH' AND opening = 1 AND id_user = $idUser";
         return $this->select($sql);
     }
     public function getCashReserves($idUser)
     {
-        $sql = "SELECT SUM(payment) AS total FROM reserves WHERE id_user = $idUser";
+        $sql = "SELECT SUM(dr.amount) AS total FROM detail_reserve dr INNER JOIN reserves r ON dr.id_reserves = r.id WHERE dr.opening = 1 AND dr.id_user = $idUser";
         return $this->select($sql);
     }
     public function getCashDeposits($idUser)
     {
-        $sql = "SELECT SUM(deposits) AS total FROM deposit WHERE id_user = $idUser";
+        $sql = "SELECT SUM(deposits) AS total FROM deposit WHERE id_user = $idUser AND opening = 1";
         return $this->select($sql);
     }
     public function getCashCredits($idUser)
     {
-        $sql = "SELECT SUM(cr.amount) AS total FROM credits cr INNER JOIN sales sl ON cr.id_sale = sl.id AND sl.id_user = $idUser";
+        $sql = "SELECT SUM(amount) AS total FROM credits WHERE opening = 1 AND id_user = $idUser";
         return $this->select($sql);
     }
     //outcome movement
     public function getCashExpense($idUser)
     {
-        $sql = "SELECT SUM(amount) AS total FROM expenses WHERE id_user = $idUser";
+        $sql = "SELECT SUM(amount) AS total FROM expenses WHERE id_user = $idUser AND opening = 1";
         return $this->select($sql);
     }
     public function getCashPurchase($idUser)
     {
-        $sql = "SELECT SUM(total) AS total FROM purchases WHERE id_user = $idUser";
+        $sql = "SELECT SUM(total) AS total FROM purchases WHERE id_user = $idUser AND opening = 1";
         return $this->select($sql);
     }
-
-    // SELECT SUM(d.deposits) AS total FROM deposit d INNER JOIN credits cr ON d.id_credit = cr.id INNER JOIN sales sl ON cr.id_sale = sl.id AND sl.id_user = $idUser
+    public function getCRegisterSales($idUser)
+    {
+        $sql = "SELECT COUNT(*) AS total FROM sales WHERE id_user = $idUser AND opening = 1";
+        return $this->select($sql);
+    }
+    public function cashRegisterClose($closeDate, $finalAmount, $totalSales, $outCome, $expenses, $idUser)
+    {
+        $sql = "UPDATE cash_register SET closing_date = ?, final_amount = ?, total_sale = ?, outcome = ?, expenses = ?, status = ? WHERE status = ? AND id_user = ?";
+        $arrData = array($closeDate, $finalAmount, $totalSales, $outCome, $expenses, 0, 1, $idUser);
+        return $this->save($sql, $arrData);
+    }
+    public function updateOpenCRegister($table, $idUser)
+    {
+        $sql = "UPDATE $table SET opening = ? WHERE id_user = ?";
+        $arrData = array(0, $idUser);
+        return $this->save($sql, $arrData);
+    }
+    public function getHistoryData($idCashRegister)
+    {
+        $sql = "SELECT * FROM cash_register WHERE id = $idCashRegister";
+        return $this->select($sql);
+    }
 }

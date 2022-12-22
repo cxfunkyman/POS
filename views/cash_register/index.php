@@ -21,11 +21,17 @@
                 <a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
                 </a>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalRegister"><i class="fas fa-cash-register text-success" style="color: rgb(255, 0, 0)"></i> Open Cash Register</a>
-                    </li>
+                    <?php if ((empty($data['cashRegister']))) { ?>
+                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalRegister"><i class="fas fa-cash-register text-success" style="color: rgb(255, 0, 0)"></i> Open Cash Register</a>
+                        </li>
+                    <?php } else { ?>
+                        <li><a class="dropdown-item" href="#" onclick="closeCashRegister()"><i class="fas fa-cash-register text-danger" style="color: rgb(0, 255, 0)"></i> Close Cash Register</a>
+                        </li>
+                    <?php }  ?>
                 </ul>
             </div>
         </div>
+        
         <hr>
         <?php if ((!empty($data['cashRegister']))) { ?>
             <nav>
@@ -48,6 +54,7 @@
                                     <th>Final Amount</th>
                                     <th>Total Sale</th>
                                     <th>User</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
