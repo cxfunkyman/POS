@@ -6,12 +6,12 @@
 			<div class="card-body">
 				<div class="d-flex align-items-center">
 					<div>
-						<p class="mb-0 text-secondary">Total Orders</p>
-						<h4 class="my-1 text-info">4805</h4>
-						<p class="mb-0 font-13">+2.5% from last week</p>
+						<p class="mb-0 text-secondary">Total Users</p>
+						<h4 class="my-1 text-info"><?php echo $data['users']['total']; ?></h4>
+						<a class="mb-0 font-13" href="<?php echo BASE_URL . 'users'; ?>">Details</a>
 					</div>
 					<div class="widgets-icons-2 rounded-circle bg-gradient-scooter text-white ms-auto">
-						<i class='bx bxs-cart'></i>
+						<i class='fas fa-user'></i>
 					</div>
 				</div>
 			</div>
@@ -22,11 +22,11 @@
 			<div class="card-body">
 				<div class="d-flex align-items-center">
 					<div>
-						<p class="mb-0 text-secondary">Total Revenue</p>
-						<h4 class="my-1 text-danger">$84,245</h4>
-						<p class="mb-0 font-13">+5.4% from last week</p>
+						<p class="mb-0 text-secondary">Total Clients</p>
+						<h4 class="my-1 text-info"><?php echo $data['clients']['total']; ?></h4>
+						<a class="mb-0 font-13" href="<?php echo BASE_URL . 'clients'; ?>">Details</a>
 					</div>
-					<div class="widgets-icons-2 rounded-circle bg-gradient-bloody text-white ms-auto"><i class='bx bxs-wallet'></i>
+					<div class="widgets-icons-2 rounded-circle bg-gradient-bloody text-white ms-auto"><i class='fas fa-users'></i>
 					</div>
 				</div>
 			</div>
@@ -37,12 +37,12 @@
 			<div class="card-body">
 				<div class="d-flex align-items-center">
 					<div>
-						<p class="mb-0 text-secondary">Bounce Rate</p>
-						<h4 class="my-1 text-success">34.6%</h4>
-						<p class="mb-0 font-13">-4.5% from last week</p>
+						<p class="mb-0 text-secondary">Total Supplier</p>
+						<h4 class="my-1 text-info"><?php echo $data['supplier']['total']; ?></h4>
+						<a class="mb-0 font-13" href="<?php echo BASE_URL . 'suppliers'; ?>">Details</a>
 					</div>
 					<div class="widgets-icons-2 rounded-circle bg-gradient-ohhappiness text-white ms-auto">
-						<i class='bx bxs-bar-chart-alt-2'></i>
+						<i class='fa-solid fa-cart-flatbed-suitcase'></i>
 					</div>
 				</div>
 			</div>
@@ -53,12 +53,12 @@
 			<div class="card-body">
 				<div class="d-flex align-items-center">
 					<div>
-						<p class="mb-0 text-secondary">Total Customers</p>
-						<h4 class="my-1 text-warning">8.4K</h4>
-						<p class="mb-0 font-13">+8.4% from last week</p>
+						<p class="mb-0 text-secondary">Total Products</p>
+						<h4 class="my-1 text-info"><?php echo $data['products']['total']; ?></h4>
+						<a class="mb-0 font-13" href="<?php echo BASE_URL . 'products'; ?>">Details</a>
 					</div>
 					<div class="widgets-icons-2 rounded-circle bg-gradient-blooker text-white ms-auto">
-						<i class='bx bxs-group'></i>
+						<i class="fa-solid fa-cubes-stacked"></i>
 					</div>
 				</div>
 			</div>
@@ -68,65 +68,103 @@
 <!--end row-->
 
 <div class="row">
-	<div class="col-12 col-lg-8">
+	<div class="col-12 col-lg-12">
 		<div class="card radius-10">
 			<div class="card-body">
-				<div class="d-flex align-items-center">
+				<div class="d-flex justify-content-between align-items-center">
 					<div>
-						<h6 class="mb-0">Sales Overview</h6>
+						<h6 class="mb-0">Sales & Purchases</h6>
 					</div>
-					<div class="dropdown ms-auto">
-						<a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
-						</a>
-						<ul class="dropdown-menu">
-							<li><a class="dropdown-item" href="javascript:;">Action</a>
-							</li>
-							<li><a class="dropdown-item" href="javascript:;">Another action</a>
-							</li>
-							<li>
-								<hr class="dropdown-divider">
-							</li>
-							<li><a class="dropdown-item" href="javascript:;">Something else here</a>
-							</li>
-						</ul>
+					<div class="form-group">
+						<label for="yearSP">Year</label>
+						<select id="yearSP" onchange="salesAndPurchases()">
+							<?php
+							$dates = date('Y');
+							for ($i = 2022; $i <= $dates; $i++) { ?>
+								<option value="<?php echo $i; ?>" <?php echo ($dates == $i) ? 'selected' : ''; ?>><?php echo $i; ?></option>;
+							<?php } ?>
+						</select>
 					</div>
 				</div>
 				<div class="d-flex align-items-center ms-auto font-13 gap-2 my-3">
-					<span class="border px-1 rounded cursor-pointer"><i class="bx bxs-circle me-1" style="color: #14abef"></i>Sales</span>
-					<span class="border px-1 rounded cursor-pointer"><i class="bx bxs-circle me-1" style="color: #ffc107"></i>Visits</span>
+					<span class="border px-1 rounded cursor-pointer"><i class="bx bxs-circle me-1" style="color: #18caca"></i>Sales</span>
+					<span class="border px-1 rounded cursor-pointer"><i class="bx bxs-circle me-1" style="color: #aa1818"></i>Purchases</span>
 				</div>
 				<div class="chart-container-1">
-					<canvas id="chart1"></canvas>
+					<canvas id="salesAndPurchases"></canvas>
+				</div>
+			</div>
+			<div class="row row-cols-1 row-cols-md-2 row-cols-xl-2 g-0 row-group text-center border-top">
+				<div class="col">
+					<div class="p-3">
+						<h5 class="mb-0" id="totalSale"><?php echo CURRENCY ?>0.00</h5>
+						<small class="mb-0">Total Sales</small>
+					</div>
+				</div>
+				<div class="col">
+					<div class="p-3">
+						<h5 class="mb-0" id="totalPurchase"><?php echo CURRENCY ?>0.00</h5>
+						<small class="mb-0">Total Purchases</small>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-12 col-lg-12">
+		<div class="card radius-10">
+			<div class="card-body">
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<h6 class="mb-0">Cash-Credits-Discounts</h6>
+					</div>
+					<div class="form-group">
+						<label for="yearCCD">Year</label>
+						<select id="yearCCD" onchange="cashCreditsDiscounts()">
+							<?php
+							$dates = date('Y');
+							for ($i = 2022; $i <= $dates; $i++) { ?>
+								<option value="<?php echo $i; ?>"><?php echo $i; ?></option>;
+							<?php } ?>
+						</select>
+					</div>
+				</div>
+				<div class="d-flex align-items-center ms-auto font-13 gap-2 my-3">
+					<span class="border px-1 rounded cursor-pointer"><i class="bx bxs-circle me-1" style="color: #d89411"></i>Cash</span>
+					<span class="border px-1 rounded cursor-pointer"><i class="bx bxs-circle me-1" style="color: #161aef"></i>Credits</span>
+					<span class="border px-1 rounded cursor-pointer"><i class="bx bxs-circle me-1" style="color: #b615a3"></i>Discounts</span>
+				</div>
+				<div class="chart-container-1">
+					<canvas id="cashAndCredits"></canvas>
 				</div>
 			</div>
 			<div class="row row-cols-1 row-cols-md-3 row-cols-xl-3 g-0 row-group text-center border-top">
 				<div class="col">
-					<div class="p-3">
-						<h5 class="mb-0">24.15M</h5>
-						<small class="mb-0">Overall Visitor <span> <i class="bx bx-up-arrow-alt align-middle"></i> 2.43%</span></small>
+					<div class="p-3 text-center">
+						<h5 class="mb-0" id="saleCash"><?php echo CURRENCY ?>0.00</h5>
+						<p class="mb-0">Cash</p>
 					</div>
 				</div>
 				<div class="col">
-					<div class="p-3">
-						<h5 class="mb-0">12:38</h5>
-						<small class="mb-0">Visitor Duration <span> <i class="bx bx-up-arrow-alt align-middle"></i> 12.65%</span></small>
+					<div class="p-3 text-center">
+						<h5 class="mb-0" id="saleCredit"><?php echo CURRENCY ?>0.00</h5>
+						<p class="mb-0">Credits</p>
 					</div>
 				</div>
 				<div class="col">
-					<div class="p-3">
-						<h5 class="mb-0">639.82</h5>
-						<small class="mb-0">Pages/Visit <span> <i class="bx bx-up-arrow-alt align-middle"></i> 5.62%</span></small>
+					<div class="p-3 text-center">
+						<h5 class="mb-0" id="saleDiscount"><?php echo CURRENCY ?>0.00</h5>
+						<p class="mb-0">Discounts</p>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div class="col-12 col-lg-4">
+	<div class="col-12 col-lg-12">
 		<div class="card radius-10">
 			<div class="card-body">
 				<div class="d-flex align-items-center">
 					<div>
-						<h6 class="mb-0">Trending Products</h6>
+						<h6 class="mb-0">Recent 10 Products</h6>
 					</div>
 					<div class="dropdown ms-auto">
 						<a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
@@ -144,177 +182,124 @@
 						</ul>
 					</div>
 				</div>
-				<div class="chart-container-2 mt-4">
-					<canvas id="chart2"></canvas>
+				<div class="table-responsive">
+					<table class="table align-middle mb-0">
+						<thead class="table-light">
+							<tr>
+								<th>Product</th>
+								<th>Photo</th>
+								<th>Purchase Price</th>
+								<th>Sale Price</th>
+								<th>Date</th>
+								<th>Category</th>
+							</tr>
+						</thead>
+						<tbody>
+							<?php foreach ($data['newProducts'] as $product) {
+								if ($product['photo'] == null) {
+									$photo = BASE_URL . 'assets/images/products/default.jpg';
+								} else {
+									$photo = BASE_URL . $product['photo'];
+								}
+							?>
+								<tr>
+									<td><?php echo $product['description']; ?></td>
+									<td><img src="<?php echo $photo; ?>" class="product-img-2" alt="product img"></td>
+									<td><span class="badge bg-gradient-quepal text-black shadow-sm w-100">
+											<?php echo CURRENCY . $product['purchase_price']; ?></span></td>
+									<td><span class="badge bg-gradient-scooter text-black shadow-sm w-100">
+											<?php echo CURRENCY . $product['sale_price']; ?></span></td>
+									<td><?php echo $product['dates']; ?></td>
+									<td><?php echo $product['category']; ?></td>
+								</tr>
+							<?php } ?>
+						</tbody>
+					</table>
 				</div>
 			</div>
-			<ul class="list-group list-group-flush">
-				<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
-					Jeans <span class="badge bg-success rounded-pill">25</span>
-				</li>
-				<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
-					T-Shirts <span class="badge bg-danger rounded-pill">10</span>
-				</li>
-				<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
-					Shoes <span class="badge bg-primary rounded-pill">65</span>
-				</li>
-				<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
-					Lingerie <span class="badge bg-warning text-dark rounded-pill">14</span>
-				</li>
-			</ul>
 		</div>
 	</div>
 </div>
+
 <!--end row-->
 
-<div class="card radius-10">
-	<div class="card-body">
-		<div class="d-flex align-items-center">
-			<div>
-				<h6 class="mb-0">Recent Orders</h6>
-			</div>
-			<div class="dropdown ms-auto">
-				<a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
-				</a>
-				<ul class="dropdown-menu">
-					<li><a class="dropdown-item" href="javascript:;">Action</a>
+<div class="row row-cols-1 row-cols-lg-2">
+	<div class="col d-flex">
+		<div class="card radius-10 w-100">
+			<div class="card-header bg-transparent">
+				<div class="card-body">
+					<div class="d-flex align-items-center">
+						<div>
+							<h6 class="mb-0">Top 5 Products</h6>
+						</div>
+						<div class="dropdown ms-auto">
+							<a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="javascript:;">Action</a>
+								</li>
+								<li><a class="dropdown-item" href="javascript:;">Another action</a>
+								</li>
+								<li>
+									<hr class="dropdown-divider">
+								</li>
+								<li><a class="dropdown-item" href="javascript:;">Something else here</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="chart-container-2 mt-4">
+						<canvas id="topProducts"></canvas>
+					</div>
+				</div>
+				<ul class="list-group list-group-flush">
+
+					<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
+						<?php echo $data['topProducts'][0]['description'] ?> <span class="badge bg-success rounded-pill"><?php echo $data['topProducts'][0]['sales'] ?></span>
 					</li>
-					<li><a class="dropdown-item" href="javascript:;">Another action</a>
+					<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
+						<?php echo $data['topProducts'][1]['description'] ?> <span class="badge bg-info rounded-pill"><?php echo $data['topProducts'][1]['sales'] ?></span>
 					</li>
-					<li>
-						<hr class="dropdown-divider">
+					<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
+						<?php echo $data['topProducts'][2]['description'] ?> <span class="badge bg-primary rounded-pill"><?php echo $data['topProducts'][2]['sales'] ?></span>
 					</li>
-					<li><a class="dropdown-item" href="javascript:;">Something else here</a>
+					<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
+						<?php echo $data['topProducts'][3]['description'] ?> <span class="badge bg-warning text-dark rounded-pill"><?php echo $data['topProducts'][3]['sales'] ?></span>
+					</li>
+					<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
+						<?php echo $data['topProducts'][4]['description'] ?> <span class="badge bg-danger text-dark rounded-pill"><?php echo $data['topProducts'][4]['sales'] ?></span>
 					</li>
 				</ul>
 			</div>
 		</div>
-		<div class="table-responsive">
-			<table class="table align-middle mb-0">
-				<thead class="table-light">
-					<tr>
-						<th>Product</th>
-						<th>Photo</th>
-						<th>Product ID</th>
-						<th>Status</th>
-						<th>Amount</th>
-						<th>Date</th>
-						<th>Shipping</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>Iphone 5</td>
-						<td><img src="<?php echo BASE_URL; ?>assets/images/products/01.png" class="product-img-2" alt="product img"></td>
-						<td>#9405822</td>
-						<td><span class="badge bg-gradient-quepal text-white shadow-sm w-100">Paid</span>
-						</td>
-						<td>$1250.00</td>
-						<td>03 Feb 2020</td>
-						<td>
-							<div class="progress" style="height: 6px;">
-								<div class="progress-bar bg-gradient-quepal" role="progressbar" style="width: 100%"></div>
-							</div>
-						</td>
-					</tr>
-
-					<tr>
-						<td>Earphone GL</td>
-						<td><img src="<?php echo BASE_URL; ?>assets/images/products/02.png" class="product-img-2" alt="product img"></td>
-						<td>#8304620</td>
-						<td><span class="badge bg-gradient-blooker text-white shadow-sm w-100">Pending</span>
-						</td>
-						<td>$1500.00</td>
-						<td>05 Feb 2020</td>
-						<td>
-							<div class="progress" style="height: 6px;">
-								<div class="progress-bar bg-gradient-blooker" role="progressbar" style="width: 60%"></div>
-							</div>
-						</td>
-					</tr>
-
-					<tr>
-						<td>HD Hand Camera</td>
-						<td><img src="<?php echo BASE_URL; ?>assets/images/products/03.png" class="product-img-2" alt="product img"></td>
-						<td>#4736890</td>
-						<td><span class="badge bg-gradient-bloody text-white shadow-sm w-100">Failed</span>
-						</td>
-						<td>$1400.00</td>
-						<td>06 Feb 2020</td>
-						<td>
-							<div class="progress" style="height: 6px;">
-								<div class="progress-bar bg-gradient-bloody" role="progressbar" style="width: 70%"></div>
-							</div>
-						</td>
-					</tr>
-
-					<tr>
-						<td>Clasic Shoes</td>
-						<td><img src="<?php echo BASE_URL; ?>assets/images/products/04.png" class="product-img-2" alt="product img"></td>
-						<td>#8543765</td>
-						<td><span class="badge bg-gradient-quepal text-white shadow-sm w-100">Paid</span>
-						</td>
-						<td>$1200.00</td>
-						<td>14 Feb 2020</td>
-						<td>
-							<div class="progress" style="height: 6px;">
-								<div class="progress-bar bg-gradient-quepal" role="progressbar" style="width: 100%"></div>
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td>Sitting Chair</td>
-						<td><img src="<?php echo BASE_URL; ?>assets/images/products/06.png" class="product-img-2" alt="product img"></td>
-						<td>#9629240</td>
-						<td><span class="badge bg-gradient-blooker text-white shadow-sm w-100">Pending</span>
-						</td>
-						<td>$1500.00</td>
-						<td>18 Feb 2020</td>
-						<td>
-							<div class="progress" style="height: 6px;">
-								<div class="progress-bar bg-gradient-blooker" role="progressbar" style="width: 60%"></div>
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td>Hand Watch</td>
-						<td><img src="<?php echo BASE_URL; ?>assets/images/products/05.png" class="product-img-2" alt="product img"></td>
-						<td>#8506790</td>
-						<td><span class="badge bg-gradient-bloody text-white shadow-sm w-100">Failed</span>
-						</td>
-						<td>$1800.00</td>
-						<td>21 Feb 2020</td>
-						<td>
-							<div class="progress" style="height: 6px;">
-								<div class="progress-bar bg-gradient-bloody" role="progressbar" style="width: 40%"></div>
-							</div>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
 	</div>
-</div>
-
-<!--end row-->
-
-<div class="row row-cols-1 row-cols-lg-3">
 	<div class="col d-flex">
 		<div class="card radius-10 w-100">
 			<div class="card-body">
-				<p class="font-weight-bold mb-1 text-secondary">Weekly Revenue</p>
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<h6 class="mb-0">Monthly Expenses</h6>
+					</div>
+					<div class="form-group">
+						<label for="yearEX">Year</label>
+						<select id="yearEX" onchange="expenseGraph()">
+							<?php
+							$dates = date('Y');
+							for ($i = 2022; $i <= $dates; $i++) { ?>
+								<option value="<?php echo $i; ?>"><?php echo $i; ?></option>;
+							<?php } ?>
+						</select>
+					</div>
+				</div>
 				<div class="d-flex align-items-center mb-4">
 					<div>
-						<h4 class="mb-0">$89,540</h4>
-					</div>
-					<div class="">
-						<p class="mb-0 align-self-center font-weight-bold text-success ms-2">4.4% <i class="bx bxs-up-arrow-alt mr-2"></i>
-						</p>
+						<h7 class="mb-0" id="expenseTotal">Year Total Expense <?php echo CURRENCY ?>0.00</h7>
 					</div>
 				</div>
 				<div class="chart-container-0">
-					<canvas id="chart3"></canvas>
+					<canvas id="expenses"></canvas>
 				</div>
+
 			</div>
 		</div>
 	</div>
@@ -323,7 +308,7 @@
 			<div class="card-header bg-transparent">
 				<div class="d-flex align-items-center">
 					<div>
-						<h6 class="mb-0">Orders Summary</h6>
+						<h6 class="mb-0">5 Products With Minimum Stock</h6>
 					</div>
 					<div class="dropdown ms-auto">
 						<a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
@@ -343,67 +328,64 @@
 				</div>
 			</div>
 			<div class="card-body">
-				<div class="chart-container-1">
-					<canvas id="chart4"></canvas>
+				<div class="chart-container-2 mt-4">
+					<canvas id="minStock"></canvas>
 				</div>
 			</div>
 			<ul class="list-group list-group-flush">
-				<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
-					Completed <span class="badge bg-gradient-quepal rounded-pill">25</span>
-				</li>
-				<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
-					Pending <span class="badge bg-gradient-ibiza rounded-pill">10</span>
-				</li>
-				<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
-					Process <span class="badge bg-gradient-deepblue rounded-pill">65</span>
-				</li>
+			<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
+						<?php echo $data['minimumStock'][0]['description'] ?> <span class="badge bg-success rounded-pill"><?php echo $data['minimumStock'][0]['quantity'] ?></span>
+					</li>
+					<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
+						<?php echo $data['minimumStock'][1]['description'] ?> <span class="badge bg-info rounded-pill"><?php echo $data['minimumStock'][1]['quantity'] ?></span>
+					</li>
+					<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
+						<?php echo $data['minimumStock'][2]['description'] ?> <span class="badge bg-primary rounded-pill"><?php echo $data['minimumStock'][2]['quantity'] ?></span>
+					</li>
+					<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
+						<?php echo $data['minimumStock'][3]['description'] ?> <span class="badge bg-warning text-dark rounded-pill"><?php echo $data['minimumStock'][3]['quantity'] ?></span>
+					</li>
+					<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
+						<?php echo $data['minimumStock'][4]['description'] ?> <span class="badge bg-danger text-dark rounded-pill"><?php echo $data['minimumStock'][4]['quantity'] ?></span>
+					</li>
 			</ul>
 		</div>
 	</div>
 	<div class="col d-flex">
 		<div class="card radius-10 w-100">
 			<div class="card-header bg-transparent">
-				<div class="d-flex align-items-center">
+				<div class="d-flex justify-content-between align-items-center">
 					<div>
-						<h6 class="mb-0">Top Selling Categories</h6>
+						<h6 class="mb-0">Reserves Summary</h6>
 					</div>
-					<div class="dropdown ms-auto">
-						<a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
-						</a>
-						<ul class="dropdown-menu">
-							<li><a class="dropdown-item" href="javascript:;">Action</a>
-							</li>
-							<li><a class="dropdown-item" href="javascript:;">Another action</a>
-							</li>
-							<li>
-								<hr class="dropdown-divider">
-							</li>
-							<li><a class="dropdown-item" href="javascript:;">Something else here</a>
-							</li>
-						</ul>
+					<div class="form-group">
+						<label for="yearRS">Year</label>
+						<select id="yearRS" onchange="reservesSummary()">
+							<?php
+							$dates = date('Y');
+							for ($i = 2022; $i <= $dates; $i++) { ?>
+								<option value="<?php echo $i; ?>" <?php echo ($dates == $i) ? 'selected' : ''; ?>><?php echo $i; ?></option>;
+							<?php } ?>
+						</select>
 					</div>
 				</div>
 			</div>
 			<div class="card-body">
-				<div class="chart-container-0">
-					<canvas id="chart5"></canvas>
+				<div class="chart-container-2 mt-4">
+					<canvas id="reserveSummary"></canvas>
 				</div>
 			</div>
-			<div class="row row-group border-top g-0">
-				<div class="col">
-					<div class="p-3 text-center">
-						<h4 class="mb-0 text-danger">$45,216</h4>
-						<p class="mb-0">Clothing</p>
-					</div>
-				</div>
-				<div class="col">
-					<div class="p-3 text-center">
-						<h4 class="mb-0 text-success">$68,154</h4>
-						<p class="mb-0">Electronic</p>
-					</div>
-				</div>
-			</div>
-			<!--end row-->
+			<ul class="list-group list-group-flush">
+				<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
+					Completed <span class="badge bg-gradient-darklush rounded-pill" id="compRS"></span>
+				</li>
+				<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
+					Pending <span class="badge bg-gradient-blues rounded-pill" id="pendRS"></span>
+				</li>
+				<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
+					Cancelled <span class="badge bg-gradient-burning rounded-pill" id="cancRS"></span>
+				</li>
+			</ul>
 		</div>
 	</div>
 </div>

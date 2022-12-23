@@ -116,7 +116,8 @@ class Sales extends Controller
 
                             //update stock
                             $newQuantity = $result['quantity'] - $product['quantity'];
-                            $this->model->updateQuantity($newQuantity, $product['id']);
+                            $newTotalSale = $result['sales'] + $product['quantity'];
+                            $this->model->updateQuantity($newQuantity, $newTotalSale, $product['id']);
                         }
                         if ($payMethod == 'CREDIT') {
                             $amountSale = $totalPrice;
@@ -226,7 +227,8 @@ class Sales extends Controller
 
                     //update stock
                     $newQuantity = $result['quantity'] + $product['quantity'];
-                    $this->model->updateQuantity($newQuantity, $product['id']);
+                    $newTotalSale = $result['sales'] - $product['quantity'];
+                    $this->model->updateQuantity($newQuantity, $newTotalSale, $product['id']);
                 }
                 if ($resultSale['pay_method'] == 'CREDIT') {
                     $this->model->cancelCredit($idSale);

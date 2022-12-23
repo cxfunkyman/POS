@@ -52,10 +52,10 @@ class SalesModel extends Query
         $array = array($amountSale,  $currentDate, $currentTime, $idSale, $idUser);
         return $this->insert($sql, $array);
     }
-    public function updateQuantity($newQuantity, $idProduct)
+    public function updateQuantity($newQuantity, $newTotalSale, $idProduct)
     {
-        $sql = "UPDATE products SET quantity = ? WHERE id = ?";
-        $array = array($newQuantity, $idProduct);
+        $sql = "UPDATE products SET quantity = ?, sales = ? WHERE id = ?";
+        $array = array($newQuantity, $newTotalSale, $idProduct);
         return $this->save($sql, $array);
     }
     public function getCompanies()

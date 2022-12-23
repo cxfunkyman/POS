@@ -1,26 +1,53 @@
-$(function() {
-    "use strict";
 
-	
-// chart 1
+let spChart, ccdChart, tpChart, exChart, smChart, rsChart;
 
-  var ctx = document.getElementById("chart1").getContext('2d');
-   
-  var gradientStroke1 = ctx.createLinearGradient(0, 0, 0, 300);
-      gradientStroke1.addColorStop(0, '#6078ea');  
-      gradientStroke1.addColorStop(1, '#17c5ea'); 
-   
-  var gradientStroke2 = ctx.createLinearGradient(0, 0, 0, 300);
-      gradientStroke2.addColorStop(0, '#ff8359');
-      gradientStroke2.addColorStop(1, '#ffdf40');
+salesAndPurchases();
+cashCreditsDiscounts();
+topProductGraph();
+expenseGraph();
+stockMinimum();
+reservesSummary();
 
-      var myChart = new Chart(ctx, {
+function salesAndPurchases() {
+  if (spChart) {
+    spChart.destroy();
+  }
+  const yearSP = document.querySelector('#yearSP').value;
+
+  const url = base_url + 'admin/salesAndPurchases/' + yearSP;
+  //instaciate the object XMLHttpRequest
+  const http = new XMLHttpRequest();
+  //open connection this time POST
+  http.open('GET', url, true);
+  //send data
+  http.send();
+  //verify status
+  http.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      const res = JSON.parse(this.responseText);
+
+      // chart Sales & Purchases
+
+      document.querySelector('#totalSale').textContent = "$ " + res.totalSalesDecimal;
+      document.querySelector('#totalPurchase').textContent = "$ " + res.totalPurchasesDecimal;
+
+      var ctx = document.getElementById("salesAndPurchases").getContext('2d');
+
+      var gradientStroke1 = ctx.createLinearGradient(0, 0, 0, 300);
+      gradientStroke1.addColorStop(0, '#18caca');
+      gradientStroke1.addColorStop(1, '#90f4f4');
+
+      var gradientStroke2 = ctx.createLinearGradient(0, 0, 0, 300);
+      gradientStroke2.addColorStop(0, '#aa1818');
+      gradientStroke2.addColorStop(1, '#e55353');
+
+      spChart = new Chart(ctx, {
         type: 'bar',
         data: {
           labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
           datasets: [{
-            label: 'Laptops',
-            data: [65, 59, 80, 81,65, 59, 80, 81,59, 80, 81,65],
+            label: 'Sales',
+            data: [res.sales.ene, res.sales.feb, res.sales.mar, res.sales.abr, res.sales.may, res.sales.jun, res.sales.jul, res.sales.aug, res.sales.sep, res.sales.oct, res.sales.nov, res.sales.dic],
             borderColor: gradientStroke1,
             backgroundColor: gradientStroke1,
             hoverBackgroundColor: gradientStroke1,
@@ -28,8 +55,8 @@ $(function() {
             fill: false,
             borderWidth: 0
           }, {
-            label: 'Mobiles',
-            data: [28, 48, 40, 19,28, 48, 40, 19,40, 19,28, 48],
+            label: 'Purchases',
+            data: [res.purchases.ene, res.purchases.feb, res.purchases.mar, res.purchases.abr, res.purchases.may, res.purchases.jun, res.purchases.jul, res.purchases.aug, res.purchases.sep, res.purchases.oct, res.purchases.nov, res.purchases.dic],
             borderColor: gradientStroke2,
             backgroundColor: gradientStroke2,
             hoverBackgroundColor: gradientStroke2,
@@ -38,102 +65,249 @@ $(function() {
             borderWidth: 0
           }]
         },
-		
-		options:{
-		  maintainAspectRatio: false,
-		  legend: {
-			  position: 'bottom',
-              display: false,
-			  labels: {
-                boxWidth:8
-              }
-            },
-			tooltips: {
-			  displayColors:false,
-			},	
-		  scales: {
-			  xAxes: [{
-				barPercentage: .5
-			  }]
-		     }
-		}
+
+        options: {
+          maintainAspectRatio: false,
+          legend: {
+            position: 'bottom',
+            display: false,
+            labels: {
+              boxWidth: 8
+            }
+          },
+          tooltips: {
+            displayColors: false,
+          },
+          scales: {
+            xAxes: [{
+              barPercentage: .5
+            }]
+          }
+        }
       });
-	  
-	 
-// chart 2
+    }
+  }
+}
+function cashCreditsDiscounts() {
+  if (ccdChart) {
+    ccdChart.destroy();
+  }
+  const yearCDD = document.querySelector('#yearCCD').value;
+  // chart 1
+  const url = base_url + 'admin/cashCreditsDiscount/' + yearCDD;
+  //instaciate the object XMLHttpRequest
+  const http = new XMLHttpRequest();
+  //open connection this time POST
+  http.open('GET', url, true);
+  //send data
+  http.send();
+  //verify status
+  http.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      const res = JSON.parse(this.responseText);
 
- var ctx = document.getElementById("chart2").getContext('2d');
+      // chart Cash & Credits & Discounts
 
-  var gradientStroke1 = ctx.createLinearGradient(0, 0, 0, 300);
-      gradientStroke1.addColorStop(0, '#fc4a1a');
-      gradientStroke1.addColorStop(1, '#f7b733');
+      document.querySelector('#saleCash').textContent = "$ " + res.totalCashDecimal;
+      document.querySelector('#saleCredit').textContent = "$ " + res.totalCreditDecimal;
+      document.querySelector('#saleDiscount').textContent = "$ " + res.totalDiscountDecimal;
 
-  var gradientStroke2 = ctx.createLinearGradient(0, 0, 0, 300);
-      gradientStroke2.addColorStop(0, '#4776e6');
-      gradientStroke2.addColorStop(1, '#8e54e9');
+      var ctx = document.getElementById("cashAndCredits").getContext('2d');
+
+      var gradientStroke1 = ctx.createLinearGradient(0, 0, 0, 300);
+      gradientStroke1.addColorStop(0, '#d89411');
+      gradientStroke1.addColorStop(1, '#f9c96d');
+
+      var gradientStroke2 = ctx.createLinearGradient(0, 0, 0, 300);
+      gradientStroke2.addColorStop(0, '#161aef');
+      gradientStroke2.addColorStop(1, '#787bfa');
+
+      var gradientStroke3 = ctx.createLinearGradient(0, 0, 0, 300);
+      gradientStroke3.addColorStop(0, '#b615a3');
+      gradientStroke3.addColorStop(1, '#e551d3');
+
+      ccdChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+          datasets: [{
+            label: 'Cash',
+            data: [res.cash.ene, res.cash.feb, res.cash.mar, res.cash.abr, res.cash.may, res.cash.jun, res.cash.jul, res.cash.aug, res.cash.sep, res.cash.oct, res.cash.nov, res.cash.dic],
+            borderColor: gradientStroke1,
+            backgroundColor: gradientStroke1,
+            hoverBackgroundColor: gradientStroke1,
+            pointRadius: 0,
+            fill: false,
+            borderWidth: 0
+          }, {
+            label: 'Credit',
+            data: [res.credit.ene, res.credit.feb, res.credit.mar, res.credit.abr, res.credit.may, res.credit.jun, res.credit.jul, res.credit.aug, res.credit.sep, res.credit.oct, res.credit.nov, res.credit.dic],
+            borderColor: gradientStroke2,
+            backgroundColor: gradientStroke2,
+            hoverBackgroundColor: gradientStroke2,
+            pointRadius: 0,
+            fill: false,
+            borderWidth: 0
+          }, {
+            label: 'Discount',
+            data: [res.discount.ene, res.discount.feb, res.discount.mar, res.discount.abr, res.discount.may, res.discount.jun, res.discount.jul, res.discount.aug, res.discount.sep, res.discount.oct, res.discount.nov, res.discount.dic],
+            borderColor: gradientStroke3,
+            backgroundColor: gradientStroke3,
+            hoverBackgroundColor: gradientStroke3,
+            pointRadius: 0,
+            fill: false,
+            borderWidth: 0
+          }]
+        },
+
+        options: {
+          maintainAspectRatio: false,
+          legend: {
+            position: 'bottom',
+            display: false,
+            labels: {
+              boxWidth: 8
+            }
+          },
+          tooltips: {
+            displayColors: false,
+          },
+          scales: {
+            xAxes: [{
+              barPercentage: .5
+            }]
+          }
+        }
+      });
+    }
+  }
+}
+function topProductGraph() {
+  if (tpChart) {
+    tpChart.destroy();
+  }
+
+  const url = base_url + 'admin/topProductsGraph/';
+  //instaciate the object XMLHttpRequest
+  const http = new XMLHttpRequest();
+  //open connection this time POST
+  http.open('GET', url, true);
+  //send data
+  http.send();
+  //verify status
+  http.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      const res = JSON.parse(this.responseText);
+
+      // chart Top 5 Products
+
+      var ctx = document.getElementById("topProducts").getContext('2d');
+
+      var gradientStroke1 = ctx.createLinearGradient(0, 0, 0, 300);
+      gradientStroke1.addColorStop(0, '#17a00e');
+      gradientStroke1.addColorStop(1, '#50c948');
+
+      var gradientStroke2 = ctx.createLinearGradient(0, 0, 0, 300);
+      gradientStroke2.addColorStop(0, '#0bb2d3');
+      gradientStroke2.addColorStop(1, '#88d8e8');
 
 
-  var gradientStroke3 = ctx.createLinearGradient(0, 0, 0, 300);
-      gradientStroke3.addColorStop(0, '#ee0979');
-      gradientStroke3.addColorStop(1, '#ff6a00');
-	  
-	var gradientStroke4 = ctx.createLinearGradient(0, 0, 0, 300);
-      gradientStroke4.addColorStop(0, '#42e695');
-      gradientStroke4.addColorStop(1, '#3bb2b8');
+      var gradientStroke3 = ctx.createLinearGradient(0, 0, 0, 300);
+      gradientStroke3.addColorStop(0, '#008cff');
+      gradientStroke3.addColorStop(1, '#73bbf5');
 
-      var myChart = new Chart(ctx, {
+      var gradientStroke4 = ctx.createLinearGradient(0, 0, 0, 300);
+      gradientStroke4.addColorStop(0, '#ffc107');
+      gradientStroke4.addColorStop(1, '#f7d87b');
+
+      var gradientStroke5 = ctx.createLinearGradient(0, 0, 0, 300);
+      gradientStroke5.addColorStop(0, '#f41127');
+      gradientStroke5.addColorStop(1, '#f08691');
+
+      let name = [];
+      let quantity = [];
+
+      for (const element of res) {
+        name.push(element.description);
+        quantity.push(element.sales);
+      }
+
+      tpChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
-          labels: ["Jeans", "T-Shirts", "Shoes", "Lingerie"],
+          labels: name,
           datasets: [{
             backgroundColor: [
               gradientStroke1,
               gradientStroke2,
               gradientStroke3,
-              gradientStroke4
+              gradientStroke4,
+              gradientStroke5
             ],
             hoverBackgroundColor: [
               gradientStroke1,
               gradientStroke2,
               gradientStroke3,
-              gradientStroke4
+              gradientStroke4,
+              gradientStroke5
             ],
-            data: [25, 80, 25, 25],
-			borderWidth: [1, 1, 1, 1]
+            data: quantity,
+            borderWidth: [1, 1, 1, 1, 1]
           }]
         },
         options: {
-			maintainAspectRatio: false,
-			cutoutPercentage: 75,
-            legend: {
-			  position: 'bottom',
-              display: false,
-			  labels: {
-                boxWidth:8
-              }
-            },
-			tooltips: {
-			  displayColors:false,
-			}
+          maintainAspectRatio: false,
+          cutoutPercentage: 75,
+          legend: {
+            position: 'bottom',
+            display: false,
+            labels: {
+              boxWidth: 8
+            }
+          },
+          tooltips: {
+            displayColors: false,
+          }
         }
       });
+    }
+  }
+}
+function expenseGraph() {
+  if (exChart) {
+    exChart.destroy();
+  }
+  const yearEX = document.querySelector('#yearEX').value;
 
+  const url = base_url + 'admin/expenses/' + yearEX;
+  //instaciate the object XMLHttpRequest
+  const http = new XMLHttpRequest();
+  //open connection this time POST
+  http.open('GET', url, true);
+  //send data
+  http.send();
+  //verify status
+  http.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      const res = JSON.parse(this.responseText);
 
-// chart 3
+      document.querySelector('#expenseTotal').textContent = "Year Total Expense $ " + res.totalExpensesDecimal;
 
- var ctx = document.getElementById('chart3').getContext('2d');
+      // chart Monthly Expenses
 
-  var gradientStroke1 = ctx.createLinearGradient(0, 0, 0, 300);
+      var ctx = document.getElementById('expenses').getContext('2d');
+
+      var gradientStroke1 = ctx.createLinearGradient(0, 0, 0, 300);
       gradientStroke1.addColorStop(0, '#008cff');
       gradientStroke1.addColorStop(1, 'rgba(22, 195, 233, 0.1)');
 
-      var myChart = new Chart(ctx, {
+      exChart = new Chart(ctx, {
         type: 'line',
         data: {
-          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
           datasets: [{
-            label: 'Revenue',
-            data: [3, 30, 10, 10, 22, 12, 5],
+            label: 'Expenses',
+            data: [res.expenses.jan, res.expenses.feb, res.expenses.mar, res.expenses.apr, res.expenses.may, res.expenses.jun, res.expenses.jul, res.expenses.aug, res.expenses.sep, res.expenses.oct, res.expenses.nov, res.expenses.dic],
             pointBorderWidth: 2,
             pointHoverBackgroundColor: gradientStroke1,
             backgroundColor: gradientStroke1,
@@ -142,45 +316,158 @@ $(function() {
           }]
         },
         options: {
-			maintainAspectRatio: false,
-            legend: {
-			  position: 'bottom',
-              display:false
-            },
-            tooltips: {
-			  displayColors:false,	
-              mode: 'nearest',
-              intersect: false,
-              position: 'nearest',
-              xPadding: 10,
-              yPadding: 10,
-              caretPadding: 10
-            }
-         }
+          maintainAspectRatio: false,
+          legend: {
+            position: 'bottom',
+            display: false
+          },
+          tooltips: {
+            displayColors: false,
+            mode: 'nearest',
+            intersect: false,
+            position: 'nearest',
+            xPadding: 10,
+            yPadding: 10,
+            caretPadding: 10
+          }
+        }
       });
+    }
+  }
+}
+function stockMinimum() {
+  if (smChart) {
+    smChart.destroy();
+  }
+
+  const url = base_url + 'admin/minimumStock/';
+  //instaciate the object XMLHttpRequest
+  const http = new XMLHttpRequest();
+  //open connection this time POST
+  http.open('GET', url, true);
+  //send data
+  http.send();
+  //verify status
+  http.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      const res = JSON.parse(this.responseText);
+
+      // chart 5 Products With Minimum Stock
+
+      var ctx = document.getElementById("minStock").getContext('2d');
+
+      var gradientStroke1 = ctx.createLinearGradient(0, 0, 0, 300);
+      gradientStroke1.addColorStop(0, '#17a00e');
+      gradientStroke1.addColorStop(1, '#50c948');
+
+      var gradientStroke2 = ctx.createLinearGradient(0, 0, 0, 300);
+      gradientStroke2.addColorStop(0, '#0bb2d3');
+      gradientStroke2.addColorStop(1, '#88d8e8');
 
 
+      var gradientStroke3 = ctx.createLinearGradient(0, 0, 0, 300);
+      gradientStroke3.addColorStop(0, '#008cff');
+      gradientStroke3.addColorStop(1, '#73bbf5');
 
-// chart 4
+      var gradientStroke4 = ctx.createLinearGradient(0, 0, 0, 300);
+      gradientStroke4.addColorStop(0, '#ffc107');
+      gradientStroke4.addColorStop(1, '#f7d87b');
 
-var ctx = document.getElementById("chart4").getContext('2d');
+      var gradientStroke5 = ctx.createLinearGradient(0, 0, 0, 300);
+      gradientStroke5.addColorStop(0, '#f41127');
+      gradientStroke5.addColorStop(1, '#f08691');
 
-  var gradientStroke1 = ctx.createLinearGradient(0, 0, 0, 300);
-      gradientStroke1.addColorStop(0, '#ee0979');
-      gradientStroke1.addColorStop(1, '#ff6a00');
-    
-  var gradientStroke2 = ctx.createLinearGradient(0, 0, 0, 300);
-      gradientStroke2.addColorStop(0, '#283c86');
-      gradientStroke2.addColorStop(1, '#39bd3c');
+      let name = [];
+      let quantity = [];
 
-  var gradientStroke3 = ctx.createLinearGradient(0, 0, 0, 300);
-      gradientStroke3.addColorStop(0, '#7f00ff');
-      gradientStroke3.addColorStop(1, '#e100ff');
+      for (const element of res) {
+        name.push(element.description);
+        quantity.push(element.quantity);
+      }
 
-      var myChart = new Chart(ctx, {
+      smChart = new Chart(ctx, {
         type: 'pie',
         data: {
-          labels: ["Completed", "Pending", "Process"],
+          labels: name,
+          datasets: [{
+            backgroundColor: [
+              gradientStroke1,
+              gradientStroke2,
+              gradientStroke3,
+              gradientStroke4,
+              gradientStroke5
+            ],
+            hoverBackgroundColor: [
+              gradientStroke1,
+              gradientStroke2,
+              gradientStroke3,
+              gradientStroke4,
+              gradientStroke5
+            ],
+            data: quantity,
+            borderWidth: [1, 1, 1, 1, 1]
+          }]
+        },
+        options: {
+          maintainAspectRatio: false,
+          cutoutPercentage: 75,
+          legend: {
+            position: 'bottom',
+            display: false,
+            labels: {
+              boxWidth: 8
+            }
+          },
+          tooltips: {
+            displayColors: false,
+          }
+        }
+      });
+    }
+  }
+}
+function reservesSummary() {
+  if (rsChart) {
+    rsChart.destroy();
+  }
+  const yearRS = document.querySelector('#yearRS').value;
+
+  const url = base_url + 'admin/reserves/' + yearRS;
+  //instaciate the object XMLHttpRequest
+  const http = new XMLHttpRequest();
+  //open connection this time POST
+  http.open('GET', url, true);
+  //send data
+  http.send();
+  //verify status
+  http.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      const res = JSON.parse(this.responseText);
+
+      document.querySelector('#compRS').textContent = res.completed.total;
+      document.querySelector('#pendRS').textContent = res.pending.total;
+      document.querySelector('#cancRS').textContent = res.cancelled.total;
+
+      // Chart Reserves Summary
+
+      var ctx = document.getElementById("reserveSummary").getContext('2d');
+
+      var gradientStroke1 = ctx.createLinearGradient(0, 0, 0, 300);
+      gradientStroke1.addColorStop(0, '#17a00e');
+      gradientStroke1.addColorStop(1, '#50c948');
+
+      var gradientStroke2 = ctx.createLinearGradient(0, 0, 0, 300);
+      gradientStroke2.addColorStop(0, '#008cff');
+      gradientStroke2.addColorStop(1, '#73bbf5');
+
+      var gradientStroke3 = ctx.createLinearGradient(0, 0, 0, 300);
+      gradientStroke3.addColorStop(0, '#f41127');
+      gradientStroke3.addColorStop(1, '#f08691');
+
+      rsChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ["Completed", "Pending", "Cancelled"],
           datasets: [{
             backgroundColor: [
               gradientStroke1,
@@ -188,91 +475,31 @@ var ctx = document.getElementById("chart4").getContext('2d');
               gradientStroke3
             ],
 
-             hoverBackgroundColor: [
+            hoverBackgroundColor: [
               gradientStroke1,
               gradientStroke2,
               gradientStroke3
             ],
 
-            data: [50, 50, 50],
-      borderWidth: [1, 1, 1]
+            data: [res.completed.total, res.pending.total, res.cancelled.total],
+            borderWidth: [1, 1, 1]
           }]
         },
         options: {
-		 maintainAspectRatio: false,
+          maintainAspectRatio: false,
           cutoutPercentage: 0,
-            legend: {
-              position: 'bottom',
-              display: false,
+          legend: {
+            position: 'bottom',
+            display: false,
             labels: {
-                boxWidth:8
-              }
-            },
-			tooltips: {
-			  displayColors:false,
-			},
+              boxWidth: 8
+            }
+          },
+          tooltips: {
+            displayColors: false,
+          },
         }
       });
-
-	  
-  // chart 5
-
-    var ctx = document.getElementById("chart5").getContext('2d');
-   
-      var gradientStroke1 = ctx.createLinearGradient(0, 0, 0, 300);
-      gradientStroke1.addColorStop(0, '#f54ea2');
-      gradientStroke1.addColorStop(1, '#ff7676');
-
-      var gradientStroke2 = ctx.createLinearGradient(0, 0, 0, 300);
-      gradientStroke2.addColorStop(0, '#42e695');
-      gradientStroke2.addColorStop(1, '#3bb2b8');
-
-      var myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: [1, 2, 3, 4, 5, 6, 7, 8],
-          datasets: [{
-            label: 'Clothing',
-            data: [40, 30, 60, 35, 60, 25, 50, 40],
-            borderColor: gradientStroke1,
-            backgroundColor: gradientStroke1,
-            hoverBackgroundColor: gradientStroke1,
-            pointRadius: 0,
-            fill: false,
-            borderWidth: 1
-          }, {
-            label: 'Electronic',
-            data: [50, 60, 40, 70, 35, 75, 30, 20],
-            borderColor: gradientStroke2,
-            backgroundColor: gradientStroke2,
-            hoverBackgroundColor: gradientStroke2,
-            pointRadius: 0,
-            fill: false,
-            borderWidth: 1
-          }]
-        },
-		options:{
-		  maintainAspectRatio: false,
-		  legend: {
-			  position: 'bottom',
-              display: false,
-			  labels: {
-                boxWidth:8
-              }
-            },	
-		  scales: {
-			  xAxes: [{
-				barPercentage: .5
-			  }]
-		     },
-			tooltips: {
-			  displayColors:false,
-			}
-		}
-      });
-
-
-
-
-   });	 
-   
+    }
+  }
+}

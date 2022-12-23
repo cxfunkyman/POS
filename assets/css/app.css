@@ -1656,6 +1656,10 @@ a {
 	background: linear-gradient(to right, #56ab2f, #a8e063)!important
 }
 
+.bg-gradient-darklush {
+	background: linear-gradient(to right, #56ab2fa8, #a8e063a6)!important
+}
+
 .bg-gradient-kyoto {
 	background: linear-gradient(to right, #f7971e, #ffd200)!important
 }
