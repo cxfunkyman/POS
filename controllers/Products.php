@@ -1,4 +1,14 @@
 <?php
+require 'vendor/autoload.php';
+
+// reference the Dompdf namespace
+use Dompdf\Dompdf;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use Picqer\Barcode\BarcodeGeneratorHTML;
+use Picqer\Barcode\BarcodeGeneratorPNG;
 
 class Products extends Controller
 {
@@ -39,12 +49,12 @@ class Products extends Controller
             $s_Price = strClean($_POST['s_Price']);
             $p_Measure = strClean($_POST['p_Measure']);
             $p_Category = strClean($_POST['p_Category']);
-           
+
             $p_Photo = $_FILES['p_Photo'];
             $actualPhoto = strClean($_POST['actualPhoto']);
             $namePhoto = $p_Photo['name'];
             $tmpPhoto = $p_Photo['tmp_name'];
-            
+
             $photoDirectory = null;
             if (!empty($namePhoto)) {
                 $p_Date = date('YmdHis');
@@ -196,7 +206,7 @@ class Products extends Controller
     {
         $array = array('status' => false, 'data' => '');
         $data = $this->model->searchBarcode($value);
-        if (!empty($data)){
+        if (!empty($data)) {
             $array['status'] = true;
             $array['data'] = $data;
         }
@@ -228,7 +238,7 @@ class Products extends Controller
         $totalPricePurchase = 0;
         $totalPriceSale = 0;
         $array['products'] = array();
-        
+
         if (!empty($dataProducts)) {
             foreach ($dataProducts as $product) {
 
@@ -247,10 +257,174 @@ class Products extends Controller
                 $totalPriceSale += $subTotalSale;
             }
         }
-        
+
         $array['totalPurchase'] = number_format($totalPricePurchase, 2);
         $array['totalSale'] = number_format($totalPriceSale, 2);
         echo json_encode($array, JSON_UNESCAPED_UNICODE);
         die();
+    }
+    //PDF & Excel Reports for active/inactive Products in Stock
+    public function activeProductPDF()
+    {
+        $this->productPDFReport(1);
+    }
+    public function inactiveProductPDF()
+    {
+        $this->productPDFReport(0);
+    }
+    public function productPDFReport($status)
+    {
+        ob_start();
+
+        $data['title'] = ($status == 1) ? 'Active Products Report' : 'Inactive Products Report';
+        $data['companies'] = $this->model->getCompanies();
+        $data['products'] = $this->model->getProducts($status);
+
+        $this->views->getView('reports', 'active_inactiveProductPDF', $data);
+        $html = ob_get_clean();
+        // instantiate and use the dompdf class
+        $dompdf = new Dompdf();
+
+        $options = $dompdf->getOptions();
+        $options->set('isJavascriptEnabled', true);
+        $options->set('isRemoteEnabled', true);
+        $dompdf->setOptions($options);
+
+        $dompdf->loadHtml($html);
+        // (Optional) Setup the paper size and orientation
+        $dompdf->setPaper('A4', 'vertical');
+        // Render the HTML as PDF
+        $dompdf->render();
+
+        // Output the generated PDF to Browser
+        $dompdf->stream(($status == 1) ? 'activeProductReport.pdf' : 'inactiveProductReport.pdf', array('Attachment' => false));
+    }
+    public function activeProductExcel()
+    {
+        $this->productExcelReport(1);
+    }
+    public function inactiveProductExcel()
+    {
+        $this->productExcelReport(0);
+    }
+    public function productExcelReport($status)
+    {
+        $spreadsheet = new Spreadsheet();
+
+        $spreadsheet->getProperties()
+            ->setCreator($_SESSION['user_name'] . ' ' . $_SESSION['user_lname'])
+            ->setTitle(($status == 1) ? "Active Product Report" : "Inactive Product Report")
+            ->setSubject(($status == 1) ? "Active Product Report" : "Inactive Product Report")
+            ->setDescription(($status == 1) ? "Report to show the active products in store." : "Report to show the inactive products in store.");
+
+        $spreadsheet->setActiveSheetIndex(0);
+        $spreadsheet->getDefaultStyle()->getFont()->setName('Times New Roman');
+        $spreadsheet->getDefaultStyle()->getFont()->setSize(12);
+
+
+
+        $activeSheet = $spreadsheet->getActiveSheet();
+        if ($status == 1) {
+            $activeSheet->setTitle('Active Product Report');
+        } else {
+            $activeSheet->setTitle('Inactive Product Report');
+        }
+        $activeSheet->getColumnDimension('A')->setWidth(15);
+        $activeSheet->getColumnDimension('B')->setWidth(50);
+        $activeSheet->getColumnDimension('C')->setWidth(20);
+        $activeSheet->getColumnDimension('D')->setWidth(20);
+        $activeSheet->getColumnDimension('E')->setWidth(12);
+        $activeSheet->getColumnDimension('F')->setWidth(12);
+        $activeSheet->getColumnDimension('G')->setWidth(30);
+        $activeSheet->getColumnDimension('H')->setWidth(30);
+
+        $activeSheet->setCellValue('A1', 'Code');
+        $activeSheet->setCellValue('B1', 'Product');
+        $activeSheet->setCellValue('C1', 'Purchase Price');
+        $activeSheet->setCellValue('D1', 'Sale Price');
+        $activeSheet->setCellValue('E1', 'Quantity');
+        $activeSheet->setCellValue('F1', 'Sales');
+        $activeSheet->setCellValue('G1', 'Measure');
+        $activeSheet->setCellValue('H1', 'Category');
+
+        $spreadsheet->getActiveSheet()->getStyle('A1:H1')->getFill()
+            ->setFillType(Fill::FILL_SOLID)
+            ->getStartColor()->setARGB('FF00C8FA');
+        $spreadsheet->getActiveSheet()->getStyle('A1:H1')
+            ->getAlignment()->setVertical(Alignment::VERTICAL_CENTER)
+            ->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+        $eRow = 2;
+        $data['products'] = $this->model->getProducts($status);
+
+        foreach ($data['products'] as $product) {
+            if (fmod($eRow, 2) != 0) {
+                $spreadsheet->getActiveSheet()->getStyle('A' . $eRow . ':H' . $eRow)->getFill()
+                    ->setFillType(Fill::FILL_SOLID)
+                    ->getStartColor()->setARGB('FFE9E9E9');
+            }
+            $spreadsheet->getActiveSheet()->getStyle('C' . $eRow . ':D' . $eRow)->getNumberFormat()
+                ->setFormatCode('#,##0.00');
+            $spreadsheet->getActiveSheet()->getStyle('A' . $eRow . ':H' . $eRow)
+                ->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+
+            $activeSheet->setCellValue('A' . $eRow, $product['code']);
+            $activeSheet->setCellValue('B' . $eRow, $product['description']);
+            $activeSheet->setCellValue('C' . $eRow, $product['purchase_price']);
+            $activeSheet->setCellValue('D' . $eRow, $product['sale_price']);
+            $activeSheet->setCellValue('E' . $eRow, $product['quantity']);
+            $activeSheet->setCellValue('F' . $eRow, $product['sales']);
+            $activeSheet->setCellValue('G' . $eRow, $product['measure']);
+            $activeSheet->setCellValue('H' . $eRow, $product['category']);
+            $eRow++;
+        }
+        $date = date('Y-m-d-H:i:s');
+        //Generate an excel file download
+        header('Content-Type: application/vnd.ms-excel');
+        header(($status == 1) ? 'Content-Disposition: attachment;filename="activeProducts-' . $date . '.xlsx"' : 'Content-Disposition: attachment;filename="inactiveProducts-' . $date . '.xlsx"');
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->save('php://output');
+    }
+    //Barcode products
+    public function generateBarcode()
+    {
+        $status = 1;
+        // $generator = new BarcodeGeneratorHTML();
+        // echo $generator->getBarcode('081231723897', $generator::TYPE_CODE_128);
+        $route = 'assets/images/barcode/';
+
+        $datas['products'] = $this->model->getProducts($status);
+        $generator = new BarcodeGeneratorPNG();
+
+        foreach ($datas['products'] as $product) {
+            if (!file_exists($route . $product['id'] . '.png')) {
+                file_put_contents($route . $product['id'] . '.png', $generator->getBarcode($product['code'], $generator::TYPE_CODE_128, 3, 50));
+                
+                $this->model->barcodeProduct($product['id'], $route . $product['id'] . '.png', $status);
+            }
+        }
+        ob_start();
+
+        $data['title'] = ($status == 1) ? 'Active Products Barcode' : 'Inactive Products Barcode';
+        $data['products'] = $this->model->getProducts($status);
+
+        $this->views->getView('reports', 'barcode', $data);
+        $html = ob_get_clean();
+        // instantiate and use the dompdf class
+        $dompdf = new Dompdf();
+
+        $options = $dompdf->getOptions();
+        $options->set('isJavascriptEnabled', true);
+        $options->set('isRemoteEnabled', true);
+        $dompdf->setOptions($options);
+
+        $dompdf->loadHtml($html);
+        // (Optional) Setup the paper size and orientation
+        $dompdf->setPaper('A4', 'vertical');
+        // Render the HTML as PDF
+        $dompdf->render();
+
+        // Output the generated PDF to Browser
+        $dompdf->stream(($status == 1) ? 'activeProductBarcode.pdf' : 'inactiveProductBarcode.pdf', array('Attachment' => false));
     }
 }

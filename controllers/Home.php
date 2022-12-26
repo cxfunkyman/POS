@@ -32,6 +32,7 @@ class Home extends Controller
                     if (password_verify($password, $data['password'])) {
                         $_SESSION['id_user'] = $data['id'];
                         $_SESSION['user_name'] = $data['first_name'];
+                        $_SESSION['user_lname'] = $data['last_name'];
                         $_SESSION['user_email'] = $data['email'];
                         $res = array('msg' => 'PASSWORD IS CORRECT', 'type' => 'success');
                     } else {

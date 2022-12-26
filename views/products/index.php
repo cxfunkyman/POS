@@ -8,7 +8,15 @@
                 <a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
                 </a>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="<?php echo BASE_URL . 'products/inactiveProduct'; ?>"><i class="fas fa-trash text-danger" style="color: rgb(255, 0, 0)"></i> Inactive Product</a>
+                    <li><a class="dropdown-item" href="<?php echo BASE_URL . 'products/inactiveProduct'; ?>"><i class="fas fa-trash text-warning" style="color: rgb(255, 0, 0)"></i> Inactive Product</a>
+                    </li>
+                    <hr class="dropdown-divider">
+                    <li><a class="dropdown-item" href="<?php echo BASE_URL . 'products/activeProductPDF' ?>" target="_blank"><i class="fas fa-file-pdf text-danger"></i> Active PDF</a>
+                    </li>
+                    <li><a class="dropdown-item" href="<?php echo BASE_URL . 'products/activeProductExcel' ?>"><i class="fas fa-file-excel text-success"></i> Active Excel</a>
+                    </li>
+                    <hr class="dropdown-divider">
+                    <li><a class="dropdown-item" href="<?php echo BASE_URL . 'products/generateBarcode' ?>" target="_blank"><i class="fas fa-barcode text-primary"></i> Barcode All</a>
                     </li>
                 </ul>
             </div>

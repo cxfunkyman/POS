@@ -67,7 +67,7 @@
         <tbody>
             <?php
             $products = json_decode($data['sales']['products'], true);
-            //TAX INCLUDE            
+            //TAX INCLUDED
             $discount = $data['sales']['discount_amount'];
             $subTotal = $data['sales']['subtotal'];
             $tps = $data['sales']['sale_tps'];

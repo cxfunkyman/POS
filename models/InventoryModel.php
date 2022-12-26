@@ -9,13 +9,13 @@ class InventoryModel extends Query
     }
     public function getInvMovement()
     {
-        $sql = "SELECT i.*, p.description AS product, p.quantity AS stock, u.first_name AS name FROM inventory i
+        $sql = "SELECT i.*, p.description AS product, p.quantity AS stock, u.first_name AS name, u.last_name AS lname FROM inventory i
         INNER JOIN products p ON i.id_product = p.id INNER JOIN users u ON i.id_user = u.id";
         return $this->selectAll($sql);
     }
     public function getMoveByMonth($year, $month)
     {
-        $sql = "SELECT i.*, p.description AS product, p.quantity AS stock, u.first_name AS name FROM inventory i
+        $sql = "SELECT i.*, p.description AS product, p.quantity AS stock, u.first_name AS name, u.last_name AS lname FROM inventory i
         INNER JOIN products p ON i.id_product = p.id INNER JOIN users u ON i.id_user = u.id
         WHERE YEAR(i.dates) = $year AND MONTH(i.dates) = $month";
         return $this->selectAll($sql);
@@ -46,7 +46,7 @@ class InventoryModel extends Query
     }
     public function getKardex($idProduct)
     {
-        $sql = "SELECT i.*, p.description AS product, u.first_name AS name FROM inventory i
+        $sql = "SELECT i.*, p.description AS product, u.first_name AS name, u.last_name AS lname FROM inventory i
         INNER JOIN products p ON i.id_product = p.id INNER JOIN users u ON i.id_user = u.id
         WHERE i.id_product = $idProduct";
         return $this->selectAll($sql);

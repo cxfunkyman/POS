@@ -1,6 +1,7 @@
 <?php include_once 'views/templates/header.php'; ?>
 
 <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4">
+	<!-- Total Users -->
 	<div class="col">
 		<div class="card radius-10 border-start border-0 border-3 border-info">
 			<div class="card-body">
@@ -17,6 +18,7 @@
 			</div>
 		</div>
 	</div>
+	<!-- Total Clients -->
 	<div class="col">
 		<div class="card radius-10 border-start border-0 border-3 border-danger">
 			<div class="card-body">
@@ -32,6 +34,7 @@
 			</div>
 		</div>
 	</div>
+	<!-- Total Supplier -->
 	<div class="col">
 		<div class="card radius-10 border-start border-0 border-3 border-success">
 			<div class="card-body">
@@ -48,6 +51,7 @@
 			</div>
 		</div>
 	</div>
+	<!-- Total Products -->
 	<div class="col">
 		<div class="card radius-10 border-start border-0 border-3 border-warning">
 			<div class="card-body">
@@ -68,6 +72,7 @@
 <!--end row-->
 
 <div class="row">
+	<!-- Sales & Purchases -->
 	<div class="col-12 col-lg-12">
 		<div class="card radius-10">
 			<div class="card-body">
@@ -110,6 +115,7 @@
 			</div>
 		</div>
 	</div>
+	<!-- Cash-Credits-Discounts -->
 	<div class="col-12 col-lg-12">
 		<div class="card radius-10">
 			<div class="card-body">
@@ -159,6 +165,7 @@
 			</div>
 		</div>
 	</div>
+	<!-- Recent 10 Products -->
 	<div class="col-12 col-lg-12">
 		<div class="card radius-10">
 			<div class="card-body">
@@ -170,14 +177,9 @@
 						<a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
 						</a>
 						<ul class="dropdown-menu">
-							<li><a class="dropdown-item" href="javascript:;">Action</a>
+							<li><a class="dropdown-item" href="<?php echo BASE_URL . 'admin/recentProductPDF' ?>" target="_blank"><i class="fas fa-file-pdf text-danger"></i> Report PDF</a>
 							</li>
-							<li><a class="dropdown-item" href="javascript:;">Another action</a>
-							</li>
-							<li>
-								<hr class="dropdown-divider">
-							</li>
-							<li><a class="dropdown-item" href="javascript:;">Something else here</a>
+							<li><a class="dropdown-item" href="<?php echo BASE_URL . 'admin/recentProductExcel' ?>"><i class="fas fa-file-excel text-success"></i> Report Excel</a>
 							</li>
 						</ul>
 					</div>
@@ -186,6 +188,7 @@
 					<table class="table align-middle mb-0">
 						<thead class="table-light">
 							<tr>
+								<th>Code</th>
 								<th>Product</th>
 								<th>Photo</th>
 								<th>Purchase Price</th>
@@ -201,14 +204,22 @@
 								} else {
 									$photo = BASE_URL . $product['photo'];
 								}
+								if ($product['purchase_price']) {
+									$pPrice = number_format($product['purchase_price'], 2,);
+								}
+								if ($product['sale_price']) {
+									$sPrice = number_format($product['sale_price'], 2,);
+								}
+
 							?>
 								<tr>
+									<td><?php echo $product['code']; ?></td>
 									<td><?php echo $product['description']; ?></td>
 									<td><img src="<?php echo $photo; ?>" class="product-img-2" alt="product img"></td>
 									<td><span class="badge bg-gradient-quepal text-black shadow-sm w-100">
-											<?php echo CURRENCY . $product['purchase_price']; ?></span></td>
+											<?php echo CURRENCY . $pPrice; ?></span></td>
 									<td><span class="badge bg-gradient-scooter text-black shadow-sm w-100">
-											<?php echo CURRENCY . $product['sale_price']; ?></span></td>
+											<?php echo CURRENCY . $sPrice; ?></span></td>
 									<td><?php echo $product['dates']; ?></td>
 									<td><?php echo $product['category']; ?></td>
 								</tr>
@@ -224,6 +235,7 @@
 <!--end row-->
 
 <div class="row row-cols-1 row-cols-lg-2">
+	<!-- Top 5 Products -->
 	<div class="col d-flex">
 		<div class="card radius-10 w-100">
 			<div class="card-header bg-transparent">
@@ -236,14 +248,9 @@
 							<a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
 							</a>
 							<ul class="dropdown-menu">
-								<li><a class="dropdown-item" href="javascript:;">Action</a>
+								<li><a class="dropdown-item" href="<?php echo BASE_URL . 'admin/topProductPDF' ?>" target="_blank"><i class="fas fa-file-pdf text-danger"></i> Report PDF</a>
 								</li>
-								<li><a class="dropdown-item" href="javascript:;">Another action</a>
-								</li>
-								<li>
-									<hr class="dropdown-divider">
-								</li>
-								<li><a class="dropdown-item" href="javascript:;">Something else here</a>
+								<li><a class="dropdown-item" href="<?php echo BASE_URL . 'admin/topProductExcel' ?>"><i class="fas fa-file-excel text-success"></i> Report Excel</a>
 								</li>
 							</ul>
 						</div>
@@ -273,6 +280,7 @@
 			</div>
 		</div>
 	</div>
+	<!-- Monthly Expenses -->
 	<div class="col d-flex">
 		<div class="card radius-10 w-100">
 			<div class="card-body">
@@ -303,6 +311,7 @@
 			</div>
 		</div>
 	</div>
+	<!-- 5 Products With Minimum Stock -->
 	<div class="col d-flex">
 		<div class="card radius-10 w-100">
 			<div class="card-header bg-transparent">
@@ -311,19 +320,16 @@
 						<h6 class="mb-0">5 Products With Minimum Stock</h6>
 					</div>
 					<div class="dropdown ms-auto">
-						<a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
-						</a>
-						<ul class="dropdown-menu">
-							<li><a class="dropdown-item" href="javascript:;">Action</a>
-							</li>
-							<li><a class="dropdown-item" href="javascript:;">Another action</a>
-							</li>
-							<li>
-								<hr class="dropdown-divider">
-							</li>
-							<li><a class="dropdown-item" href="javascript:;">Something else here</a>
-							</li>
-						</ul>
+						<div class="dropdown ms-auto">
+							<a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="<?php echo BASE_URL . 'admin/minProdStockPDF' ?>" target="_blank"><i class="fas fa-file-pdf text-danger"></i> Report PDF</a>
+								</li>
+								<li><a class="dropdown-item" href="<?php echo BASE_URL . 'admin/minProdStockExcel' ?>"><i class="fas fa-file-excel text-success"></i> Report Excel</a>
+								</li>
+							</ul>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -333,31 +339,32 @@
 				</div>
 			</div>
 			<ul class="list-group list-group-flush">
-			<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
-						<?php echo $data['minimumStock'][0]['description'] ?> <span class="badge bg-success rounded-pill"><?php echo $data['minimumStock'][0]['quantity'] ?></span>
-					</li>
-					<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
-						<?php echo $data['minimumStock'][1]['description'] ?> <span class="badge bg-info rounded-pill"><?php echo $data['minimumStock'][1]['quantity'] ?></span>
-					</li>
-					<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
-						<?php echo $data['minimumStock'][2]['description'] ?> <span class="badge bg-primary rounded-pill"><?php echo $data['minimumStock'][2]['quantity'] ?></span>
-					</li>
-					<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
-						<?php echo $data['minimumStock'][3]['description'] ?> <span class="badge bg-warning text-dark rounded-pill"><?php echo $data['minimumStock'][3]['quantity'] ?></span>
-					</li>
-					<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
-						<?php echo $data['minimumStock'][4]['description'] ?> <span class="badge bg-danger text-dark rounded-pill"><?php echo $data['minimumStock'][4]['quantity'] ?></span>
-					</li>
+				<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
+					<?php echo $data['minimumStock'][0]['description'] ?> <span class="badge bg-success rounded-pill"><?php echo $data['minimumStock'][0]['quantity'] ?></span>
+				</li>
+				<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
+					<?php echo $data['minimumStock'][1]['description'] ?> <span class="badge bg-info rounded-pill"><?php echo $data['minimumStock'][1]['quantity'] ?></span>
+				</li>
+				<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
+					<?php echo $data['minimumStock'][2]['description'] ?> <span class="badge bg-primary rounded-pill"><?php echo $data['minimumStock'][2]['quantity'] ?></span>
+				</li>
+				<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
+					<?php echo $data['minimumStock'][3]['description'] ?> <span class="badge bg-warning text-dark rounded-pill"><?php echo $data['minimumStock'][3]['quantity'] ?></span>
+				</li>
+				<li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
+					<?php echo $data['minimumStock'][4]['description'] ?> <span class="badge bg-danger text-dark rounded-pill"><?php echo $data['minimumStock'][4]['quantity'] ?></span>
+				</li>
 			</ul>
 		</div>
 	</div>
+	<!-- Reserves Summary -->
 	<div class="col d-flex">
 		<div class="card radius-10 w-100">
 			<div class="card-header bg-transparent">
 				<div class="d-flex justify-content-between align-items-center">
 					<div>
 						<h6 class="mb-0">Reserves Summary</h6>
-					</div>
+					</div>&nbsp;&nbsp;&nbsp;
 					<div class="form-group">
 						<label for="yearRS">Year</label>
 						<select id="yearRS" onchange="reservesSummary()">

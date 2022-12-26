@@ -56,7 +56,7 @@
                     <td><?php echo $inventory['dates']; ?></td>
                     <td><?php echo $inventory['time_day']; ?></td>
                     <td><?php echo $inventory['code']; ?></td>
-                    <td><?php echo $inventory['name']; ?></td>
+                    <td><?php echo $inventory['name'].' '.$inventory['lname']; ?></td>
                 </tr>
             <?php } ?>
         </tbody>

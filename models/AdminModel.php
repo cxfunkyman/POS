@@ -8,8 +8,6 @@ class AdminModel extends Query
     }
     public function getData()
     {
-        $sql = "SELECT * FROM configuration";
-        return $this->select($sql);
     }
     public function updateCompany(
         $taxID,
@@ -105,14 +103,14 @@ class AdminModel extends Query
         FROM purchases WHERE dates BETWEEN '$dateFrom' AND '$dateTo' AND id_user = $idUser";
         return $this->select($sql);
     }
-    public function topProducts()
+    public function topProducts($qty)
     {
-        $sql = "SELECT description, sales FROM products ORDER BY sales DESC LIMIT 5";
+        $sql = "SELECT p.*, c.category FROM products p INNER JOIN categories c ON p.id_category = c.id ORDER BY sales DESC LIMIT $qty";
         return $this->selectAll($sql);
     }
-    public function newProducts()
+    public function newProducts($qty)
     {
-        $sql = "SELECT p.*, c.category FROM products p INNER JOIN categories c ON p.id_category = c.id ORDER BY id DESC LIMIT 10";
+        $sql = "SELECT p.*, c.category FROM products p INNER JOIN categories c ON p.id_category = c.id ORDER BY id DESC LIMIT $qty";
         return $this->selectAll($sql);
     }
     public function monthlyExpenses($dateFrom, $dateTo, $idUser)
@@ -132,9 +130,9 @@ class AdminModel extends Query
         FROM expenses WHERE dates BETWEEN '$dateFrom' AND '$dateTo' AND id_user = $idUser";
         return $this->select($sql);
     }
-    public function stockMinimum()
+    public function stockMinimum($qty)
     {
-        $sql = "SELECT description, quantity FROM products ORDER BY quantity ASC LIMIT 5";
+        $sql = "SELECT p.*, c.category FROM products p INNER JOIN categories c ON p.id_category = c.id ORDER BY quantity ASC LIMIT $qty";
         return $this->selectAll($sql);
     }
     public function countReserves($from, $to, $status, $idUser)
@@ -142,4 +140,10 @@ class AdminModel extends Query
         $sql = "SELECT COUNT(*) AS total FROM reserves WHERE dates BETWEEN '$from' AND '$to' AND status = $status AND id_user = $idUser";
         return $this->select($sql);
     }
+    public function getCompanies()
+    {
+        $sql = "SELECT * FROM configuration";
+        return $this->select($sql);
+    }
+
 }

@@ -58,7 +58,7 @@
                     <td><?php echo $kardex['actual_stock']; ?></td>
                     <td><?php echo $kardex['dates']; ?></td>
                     <td><?php echo $kardex['time_day']; ?></td>
-                    <td><?php echo $kardex['name']; ?></td>
+                    <td><?php echo $kardex['name'].' '.$kardex['lname']; ?></td>
                 </tr>
             <?php } ?>
         </tbody>

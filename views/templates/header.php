@@ -165,7 +165,7 @@
                         <a class="d-flex align-items-center nav-link dropdown-toggle dropdown-toggle-nocaret" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="<?php echo BASE_URL; ?>assets/images/avatars/cx.jpg" class="user-img" alt="user avatar">
                             <div class="user-info ps-3">
-                                <p class="user-name mb-0"><?php echo $_SESSION['user_name']; ?></p>
+                                <p class="user-name mb-0"><?php echo $_SESSION['user_name'] . ' ' . $_SESSION['user_lname']; ?></p>
                                 <p class="designattion mb-0"><?php echo $_SESSION['user_email']; ?></p>
                             </div>
                         </a>

@@ -503,3 +503,77 @@ function reservesSummary() {
     }
   }
 }
+//Reserves Report
+
+// document.addEventListener('DOMContentLoaded', function () {
+//   //complete the Sale
+//   btnComplete.addEventListener('click', function () {
+
+//       const cartListRow = document.querySelectorAll('#tblSale tr').length;
+//       // for test only
+//       // console.log(cartListRow);
+//       // return;
+//       if (cartListRow < 2) {
+//           customAlert('warning', 'CART EMPTY');
+//       } else if (idClient.value == '' &&
+//           phoneClient.value == '' &&
+//           nameClient.value == ''
+//       ) {
+//           customAlert('warning', 'CLIENT REQUIRED');
+//       } else if (payMethod.value == '') {
+//           customAlert('warning', 'PAYMENT METHOD REQUIRED');
+//       } else {
+//           const url = base_url + 'Sales/registerSale/';
+//           //instaciate the object XMLHttpRequest
+//           const http = new XMLHttpRequest();
+//           //open connection this time POST
+//           http.open('POST', url, true);
+//           //send data
+//           http.send(JSON.stringify({
+//               products: cartList,
+//               idClient: idClient.value,
+//               payMethod: payMethod.value,
+//               discount: discount.value,
+//               optionPrinter: directPrint.checked
+//           }));
+//           //generarte ticket or invoice alert
+//           http.onreadystatechange = function () {
+//               if (this.readyState == 4 && this.status == 200) {
+//                   const res = JSON.parse(this.responseText);
+//                   //for test
+//                   //console.log(this.responseText);
+//                   customAlert(res.type, res.msg);
+//                   if (res.msg == 'CASH REGISTER IS CLOSE') {
+//                       setTimeout(() => {
+//                           localStorage.removeItem(cartKey);
+//                           window.location.reload();
+//                       }, 2000);
+//                   } else {
+//                       if (res.type == 'success') {
+//                           localStorage.removeItem(cartKey);
+//                           setTimeout(() => {
+//                               Swal.fire({
+//                                   title: 'Do you want to generate an invoice?',
+//                                   showDenyButton: true,
+//                                   showCancelButton: true,
+//                                   confirmButtonText: 'Ticket',
+//                                   denyButtonText: `Invoice`,
+//                               }).then((result) => {
+//                                   /* Read more about isConfirmed, isDenied below */
+//                                   if (result.isConfirmed) {
+//                                       const route = base_url + 'sales/reports/tickets/' + res.idSale;
+//                                       window.open(route, '_blank');
+//                                   } else if (result.isDenied) {
+//                                       const route = base_url + 'sales/reports/invoice/' + res.idSale;
+//                                       window.open(route, '_blank');
+//                                   }
+//                                   window.location.reload();
+//                               })
+//                           }, 2000);
+//                       }
+//                   }
+//               }
+//           }
+//       }
+//   })
+// })

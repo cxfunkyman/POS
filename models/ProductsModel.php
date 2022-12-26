@@ -102,4 +102,16 @@ class ProductsModel extends Query
         $sql = "SELECT id, description, quantity FROM products WHERE description LIKE '%".$value."%' AND status = 1 LIMIT 10";
         return $this->selectAll($sql);
     }
+    public function getCompanies()
+    {
+        $sql = "SELECT * FROM configuration";
+        return $this->select($sql);
+    }
+    public function barcodeProduct($id, $barcode, $status)
+    {
+        $sql = "UPDATE products SET barcode = ? WHERE id = ? AND status = ?";
+        $array = array($barcode, $id, $status);
+        $this->save($sql, $array);
+        //return;
+    }
 }

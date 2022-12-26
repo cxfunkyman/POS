@@ -224,7 +224,6 @@ function loadInventory(urlInventory) {
             { data: 'code' },
             { data: 'photo' },
             { data: 'name' }
-            //{ data: 'actions' }
         ],
         dom,
         buttons,
@@ -279,8 +278,8 @@ function searchCodeProduct(value) {
             if (!res.status) {
                 customAlert('warning', 'PRODUCT DOES NOT EXIST');
             } else {
-                //Just for test
-                 console.log(res);
+                // Just for test
+                // console.log(res);
                 // return;
                 reportKardex(res.data.id);
             }

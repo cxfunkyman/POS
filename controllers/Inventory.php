@@ -123,18 +123,6 @@ class Inventory extends Controller
     {
         $data['companies'] = $this->model->getCompanies();
         $data['kardex'] = $this->model->getKardex($idProduct);
-        // $idProductVerify = $this->model->invProductVerify($idProduct);
-        // if (count($data['kardex']) == 0) {
-        //     print_r('No hay datos');
-        //     return;
-        // }
-        
-        // if (empty($idProductVerify)) {
-            
-        // } else {
-            
-        // }
-        
 
         for ($i = 0; $i < count($data['kardex']); $i++) {
             $data['kardex'][$i]['in_stock'] = 0;
