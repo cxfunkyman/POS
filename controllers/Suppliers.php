@@ -6,6 +6,10 @@ class Suppliers extends Controller
     {
         parent::__construct();
         session_start();
+        if (empty($_SESSION['id_user'])) {
+            header('Location: ' . BASE_URL);
+            exit;
+        }
     }
     public function index()
     {

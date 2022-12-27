@@ -48,7 +48,7 @@
                             <label>First Name</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-list"></i></span>
-                                <input type="text" id="fName" name="fName" class="form-control" placeholder="First Name">
+                                <input type="text" id="fName" name="fName" class="form-control" placeholder="First Name" autocomplete="off">
                             </div>
                             <span id="errorFName" class="text-danger"></span>
                         </div>
@@ -56,7 +56,7 @@
                             <label>Last Name</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-list-alt"></i></span>
-                                <input type="text" id="lName" name="lName" class="form-control" placeholder="Last Name">
+                                <input type="text" id="lName" name="lName" class="form-control" placeholder="Last Name" autocomplete="off">
                             </div>
                             <span id="errorLName" class="text-danger"></span>
                         </div>
@@ -64,7 +64,7 @@
                             <label>Email</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                <input type="email" id="email" name="email" class="form-control" placeholder="Email">
+                                <input type="email" id="email" name="email" class="form-control" placeholder="Email" autocomplete="off">
                             </div>
                             <span id="errorEmail" class="text-danger"></span>
                         </div>
@@ -72,7 +72,7 @@
                             <label>Phone Number</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                                <input type="number" id="phone" name="phone" class="form-control" placeholder="Phone Number">
+                                <input type="number" id="phone" name="phone" class="form-control" placeholder="Phone Number" autocomplete="off">
                             </div>
                             <span id="errorPhone" class="text-danger"></span>
                         </div>
@@ -80,7 +80,7 @@
                             <label>Address</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-home"></i></span>
-                                <input type="text" id="address" name="address" class="form-control" placeholder="Address">
+                                <input type="text" id="address" name="address" class="form-control" placeholder="Address" autocomplete="off">
                             </div>
                             <span id="errorAddress" class="text-danger"></span>
                         </div>
@@ -88,7 +88,7 @@
                             <label>Password</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                <input type="password" id="password" name="password" class="form-control" placeholder="Password">
+                                <input type="password" id="password" name="password" class="form-control" placeholder="Password" autocomplete="off">
                             </div>
                             <span id="errorPassword" class="text-danger"></span>
                         </div>

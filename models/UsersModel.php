@@ -9,9 +9,9 @@ class UsersModel extends Query
     public function getUsers($status)
     {
         $sql = "SELECT id, CONCAT(first_name, ' ', last_name) AS name, email, phone_number, address, rol FROM users WHERE status = $status";
-        return $this->selectAll($sql);        
+        return $this->selectAll($sql);
     }
-    public function signUpUsers( 
+    public function signUpUsers(
         $fName,
         $lName,
         $email,
@@ -31,7 +31,7 @@ class UsersModel extends Query
             $password,
             $rol
         );
-        return $this->insert($sql, $array);   
+        return $this->insert($sql, $array);
     }
     public function getValidate($field, $value, $action, $id)
     {
@@ -39,7 +39,7 @@ class UsersModel extends Query
             $sql = "SELECT id, email, phone_number FROM users WHERE $field = '$value'";
         } else {
             $sql = "SELECT id, email, phone_number FROM users WHERE $field = '$value' AND id != $id";
-        } 
+        }
         return $this->select($sql);
     }
     public function delete($status, $id)
@@ -50,10 +50,15 @@ class UsersModel extends Query
     }
     public function userEdit($id)
     {
-        $sql = "SELECT id, first_name, last_name, email, phone_number, address, rol FROM users WHERE id = $id";
+        $sql = "SELECT id, first_name, last_name, email, phone_number, address, dates, rol FROM users WHERE id = $id";
         return $this->select($sql);
     }
-    public function userUpdate( 
+    public function userProfile($id)
+    {
+        $sql = "SELECT * FROM users WHERE id = $id";
+        return $this->select($sql);
+    }
+    public function userUpdate(
         $fName,
         $lName,
         $email,
@@ -63,7 +68,7 @@ class UsersModel extends Query
         $id
         )
     {
-        $sql = "UPDATE users SET first_name=?, last_name=?, email=?, phone_number=?, address=?, rol=? WHERE id=?"; 
+        $sql = "UPDATE users SET first_name=?, last_name=?, email=?, phone_number=?, address=?, rol=? WHERE id=?";
         $array = array(
             $fName,
             $lName,
@@ -73,6 +78,42 @@ class UsersModel extends Query
             $rol,
             $id
         );
-        return $this->save($sql, $array);   
+        return $this->save($sql, $array);
+    }
+    public function getprofileValidate($field, $value, $id)
+    {
+        $sql = "SELECT id FROM users WHERE NOT id = $id AND $field = '$value'";
+
+        return $this->select($sql);
+    }
+    public function getpassValidate($field, $value, $id)
+    {
+        $sql = "SELECT id FROM users WHERE $field = '$value' AND id = $id";
+
+        return $this->select($sql);
+    }
+    public function updateProfile(
+        $id,
+        $fName,
+        $lName,
+        $email,
+        $phone,
+        $address,
+        $photoDirectory,
+        $passHash
+    )
+    {
+        $sql = "UPDATE users SET first_name=?, last_name=?, email=?, phone_number=?, address=?, profile=?, password=?  WHERE id=?";
+        $array = array(
+            $fName,
+            $lName,
+            $email,
+            $phone,
+            $address,
+            $photoDirectory,
+            $passHash,
+            $id
+        );
+        return $this->save($sql, $array);
     }
 }

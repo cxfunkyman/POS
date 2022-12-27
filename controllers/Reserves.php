@@ -11,6 +11,10 @@ class Reserves extends Controller
     {
         parent::__construct();
         session_start();
+        if (empty($_SESSION['id_user'])) {
+            header('Location: ' . BASE_URL);
+            exit;
+        }
         $this->idUser = $_SESSION['id_user'];
     }
     public function index()

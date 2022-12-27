@@ -12,6 +12,10 @@ class Purchases extends Controller
         parent::__construct();
         require_once 'controllers/cashRegister.php';
         $this->cashRegister = new CashRegister();
+        if (empty($_SESSION['id_user'])) {
+            header('Location: ' . BASE_URL);
+            exit;
+        }
         $this->idUser = $_SESSION['id_user'];
     }
     public function index()

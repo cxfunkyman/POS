@@ -56,7 +56,7 @@
 													</div>
 													<span id="passwordError" class="text-danger"></span>
 												</div>
-												<div class="col-md-12 text-end"> <a href="authentication-forgot-password.html">Forgot Password?</a>
+												<div class="col-md-12 text-end"> <a href="<?php echo BASE_URL . 'principal/forgot' ?>">Forgot Password?</a>
 												</div>
 												<div class="col-12">
 													<div class="d-grid">

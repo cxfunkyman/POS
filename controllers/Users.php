@@ -2,10 +2,16 @@
 
 class Users extends Controller
 {
+    private $idUser;
     public function __construct()
     {
         parent::__construct();
         session_start();
+        if (empty($_SESSION['id_user'])) {
+            header('Location: ' . BASE_URL);
+            exit;
+        }
+        $this->idUser = $_SESSION['id_user'];
     }
     public function index()
     {
@@ -63,7 +69,7 @@ class Users extends Controller
 
                 if ($id == '') {
                     $hash = password_hash($password, PASSWORD_DEFAULT);
-                    
+
                     //Verify if the data exist already  
                     $verifyEmail = $this->model->getValidate('email', $email, 'register', 0);
 
@@ -176,7 +182,7 @@ class Users extends Controller
         }
         echo json_encode($data, JSON_UNESCAPED_UNICODE);
         die();
-    } 
+    }
     public function userRestore($id)
     {
         if (isset($_GET)) {
@@ -195,6 +201,113 @@ class Users extends Controller
         }
         echo json_encode($res, JSON_UNESCAPED_UNICODE);
         die();
-    }   
+    }
+    public function profile()
+    {
+        $data['title'] = 'User Profile';
+        $data['users'] = $this->model->userProfile($this->idUser);
+        $data['script'] = 'profile.js';
+        $this->views->getView('users', 'profile', $data);
+    }
+    public function updateProfile()
+    {
+
+        if (
+            isset($_POST['fNameProfile']) && isset($_POST['lNameProfile']) && isset($_POST['emailProfile'])
+            && isset($_POST['phoneProfile']) && isset($_POST['addressProfile']) && isset($_POST['oldPassProfile'])
+            && isset($_POST['newPassProfile'])
+        ) {
+            $fName = strClean($_POST['fNameProfile']);
+            $lName = strClean($_POST['lNameProfile']);
+            $email = strClean($_POST['emailProfile']);
+            $phone = strClean($_POST['phoneProfile']);
+            $address = strClean($_POST['addressProfile']);
+            $oldPass = $_POST['oldPassProfile'];
+            $newPass = $_POST['newPassProfile'];
+
+            $passHash = password_hash($newPass, PASSWORD_DEFAULT);
+
+            $profilePhoto = $_FILES['profilePhoto'];
+            $actualPhoto = strClean($_POST['actualPhoto']);
+            $namePhoto = $profilePhoto['name'];
+            $tmpPhoto = $profilePhoto['tmp_name'];
+
+            $photoDirectory = null;
+            if (!empty($namePhoto)) {
+                $photoDate = $fName . '_' . $lName . '_' . date('YmdHis');
+                $photoDirectory = 'assets/images/profile/' . $photoDate . '.jpg';
+            } else if (!empty($actualPhoto) && empty($namePhoto)) {
+                $photoDirectory = $actualPhoto;
+            }
+            if (empty($fName)) {
+                $res = array('msg' => 'FIRST NAME REQUIRED', 'type' => 'warning');
+            } else if (empty($lName)) {
+                $res = array('msg' => 'LAST NAME REQUIRED', 'type' => 'warning');
+            } else if (empty($email)) {
+                $res = array('msg' => 'EMAIL REQUIRED', 'type' => 'warning');
+            } else if (empty($phone)) {
+                $res = array('msg' => 'PHONE NUMBER REQUIRED', 'type' => 'warning');
+            } else if (empty($address)) {
+                $res = array('msg' => 'ADDRESS REQUIRED', 'type' => 'warning');
+            }
+            else {
+                $verifyEmail = $this->model->getprofileValidate('email', $email, $this->idUser);
+                $verifyPhone = $this->model->getprofileValidate('phone_number', $phone, $this->idUser);
+                $profile = $this->model->userProfile($this->idUser);
+
+                if (empty($photoDirectory)) {
+                    $photoDirectory = $profile['profile'];
+                }
+                if (empty($newPass)) {
+                    $passHash = $profile['password'];
+                } else if (!empty($newPass)) {
+                    $verifyPass = $this->model->getpassValidate('password', $passHash, $this->idUser);
+                    if (!empty($verifyPass)) {
+                        $res = array('msg' => 'PASSWORD IS BEING USED', 'type' => 'warning');
+                        echo json_encode($res, JSON_UNESCAPED_UNICODE);
+                        die();
+                    }
+                }
+                if (!empty($verifyEmail)) {
+                    $res = array('msg' => 'EMAIL MUST BE UNIQUE', 'type' => 'warning');
+                } else if (!empty($verifyPhone)) {
+                    $res = array('msg' => 'PHONE NUMBER MUST BE UNIQUE', 'type' => 'warning');
+                } else {
+                    $data = $this->model->updateProfile(
+                        $this->idUser,
+                        $fName,
+                        $lName,
+                        $email,
+                        $phone,
+                        $address,
+                        $photoDirectory,
+                        $passHash
+                    );
+                    if ($data > 0) {
+                        if (!empty($namePhoto)) {
+                            move_uploaded_file($tmpPhoto, $photoDirectory);
+                        }
+                        if (empty($newPass)) {
+                            $bool = false;
+                        } else {
+                            $bool = true;
+                        }
+                        
+                        $res = array('msg' => 'PROFILE UPDATED', 'type' => 'success', 'password' => $bool);
+                    } else {
+                        $res = array('msg' => 'PROFILE WAS NOT UPDATED', 'type' => 'error');
+                    }
+                }
+            }
+        } else {
+            $res = array('msg' => 'ERROR, PROFILE WAS NOT UPDATED', 'type' => 'error');
+        }
+        echo json_encode($res, JSON_UNESCAPED_UNICODE);
+        die();
+    }
+    public function logout()
+    {
+        session_destroy();
+        header('Location: ' . BASE_URL);
+    }
 }
-?>
