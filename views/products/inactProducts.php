@@ -8,7 +8,7 @@
                 <a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
                 </a>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="<?php echo BASE_URL . 'products'; ?>"><i class="fas fa-boxes-stacked text-primary" style="color: rgb(255, 0, 0)"></i> Active Product</a>
+                    <li><a class="dropdown-item" href="<?php echo BASE_URL . 'products'; ?>"><i class="fas fa-boxes-stacked text-primary" style="color: rgb(255, 0, 0)"></i> Product</a>
                     </li>
                     <hr class="dropdown-divider">
                     <li><a class="dropdown-item" href="<?php echo BASE_URL . 'products/inactiveProductPDF' ?>" target="_blank"><i class="fas fa-file-pdf text-danger"></i> Inactive PDF</a>
@@ -31,7 +31,6 @@
                         <th>Quantity</th>
                         <th>Measure</th>
                         <th>Category</th>
-                        <th>Photo</th>
                         <th></th>
                     </tr>
                 </thead>

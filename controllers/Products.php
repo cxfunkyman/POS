@@ -34,7 +34,8 @@ class Products extends Controller
         $data = $this->model->getProducts(1);
 
         for ($i = 0; $i < count($data); $i++) {
-            $data[$i]['photo'] = '<img class="img-thumbnail" src="' . $data[$i]['photo'] . '" alt="Photo goes here" width="100">';
+            $photo = ($data[$i]['photo'] == null || !file_exists($data[$i]['photo'])) ? 'assets/images/products/default.jpg' : $data[$i]['photo'] ;
+            $data[$i]['photo'] = '<img class="img-thumbnail" src="' . $photo . '" alt="Photo goes here" width="100">';
             $data[$i]['actions'] = '<div>
             <button class="btn btn-danger" type="button" onclick="deleteProduct(' . $data[$i]['id'] . ')"><i class="fa fa-trash"></i></button>
             <button class="btn btn-info" type="button" onclick="editProduct(' . $data[$i]['id'] . ')"><i class="fas fa-user-edit"></i></button>
@@ -178,7 +179,6 @@ class Products extends Controller
         $data = $this->model->getProducts(0);
 
         for ($i = 0; $i < count($data); $i++) {
-            $data[$i]['photo'] = '<img class="img-thumbnail" src="' . $data[$i]['photo'] . '" alt="Photo goes here" width="100">';
             $data[$i]['actions'] = '<div>
             <button class="btn btn-danger" type="button" onclick="restoreProduct(' . $data[$i]['id'] . ')"><i class="fa fa-check-circle"></i></button>
             </div>';

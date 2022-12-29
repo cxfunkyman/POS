@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', function () {
             { data: 'quantity' },
             { data: 'measure' },
             { data: 'category' },
-            { data: 'photo' },
             { data: 'actions' }
         ],
         dom,

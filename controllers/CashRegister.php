@@ -110,8 +110,9 @@ class CashRegister extends Controller
         $data = $this->model->getExpenseHistory();
         if (!empty($data)) {
             for ($i = 0; $i < count($data); $i++) {
-                $data[$i]['photo'] = '<a href="' . BASE_URL . $data[$i]['photo'] . '" target="_blank">
-                <img class="img-thumbnail" src="' . BASE_URL . $data[$i]['photo'] . '" width="100">
+                $photo = ($data[$i]['photo'] == null || !file_exists($data[$i]['photo'])) ? 'assets/images/expenses/default.png' : $data[$i]['photo'] ;
+                $data[$i]['photo'] = '<a href="' . $photo . '" target="_blank">
+                <img class="img-thumbnail" src="' . $photo . '" width="100">
                 </a>';
             }
         }

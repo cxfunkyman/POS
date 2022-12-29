@@ -1,5 +1,6 @@
 <?php
-define('BASE_URL', 'http://localhost/POS/');
+//define('BASE_URL', 'http://localhost/POS/'); // To work with XAMPP
+define('BASE_URL', 'http://10.0.0.57/POS/'); // Work with local network
 define('HOST', 'localhost');
 define('USER', 'root');
 define('PASS', '');

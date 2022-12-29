@@ -1,5 +1,6 @@
 let tblInactiveUsers;
 document.addEventListener('DOMContentLoaded', function () {
+    //Load data with the plugin Datatable
     tblInactiveUsers = $('#tblInactiveUsers').DataTable({
         ajax: {
             url: base_url + '/Users/listInactiveUsers',

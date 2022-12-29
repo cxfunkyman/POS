@@ -39,10 +39,9 @@ class Users extends Controller
             } else {
                 $data[$i]['rol'] = '<span class="badge bg-info">SALESPERSON</span>';
             }
-            if (!file_exists($data[$i]['profile'])) {
-                $data[$i]['profile'] = 'assets/images/profile/guestUser.png';
-            }
-            $data[$i]['profile'] = '<img class="img-thumbnail" src="' . $data[$i]['profile'] . '" alt="Photo goes here" width="100">';
+            $photo = ($data[$i]['profile'] == null || !file_exists($data[$i]['profile'])) ? 'assets/images/profile/guestUser.png' : $data[$i]['profile'] ;
+            $data[$i]['profile'] = '<img class="img-thumbnail" src="' . $photo . '" alt="Photo goes here" width="100">';
+
             $data[$i]['actions'] = '<div>
             <button class="btn btn-danger" type="button" onclick="deleteUser(' . $data[$i]['id'] . ')"><i class="fa fa-trash"></i></button>
             <button class="btn btn-info" type="button" onclick="editUser(' . $data[$i]['id'] . ')"><i class="fas fa-user-edit"></i></button>
@@ -220,6 +219,7 @@ class Users extends Controller
             exit;
         }
         $data = $this->model->getUsers(0);
+
         for ($i = 0; $i < count($data); $i++) {
 
             if ($data[$i]['rol'] == 1) {
@@ -229,7 +229,7 @@ class Users extends Controller
             }
 
             $data[$i]['actions'] = '<div>
-            <button class="btn btn-danger" type="button" onclick="restoreUser(' . $data[$i]['id'] . ')"><i class="fas fa-check-circle"></i></button>            
+            <button class="btn btn-danger" type="button" onclick="restoreUser(' . $data[$i]['id'] . ')"><i class="fas fa-check-circle"></i></button>
             </div>';
         }
         echo json_encode($data, JSON_UNESCAPED_UNICODE);
