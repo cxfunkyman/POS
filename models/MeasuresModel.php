@@ -7,7 +7,7 @@ class MeasuresModel extends Query
         parent::__construct();
     }
     public function getMeasures($status)
-    {        
+    {
         $sql = "SELECT * FROM measures WHERE `status` = $status";
         return $this->selectAll($sql);
     }
@@ -24,7 +24,7 @@ class MeasuresModel extends Query
             $sql = "SELECT id FROM measures WHERE $field = '$value'";
         } else {
             $sql = "SELECT id FROM measures WHERE $field = '$value' AND id != $id";
-        } 
+        }
         return $this->select($sql);
     }
     public function eraseMeasure($status, $idMeasure)

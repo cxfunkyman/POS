@@ -36,8 +36,8 @@ if (file_exists($dirController)) {
     if (method_exists($controller, $method)) {
         $controller -> $method($parameter);
     } else {
-        echo 'Method does not exist';
+        header('location: ' . BASE_URL . 'principal/errorNotFound');
     }
 } else {
-    echo 'Controller does not exist';
+    header('location: ' . BASE_URL . 'principal/errorNotFound');
 }

@@ -145,5 +145,14 @@ class AdminModel extends Query
         $sql = "SELECT * FROM configuration";
         return $this->select($sql);
     }
-
+    public function listAccessLogs()
+    {
+        $sql = "SELECT a.*, CONCAT(u.first_name, ' ', u.last_name) as name FROM access a INNER JOIN users u ON a.id_user = u.id";
+        return $this->selectAll($sql);
+    }
+    public function clearAccessLogs()
+    {
+        $sql = "TRUNCATE access";
+        return $this->select($sql);
+    }
 }

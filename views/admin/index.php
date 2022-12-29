@@ -55,10 +55,20 @@
                     </div>
                 </div>
                 <!-- Editor made with ckeditor from https://ckeditor.com/-->
-                <div class="col-lg-9 col-sm-6 mb-2">                    
+                <div class="col-lg-9 col-sm-6 mb-2">
                     <div class="form-group">
                         <label for="configMessage">Message (Optional)</label>
                         <textarea id="configMessage" class="form-control" name="configMessage" rows="3" placeholder="Desired message"><?php echo $data['company']['message']; ?></textarea>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="form-group">
+                        <label for="logoCompany">Logo (only PNG 319X53)</label>
+                        <input id="logoCompany" class="form-control" type="file" name="logoCompany">
+                    </div>
+                    <br>
+                    <div id="containerPreview">
+                        <img class="img-thumbnail" src="<?php echo BASE_URL . 'assets/images/logo-img.png' ?>" alt="">
                     </div>
                 </div>
             </div>

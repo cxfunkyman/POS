@@ -19,7 +19,7 @@ class ClientsModel extends Query
         $clientEmail,
         $clientAddress
     ) {
-        $sql = "INSERT INTO clients ( 
+        $sql = "INSERT INTO clients (
             identification,
             num_identity,
             name,

@@ -34,7 +34,20 @@ class Home extends Controller
                         $_SESSION['user_name'] = $data['first_name'];
                         $_SESSION['user_lname'] = $data['last_name'];
                         $_SESSION['user_email'] = $data['email'];
-                        $res = array('msg' => 'PASSWORD IS CORRECT', 'type' => 'success');
+                        $_SESSION['user_profile'] = $data['profile'];
+                        $_SESSION['user_rol'] = $data['rol'];
+
+                        $event = 'LOGIN';
+                        $ip = $_SERVER['REMOTE_ADDR'];
+                        $details = $_SERVER['HTTP_USER_AGENT'];
+
+                        $accessLog = $this->model->regAccess($event, $ip, $details, $_SESSION['id_user']);
+
+                        if ($accessLog > 0) {
+                            $res = array('msg' => 'PASSWORD IS CORRECT', 'msg2' => 'WELCOME, REDIRECTING NOW...', 'type' => 'success');
+                        } else {
+                            $res = array('msg' => 'ERROR WITH LOGIN PROCESS', 'type' => 'error');
+                        }
                     } else {
                         $res = array('msg' => 'INCORRECT PASSWORD', 'type' => 'warning');
                     }

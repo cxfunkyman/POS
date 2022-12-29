@@ -5,8 +5,8 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!--favicon-->
-    <link rel="icon" href="<?php echo BASE_URL; ?>assets/images/favicon-32x32.png" type="image/png" />
+	<!--favicon-->
+	<link rel="icon" href="<?php echo BASE_URL; ?>assets/images/favicon-32x32.ico" type="image/png" />
     <!-- loader-->
     <link href="<?php echo BASE_URL; ?>assets/css/pace.min.css" rel="stylesheet" />
     <script src="<?php echo BASE_URL; ?>assets/js/pace.min.js"></script>
@@ -16,7 +16,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>assets/css/app.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>assets/css/icons.css" rel="stylesheet">
-    <title>Rocker - Bootstrap 5 Admin Dashboard Template</title>
+    <title><?php echo TITLE . ' - ' . $data['title']; ?></title>
 </head>
 
 <body>
@@ -30,21 +30,22 @@
                             <div class="col-lg-5 border-end">
                                 <div class="card-body">
                                     <div class="p-5">
-                                        <div class="text-start">
-                                            <img src="<?php echo BASE_URL; ?>assets/images/logo-img.png" width="180" alt="">
+                                        <div class="text-start text-center">
+                                            <img src="<?php echo BASE_URL; ?>assets/images/logo-img.png" width="350" alt="">
                                         </div>
-                                        <h4 class="mt-5 font-weight-bold">Genrate New Password</h4>
-                                        <p class="text-muted">We received your reset password request. Please enter your new password!</p>
+                                        <input type="hidden" id="resetToken" name="resetToken" value="<?php echo $data['secureToken']['token']; ?>">
+                                        <h4 class="mt-5 font-weight-bold text-center">Generate New Password</h4>
+                                        <p class="text-muted text-center">We received your reset password request. Please enter your new password!</p>
                                         <div class="mb-3 mt-5">
-                                            <label class="form-label">New Password</label>
-                                            <input type="text" class="form-control" placeholder="Enter new password" />
+                                            <label class="form-label">New Password <span class="text-danger fw-bold">*</span></label>
+                                            <input type="text" class="form-control" id="newPass" name="newPass" placeholder="Enter new password" />
                                         </div>
                                         <div class="mb-3">
-                                            <label class="form-label">Confirm Password</label>
-                                            <input type="text" class="form-control" placeholder="Confirm password" />
+                                            <label class="form-label">Confirm Password <span class="text-danger fw-bold">*</span></label>
+                                            <input type="text" class="form-control" id="confirmPass" name="confirmPass" placeholder="Confirm password" />
                                         </div>
                                         <div class="d-grid gap-2">
-                                            <button type="button" class="btn btn-primary">Change Password</button> 
+                                            <button type="button" class="btn btn-primary" id="btnChangePass" name="btnChangePass">Change Password</button>
                                             <a href="<?php echo BASE_URL; ?>" class="btn btn-light"><i class='bx bx-arrow-back mr-1'></i>Back to Login</a>
                                         </div>
                                     </div>
@@ -60,6 +61,11 @@
         </div>
     </div>
     <!-- end wrapper -->
+	<script>
+		const base_url = "<?php echo BASE_URL; ?>";
+	</script>
+	<script src="<?php echo BASE_URL; ?>assets/js/reset.js"></script>
+	<script src="<?php echo BASE_URL; ?>assets/js/sweetalert2.all.min.js"></script>
 </body>
 
 </html>

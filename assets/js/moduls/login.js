@@ -31,16 +31,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (this.readyState == 4 && this.status == 200) {
                     const res = JSON.parse(this.responseText);
                     //Custom error message from https://sweetalert2.github.io/
-                    Swal.fire(
-                        'Message?',
-                        res.msg,
-                        res.type
-                    )
+                    customAlert(res.type, res.msg, 2000);
                     if (res.type == 'success') {
                         setTimeout(() => {
                             let timerInterval
                             Swal.fire({
-                                title: res.msg,
+                                title: res.msg2,
                                 html: 'You will be redirected in <b></b> milliseconds.',
                                 timer: 2000,
                                 timerProgressBar: true,
@@ -70,4 +66,14 @@ document.addEventListener('DOMContentLoaded', function () {
 function clearErrorFields() {
     emailError.textContent = '';
     passwordError.textContent = '';
+}
+function customAlert(type, msg, timer) {
+    Swal.fire({
+        toast: true,
+        position: 'top-right',
+        icon: type,
+        title: msg,
+        showConfirmButton: false,
+        timer: timer
+    })
 }

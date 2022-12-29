@@ -6,7 +6,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!--favicon-->
-	<link rel="icon" href="<?php echo BASE_URL; ?>assets/images/favicon-32x32.png" type="image/png" />
+	<link rel="icon" href="<?php echo BASE_URL; ?>assets/images/favicon-32x32.ico" type="image/png" />
 	<!-- loader-->
 	<link href="<?php echo BASE_URL; ?>assets/css/pace.min.css" rel="stylesheet" />
 	<script src="<?php echo BASE_URL; ?>assets/js/pace.min.js"></script>
@@ -16,7 +16,7 @@
 	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 	<link href="<?php echo BASE_URL; ?>assets/css/app.css" rel="stylesheet">
 	<link href="<?php echo BASE_URL; ?>assets/css/icons.css" rel="stylesheet">
-	<title>Rocker - Bootstrap 5 Admin Dashboard Template</title>
+	<title><?php echo TITLE . ' - ' . $data['title']; ?></title>
 </head>
 
 <body class="bg-forgot">
@@ -33,11 +33,12 @@
 						<p class="text-muted">Enter your registered email ID to reset the password</p>
 						<div class="my-4">
 							<label class="form-label">Email id</label>
-							<input type="text" class="form-control form-control-lg" placeholder="example@user.com" />
+							<input type="email" class="form-control form-control-lg" id="forgotEmail" name="forgotEmail" placeholder="example@user.com" autocomplete="off"/>
 						</div>
 						<div class="d-grid gap-2">
-							<button type="button" class="btn btn-primary btn-lg">Send</button> 
-                            <a href="<?php echo BASE_URL; ?>" class="btn btn-light btn-lg"><i class='bx bx-arrow-back me-1'></i>Back to Login</a>
+							<button type="button" class="btn btn-primary btn-lg" id="btnForgot" name="btnForgot">Send</button>
+                            <a href="<?php echo BASE_URL; ?>" class="btn btn-light btn-lg">
+							<i class='bx bx-arrow-back me-1'></i>Back to Login</a>
 						</div>
 					</div>
 				</div>
@@ -45,6 +46,12 @@
 		</div>
 	</div>
 	<!-- end wrapper -->
+	<script>
+		const base_url = "<?php echo BASE_URL; ?>";
+	</script>
+	<script src="<?php echo BASE_URL; ?>assets/js/forgot.js"></script>
+	<script src="<?php echo BASE_URL; ?>assets/js/sweetalert2.all.min.js"></script>
 </body>
 
 </html>
+

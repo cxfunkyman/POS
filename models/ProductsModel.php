@@ -112,6 +112,5 @@ class ProductsModel extends Query
         $sql = "UPDATE products SET barcode = ? WHERE id = ? AND status = ?";
         $array = array($barcode, $id, $status);
         $this->save($sql, $array);
-        //return;
     }
 }

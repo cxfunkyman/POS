@@ -15,6 +15,10 @@ class Users extends Controller
     }
     public function index()
     {
+        if ($_SESSION['user_rol'] == 2) {
+            header('Location: ' . BASE_URL . 'admin/permissions');
+            exit;
+        }
         $data['title'] = 'Users';
         $data['script'] = 'users.js';
         $this->views->getView('users', 'index', $data);
@@ -22,7 +26,12 @@ class Users extends Controller
     //Method to show the selected user
     public function listUsers()
     {
+        if ($_SESSION['user_rol'] == 2) {
+            header('Location: ' . BASE_URL . 'admin/permissions');
+            exit;
+        }
         $data = $this->model->getUsers(1);
+        
         for ($i = 0; $i < count($data); $i++) {
 
             if ($data[$i]['rol'] == 1) {
@@ -30,7 +39,10 @@ class Users extends Controller
             } else {
                 $data[$i]['rol'] = '<span class="badge bg-info">SALESPERSON</span>';
             }
-
+            if (!file_exists($data[$i]['profile'])) {
+                $data[$i]['profile'] = 'assets/images/profile/guestUser.png';
+            }
+            $data[$i]['profile'] = '<img class="img-thumbnail" src="' . $data[$i]['profile'] . '" alt="Photo goes here" width="100">';
             $data[$i]['actions'] = '<div>
             <button class="btn btn-danger" type="button" onclick="deleteUser(' . $data[$i]['id'] . ')"><i class="fa fa-trash"></i></button>
             <button class="btn btn-info" type="button" onclick="editUser(' . $data[$i]['id'] . ')"><i class="fas fa-user-edit"></i></button>
@@ -42,6 +54,10 @@ class Users extends Controller
     //Method to signUp and modify users
     public function signUp()
     {
+        if ($_SESSION['user_rol'] == 2) {
+            header('Location: ' . BASE_URL . 'admin/permissions');
+            exit;
+        }
         if (isset($_POST)) {
             if (empty($_POST['fName'])) {
                 $res = array('msg' => 'FIRST NAME REQUIRED', 'type' => 'warning');
@@ -66,11 +82,23 @@ class Users extends Controller
                 $password = strClean($_POST['password']);
                 $rol = strClean($_POST['rol']);
                 $id = strClean($_POST['idUser']);
-
+                
+                $profile = $_FILES['userPhoto'];
+                $actualPhoto = strClean($_POST['actualPhoto']);
+                $namePhoto = $profile['name'];
+                $tmpPhoto = $profile['tmp_name'];
+    
+                $photoDirectory = null;
+                if (!empty($namePhoto)) {
+                    $photoDate = $fName . '_' . $lName . '_' . date('YmdHis');
+                    $photoDirectory = 'assets/images/profile/' . $photoDate . '.jpg';
+                } else if (!empty($actualPhoto) && empty($namePhoto)) {
+                    $photoDirectory = $actualPhoto;
+                }
                 if ($id == '') {
                     $hash = password_hash($password, PASSWORD_DEFAULT);
 
-                    //Verify if the data exist already  
+                    //Verify if the data exist already
                     $verifyEmail = $this->model->getValidate('email', $email, 'register', 0);
 
                     if (empty($verifyEmail)) {
@@ -82,10 +110,14 @@ class Users extends Controller
                                 $email,
                                 $phone,
                                 $address,
+                                $photoDirectory,
                                 $hash,
                                 $rol
                             );
                             if ($data > 0) {
+                                if (!empty($namePhoto)) {
+                                    move_uploaded_file($tmpPhoto, $photoDirectory);
+                                }
                                 $res = array('msg' => 'USER REGISTERED', 'type' => 'success');
                             } else {
                                 $res = array('msg' => 'ERROR, USER NOT REGISTERED', 'type' => 'error');
@@ -109,10 +141,14 @@ class Users extends Controller
                                 $email,
                                 $phone,
                                 $address,
+                                $photoDirectory,
                                 $rol,
                                 $id
                             );
                             if ($data > 0) {
+                                if (!empty($namePhoto)) {
+                                    move_uploaded_file($tmpPhoto, $photoDirectory);
+                                }
                                 $res = array('msg' => 'USER UPDATED', 'type' => 'success');
                             } else {
                                 $res = array('msg' => 'ERROR, USER NOT UPDATED', 'type' => 'error');
@@ -134,6 +170,10 @@ class Users extends Controller
     //Method to delete users
     public function delUsers($id)
     {
+        if ($_SESSION['user_rol'] == 2) {
+            header('Location: ' . BASE_URL . 'admin/permissions');
+            exit;
+        }
         if (isset($_GET)) {
             if (is_numeric($id)) {
                 $data = $this->model->delete(0, $id);
@@ -154,6 +194,10 @@ class Users extends Controller
     //Method edit\recover users
     public function editedUser($id)
     {
+        if ($_SESSION['user_rol'] == 2) {
+            header('Location: ' . BASE_URL . 'admin/permissions');
+            exit;
+        }
         $data = $this->model->userEdit($id);
         echo json_encode($data, JSON_UNESCAPED_UNICODE);
         die();
@@ -161,12 +205,20 @@ class Users extends Controller
     //Method to view inactive users
     public function inactive()
     {
+        if ($_SESSION['user_rol'] == 2) {
+            header('Location: ' . BASE_URL . 'admin/permissions');
+            exit;
+        }
         $data['title'] = 'Inactive Users';
         $data['script'] = 'inactive_users.js';
         $this->views->getView('users', 'inactive', $data);
     }
     public function listInactiveUsers()
     {
+        if ($_SESSION['user_rol'] == 2) {
+            header('Location: ' . BASE_URL . 'admin/permissions');
+            exit;
+        }
         $data = $this->model->getUsers(0);
         for ($i = 0; $i < count($data); $i++) {
 
@@ -185,6 +237,10 @@ class Users extends Controller
     }
     public function userRestore($id)
     {
+        if ($_SESSION['user_rol'] == 2) {
+            header('Location: ' . BASE_URL . 'admin/permissions');
+            exit;
+        }
         if (isset($_GET)) {
             if (is_numeric($id)) {
                 $data = $this->model->delete(1, $id);
@@ -249,8 +305,7 @@ class Users extends Controller
                 $res = array('msg' => 'PHONE NUMBER REQUIRED', 'type' => 'warning');
             } else if (empty($address)) {
                 $res = array('msg' => 'ADDRESS REQUIRED', 'type' => 'warning');
-            }
-            else {
+            } else {
                 $verifyEmail = $this->model->getprofileValidate('email', $email, $this->idUser);
                 $verifyPhone = $this->model->getprofileValidate('phone_number', $phone, $this->idUser);
                 $profile = $this->model->userProfile($this->idUser);
@@ -292,7 +347,7 @@ class Users extends Controller
                         } else {
                             $bool = true;
                         }
-                        
+
                         $res = array('msg' => 'PROFILE UPDATED', 'type' => 'success', 'password' => $bool);
                     } else {
                         $res = array('msg' => 'PROFILE WAS NOT UPDATED', 'type' => 'error');
@@ -307,7 +362,15 @@ class Users extends Controller
     }
     public function logout()
     {
-        session_destroy();
-        header('Location: ' . BASE_URL);
+        $event = 'LOGOUT';
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $details = $_SERVER['HTTP_USER_AGENT'];
+
+        $accessLog = $this->model->regAccess($event, $ip, $details, $this->idUser);
+
+        if ($accessLog > 0) {
+            session_destroy();
+            header('Location: ' . BASE_URL);
+        }
     }
 }

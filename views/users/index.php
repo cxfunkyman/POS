@@ -24,25 +24,27 @@
                 <h5 class="card-title text-center"><i class="fas fa-user"></i> Users List</h5>
                 <hr>
                 <div class="table-responsive">
-                <table class="table table-bordered table-striped table-hover nowrap" id="tblUsers" style="width: 100%;">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone Number</th>
-                            <th>Address</th>
-                            <th>Rol</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+                    <table class="table table-bordered table-striped table-hover nowrap" id="tblUsers" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone Number</th>
+                                <th>Address</th>
+                                <th>Profile</th>
+                                <th>Rol</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <div class="tab-pane fade mt-2" id="nav-new" role="tabpanel" aria-labelledby="nav-new-tab" tabindex="0">
                 <form class="p-4" id="newForm" autocomplete="off">
                     <input type="hidden" id="idUser" name="idUser" class="form-control">
+                    <input type='hidden' id='actualPhoto' name='actualPhoto'>
                     <div class="row">
                         <div class="col-lg-4 col-sm-6 mb-2">
                             <label>First Name</label>
@@ -103,6 +105,15 @@
                                 </select>
                             </div>
                             <span id="errorRol" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label for="userPhoto">User Photo</label>
+                                <input id="userPhoto"  name="userPhoto" class="form-control" type="file">
+                            </div>
+                            <br>
+                            <div id="containerPreview">
+                            </div>
                         </div>
                     </div>
                     <div class="text-end">

@@ -35,6 +35,7 @@ function insertRegistry(url, idForm, dataTbl, idButton, action, idUsed) {
                 if (dataTbl != null) {
                     document.querySelector(idUsed).value = '';
                     idButton.textContent = 'Register';
+                    containerPreview.innerHTML = '';
                     idForm.reset();                
                     dataTbl.ajax.reload();
                 }

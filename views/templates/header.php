@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!--favicon-->
-    <link rel="icon" href="<?php echo BASE_URL; ?>assets/images/favicon-32x32.png" type="image/png" />
+    <link rel="icon" href="<?php echo BASE_URL; ?>assets/images/favicon-32x32.ico" type="image/png" />
     <link href="<?php echo BASE_URL; ?>assets/plugins/simplebar/css/simplebar.css" rel="stylesheet" />
     <link href="<?php echo BASE_URL; ?>assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet" />
     <link href="<?php echo BASE_URL; ?>assets/plugins/metismenu/css/metisMenu.min.css" rel="stylesheet" />
@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/header-colors.css" />
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/plugins/fullcalendar/css/main.min.css" />
-    
+
     <title><?php echo TITLE . ' - ' . $data['title']; ?></title>
 </head>
 
@@ -55,6 +55,7 @@
                         <div class="menu-title">Dashboard</div>
                     </a>
                 </li>
+               <?php if ($_SESSION['user_rol'] == 1) { ?>
                 <li>
                     <a href="javascript:;" class="has-arrow">
                         <div class="parent-icon"><i class="fa-solid fa-screwdriver-wrench"></i>
@@ -66,8 +67,11 @@
                         </li>
                         <li> <a href="<?php echo BASE_URL . 'admin/configData'; ?>"><i class="bx bx-right-arrow-alt"></i>Configuration</a>
                         </li>
+                        <li> <a href="<?php echo BASE_URL . 'admin/accessLogs'; ?>"><i class="bx bx-right-arrow-alt"></i>Access Logs</a>
+                        </li>
                     </ul>
                 </li>
+                <?php } ?>
                 <li>
                     <a href="javascript:;" class="has-arrow">
                         <div class="parent-icon"><i class="fa-solid fa-clipboard-list"></i>
@@ -90,6 +94,7 @@
                         <div class="menu-title">Clients</div>
                     </a>
                 </li>
+                <?php if ($_SESSION['user_rol'] == 1) { ?>
                 <li>
                     <a href="<?php echo BASE_URL . 'suppliers'; ?>">
                         <div class="parent-icon"><i class='fa-solid fa-cart-flatbed-suitcase'></i>
@@ -97,6 +102,7 @@
                         <div class="menu-title">Suppliers</div>
                     </a>
                 </li>
+                <?php } ?>
                 <li>
                     <a href="<?php echo BASE_URL . 'cashRegister'; ?>">
                         <div class="parent-icon"><i class="fa-solid fa-cash-register"></i>
@@ -139,6 +145,7 @@
                         <div class="menu-title">Reserves</div>
                     </a>
                 </li>
+                <?php if ($_SESSION['user_rol'] == 1) { ?>
                 <li>
                     <a href="<?php echo BASE_URL . 'inventory'; ?>">
                         <div class="parent-icon"><i class="fa-solid fa-file-lines"></i>
@@ -146,6 +153,7 @@
                         <div class="menu-title">Inventory & Kardex</div>
                     </a>
                 </li>
+                <?php } ?>
             </ul>
             <!--end navigation-->
         </div>
@@ -163,7 +171,12 @@
                     </div>
                     <div class="user-box dropdown">
                         <a class="d-flex align-items-center nav-link dropdown-toggle dropdown-toggle-nocaret" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="<?php echo BASE_URL. 'assets/images/avatars/cx.jpg' ?>" class="user-img" alt="user avatar">
+                            <?php if ($_SESSION['user_profile'] == null || !file_exists($_SESSION['user_profile'])) {
+                                $profile = BASE_URL . 'assets/images/profile/guestUser.png';
+                            } else {
+                                $profile = BASE_URL . $_SESSION['user_profile'];
+                            } ?>
+                            <img src="<?php echo $profile ?>" class="user-img" alt="user avatar">
                             <div class="user-info ps-3">
                                 <p class="user-name mb-0"><?php echo $_SESSION['user_name'] . ' ' . $_SESSION['user_lname']; ?></p>
                                 <p class="designattion mb-0"><?php echo $_SESSION['user_email']; ?></p>

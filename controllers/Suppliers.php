@@ -13,12 +13,20 @@ class Suppliers extends Controller
     }
     public function index()
     {
+        if ($_SESSION['user_rol'] == 2) {
+            header('Location: ' . BASE_URL . 'admin/permissions');
+            exit;
+        }
         $data['title'] = 'Suppliers';
         $data['script'] = 'supplier.js'; // the script of the page is assigned to the array
         $this->views->getView('suppliers', 'index', $data);
     }
     public function listSuppliers()
     {
+        if ($_SESSION['user_rol'] == 2) {
+            header('Location: ' . BASE_URL . 'admin/permissions');
+            exit;
+        }
         $data = $this->model->getSuppliers(1);
 
         for ($i = 0; $i < count($data); $i++) {
@@ -32,6 +40,10 @@ class Suppliers extends Controller
     }
     public function registerSuppliers()
     {
+        if ($_SESSION['user_rol'] == 2) {
+            header('Location: ' . BASE_URL . 'admin/permissions');
+            exit;
+        }
         if (isset($_POST['supplierTaxID']) && isset($_POST['supplierName'])) {
             $id = strClean($_POST['idSupplier']);
             $supplierTaxID = strClean($_POST['supplierTaxID']);
@@ -118,6 +130,10 @@ class Suppliers extends Controller
     }
     public function delSupplier($idSupplier)
     {
+        if ($_SESSION['user_rol'] == 2) {
+            header('Location: ' . BASE_URL . 'admin/permissions');
+            exit;
+        }
         if (isset($_GET)) {
             if (is_numeric($idSupplier)) {
                 $data = $this->model->eraseSupplier(0, $idSupplier);
@@ -137,18 +153,30 @@ class Suppliers extends Controller
     }
     public function modifySuppliers($idSupplier)
     {
+        if ($_SESSION['user_rol'] == 2) {
+            header('Location: ' . BASE_URL . 'admin/permissions');
+            exit;
+        }
         $data = $this->model->updateSupplier($idSupplier);
         echo json_encode($data, JSON_UNESCAPED_UNICODE);
         die();
     }
     public function inactiveSupplier()
     {
+        if ($_SESSION['user_rol'] == 2) {
+            header('Location: ' . BASE_URL . 'admin/permissions');
+            exit;
+        }
         $data['title'] = 'Inactive Suppliers';
         $data['script'] = 'supplierInactive.js';
         $this->views->getView('Suppliers', 'inactSuppliers', $data);
     }
     public function listInactiveSuppliers()
     {
+        if ($_SESSION['user_rol'] == 2) {
+            header('Location: ' . BASE_URL . 'admin/permissions');
+            exit;
+        }
         $data = $this->model->getSuppliers(0);
 
         for ($i = 0; $i < count($data); $i++) {
@@ -161,6 +189,10 @@ class Suppliers extends Controller
     }
     public function supplierRestore($idSuppliers)
     {
+        if ($_SESSION['user_rol'] == 2) {
+            header('Location: ' . BASE_URL . 'admin/permissions');
+            exit;
+        }
         if (isset($_GET)) {
             if (is_numeric($idSuppliers)) {
                 $data = $this->model->eraseSupplier(1, $idSuppliers);

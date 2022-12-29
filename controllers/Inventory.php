@@ -15,6 +15,10 @@ class Inventory extends Controller
             header('Location: ' . BASE_URL);
             exit;
         }
+        if ($_SESSION['user_rol'] == 2) {
+            header('Location: ' . BASE_URL . 'admin/permissions');
+            exit;
+        }
         $this->idUser = $_SESSION['id_user'];
     }
     public function index()

@@ -19,6 +19,10 @@ const errorAddress = document.querySelector('#errorAddress');
 const errorPassword = document.querySelector('#errorPassword');
 const errorRol = document.querySelector('#errorRol');
 
+const userPhoto = document.querySelector('#userPhoto');
+const containerPreview = document.querySelector('#containerPreview');
+const actualPhoto = document.querySelector('#actualPhoto');
+
 document.addEventListener('DOMContentLoaded', function () {
     //Load data with the plugin Datatable
     tblUsers = $('#tblUsers').DataTable({
@@ -31,6 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
             { data: 'email' },
             { data: 'phone_number' },
             { data: 'address' },
+            { data: 'profile' },
             { data: 'rol' },
             { data: 'actions' }
         ],
@@ -39,9 +44,28 @@ document.addEventListener('DOMContentLoaded', function () {
         responsive: true,
         order: [[0, 'asc']]
     });
+
+    //Preview selected photo
+    userPhoto.addEventListener('change', function (e) {
+        if (e.target.files[0].type == 'image/png' ||
+            e.target.files[0].type == 'image/jpg' ||
+            e.target.files[0].type == 'image/jpeg') {
+
+            const url = e.target.files[0];
+            const tmpUrl = URL.createObjectURL(url);
+            containerPreview.innerHTML = `<img class="img-thumbnail" src="${tmpUrl}" width="200">
+                    <button class="btn btn-danger" type="button" onclick="delPreview()"><i class="fas fa-trash"></i></button>`;
+        } else {
+            userPhoto.value = '';
+            customAlert('warning', 'ONLY JPG, JPEG AND PNG IMAGES ARE ACEPTED')
+        }
+    })
+
     //Clear tab new form fields
     btnNew.addEventListener('click', function (e) {
+        delPreview();
         cleanFields();
+        
     })
     //Register users
     newForm.addEventListener('submit', function (e) {
@@ -49,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         //Elements to demostrate the errors
         clearErrorFields();
-        
+
         if (fName.value == '') {
             errorFName.textContent = 'FIRST NAME REQUIRED';
         }
@@ -95,6 +119,8 @@ function editUser(idUser) {
     //verify status
     http.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
+            // console.log(this.responseText);
+            // return;
             const res = JSON.parse(this.responseText);
 
             id.value = res.id;
@@ -103,6 +129,9 @@ function editUser(idUser) {
             email.value = res.email;
             phone.value = res.phone_number;
             address.value = res.address;
+            actualPhoto.value = res.profile;
+            containerPreview.innerHTML = `<img class="img-thumbnail" src="${base_url + res.profile}" width="200">
+            <button class="btn btn-danger" type="button" onclick="delPreview()"><i class="fas fa-trash"></i></button>`;
             password.value = '0000000';
             password.setAttribute('readonly', 'readonly');
             rol.value = res.rol;
@@ -130,4 +159,9 @@ function clearErrorFields() {
     errorAddress.textContent = '';
     errorPassword.textContent = '';
     errorRol.textContent = '';
+}
+function delPreview() {
+    userPhoto.value = '';
+    containerPreview.innerHTML = '';
+    actualPhoto.value = '';
 }

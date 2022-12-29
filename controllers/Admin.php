@@ -39,6 +39,10 @@ class Admin extends Controller
     // Company data
     public function configData()
     {
+        if ($_SESSION['user_rol'] == 2) {
+            header('Location: ' . BASE_URL . 'admin/permissions');
+            exit;
+        }
         $data['title'] = 'Company data';
         $data['script'] = 'configData.js'; // the script of the page is assigned to the array
         $data['company'] = $this->model->getCompanies();
@@ -47,6 +51,10 @@ class Admin extends Controller
     //Modify company data
     public function modifyCompany()
     {
+        if ($_SESSION['user_rol'] == 2) {
+            header('Location: ' . BASE_URL . 'admin/permissions');
+            exit;
+        }
         if (isset($_POST)) {
             $taxID = strClean($_POST['taxID']);
             $configName = strClean($_POST['configName']);
@@ -56,6 +64,14 @@ class Admin extends Controller
             $configMessage = strClean($_POST['configMessage']);
             $configTax = strClean($_POST['configTax']);
             $idCompany = strClean($_POST['idCompany']);
+            $logoCompany = $_FILES['logoCompany'];
+
+            if (!empty($logoCompany['name'])) {
+                $directory = 'assets/images/logo-img.png';
+                move_uploaded_file($logoCompany['tmp_name'], $directory);
+            }
+
+
 
             if (empty($taxID)) {
                 $res = array('msg' => 'TAX ID REQUIRED', 'type' => 'warning');
@@ -454,5 +470,46 @@ class Admin extends Controller
         header('Content-Disposition: attachment;filename="recentStockProduct-' . $date . '.xlsx"');
         $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
         $writer->save('php://output');
+    }
+    // list access logs
+    public function accessLogs()
+    {
+        if ($_SESSION['user_rol'] == 2) {
+            header('Location: ' . BASE_URL . 'admin/permissions');
+            exit;
+        }
+        $data['title'] = 'Access Logs';
+        $data['script'] = 'logs.js';
+        $this->views->getView('admin', 'logs', $data);
+    }
+    public function listLogs()
+    {
+        if ($_SESSION['user_rol'] == 2) {
+            header('Location: ' . BASE_URL . 'admin/permissions');
+            exit;
+        }
+        $data = $this->model->listAccessLogs();
+        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        die();
+    }
+    public function clearLogs()
+    {
+        if ($_SESSION['user_rol'] == 2) {
+            header('Location: ' . BASE_URL . 'admin/permissions');
+            exit;
+        }
+        $data = $this->model->clearAccessLogs();
+        if (empty($data)) {
+            $res = array('msg' => 'SUCCESS, LOGS WERE DELETED.', 'type' => 'success');
+        } else {
+            $res = array('msg' => 'ERROR, LOGS WERE NOT DELETED.', 'type' => 'error');
+        }
+        echo json_encode($res, JSON_UNESCAPED_UNICODE);
+        die();
+    }
+    public function permissions()
+    {
+        $data['title'] = 'Forbidden';
+        $this->views->getView('admin', 'permissions', $data);
     }
 }

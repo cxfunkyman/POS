@@ -6,9 +6,9 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!--favicon-->
-	<link rel="icon" href="<?php echo BASE_URL; ?>assets/images/favicon-32x32.png" type="image/png" />
+	<link rel="icon" href="<?php echo BASE_URL; ?>assets/images/favicon-32x32.ico" type="image/png" />
 	<!--plugins-->
-	<link href="<?php echo BASE_URL; ?><?php echo BASE_URL; ?>assets/plugins/simplebar/css/simplebar.css" rel="stylesheet" />
+	<link href="<?php echo BASE_URL; ?>assets/plugins/simplebar/css/simplebar.css" rel="stylesheet" />
 	<link href="<?php echo BASE_URL; ?>assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet" />
 	<link href="<?php echo BASE_URL; ?>assets/plugins/metismenu/css/metisMenu.min.css" rel="stylesheet" />
 	<!-- loader-->
@@ -31,7 +31,7 @@
 				<div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
 					<div class="col mx-auto">
 						<div class="mb-4 text-center">
-							<img src="<?php echo BASE_URL; ?>assets/images/logo-img.png" width="180" alt="" />
+							<img src="<?php echo BASE_URL; ?>assets/images/logo-img.png" width="350" alt="" />
 						</div>
 						<div class="card">
 							<div class="card-body">

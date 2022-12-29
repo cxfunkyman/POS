@@ -7,7 +7,7 @@ class CategoriesModel extends Query
         parent::__construct();
      }
     public function getCategories($status)
-    {        
+    {
         $sql = "SELECT * FROM categories WHERE `status` = '$status'";
         return $this->selectAll($sql);
     }
@@ -24,7 +24,7 @@ class CategoriesModel extends Query
             $sql = "SELECT id FROM categories WHERE $field = '$value'";
         } else {
             $sql = "SELECT id FROM categories WHERE $field = '$value' AND id != $id";
-        } 
+        }
         return $this->select($sql);
     }
     public function eraseCategory($status, $idCategory)

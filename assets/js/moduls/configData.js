@@ -12,6 +12,8 @@ const errorConfigName = document.querySelector('#errorConfigName');
 const errorConfigPhone = document.querySelector('#errorConfigPhone');
 const errorConfigEmail = document.querySelector('#errorConfigEmail');
 const errorConfigAddress = document.querySelector('#errorConfigAddress');
+const logoCompany = document.querySelector('#logoCompany');
+const containerPreview = document.querySelector('#containerPreview');
 
 document.addEventListener('DOMContentLoaded', function () {
     //Inicialize the ckeditor5 editor
@@ -32,12 +34,25 @@ document.addEventListener('DOMContentLoaded', function () {
         .catch(error => {
             console.error(error);
         });
+    //Preview selected photo
+    logoCompany.addEventListener('change', function (e) {
+        if (e.target.files[0].type == 'image/png') {
+
+            const url = e.target.files[0];
+            const tmpUrl = URL.createObjectURL(url);
+            containerPreview.innerHTML = `<img class="img-thumbnail" src="${tmpUrl}" width="200">
+                <button class="btn btn-danger" type="button" onclick="delPreview()"><i class="fas fa-trash"></i></button>`;
+        } else {
+            logoCompany.value = '';
+            customAlert('warning', 'ONLY PNG IMAGES ARE ACEPTED')
+        }
+    })
 
     //Update company data
     compForm.addEventListener('submit', function (e) {
         e.preventDefault();
         clearErrorFields();
-        
+
         if (taxID.value == '') {
             errortaxID.textContent = 'TAX ID REQUIRED';
         } else if (configName.value == '') {
@@ -60,6 +75,10 @@ function clearErrorFields() {
     errorConfigPhone.textContent = '';
     errorConfigEmail.textContent = '';
     errorConfigAddress.textContent = '';
+}
+function delPreview() {
+    logoCompany.value = '';
+    containerPreview.innerHTML = '';
 }
 
 

@@ -125,7 +125,7 @@ class Credits extends Controller
 
         for ($i = 0; $i < count($data); $i++) {
             $data[$i]['credit'] = 'Nº: ' . $data[$i]['id_credit'];
- }
+        }
         echo json_encode($data, JSON_UNESCAPED_UNICODE);
         die();
     }
