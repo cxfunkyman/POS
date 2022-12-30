@@ -206,9 +206,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // for test only
         // console.log(cartListRow);
         // return;
-        if (cartListRow < 2) {
-            customAlert('warning', 'CART EMPTY');
-        } else if (idClient.value == '' &&
+        if (idClient.value == '' &&
             phoneClient.value == '' &&
             nameClient.value == ''
         ) {

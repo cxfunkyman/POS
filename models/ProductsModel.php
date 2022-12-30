@@ -94,12 +94,12 @@ class ProductsModel extends Query
     }
     public function searchBarcode($value)
     {
-        $sql = "SELECT id, description AS product, quantity FROM products WHERE code = '$value'";
+        $sql = "SELECT id, description AS product, quantity, purchase_price, sale_price FROM products WHERE code = '$value'";
         return $this->select($sql);
     }
     public function searchPName($value)
     {
-        $sql = "SELECT id, description, quantity FROM products WHERE description LIKE '%".$value."%' AND status = 1 LIMIT 10";
+        $sql = "SELECT id, description, quantity, purchase_price, sale_price FROM products WHERE description LIKE '%".$value."%' AND status = 1 LIMIT 10";
         return $this->selectAll($sql);
     }
     public function getCompanies()

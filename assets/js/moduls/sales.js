@@ -159,8 +159,10 @@ function tblLoadProducts() {
 
                         html += `<tr>
                         <td>${product.name}</td>
-                        <td>${product.sale_price}</td>
-                        <td width="125">
+                        <td width="150">
+                        <input class="form-control inputPrice" type="number" data-id="${product.id}" value="${product.sale_price}" placeholder="Price">
+                        </td>
+                        <td width="100">
                         <input class="form-control inputQuantity" type="number" data-id="${product.id}" value="${product.quantity}" placeholder="Quantity">
                         </td>
                         <td>${product.subTotalSale}</td>
@@ -171,6 +173,7 @@ function tblLoadProducts() {
                     totalAmount.value = res.totalSale;
                     btnDeleteProductTbl();
                     inputChangeQuantity();
+                    changeSalePrice();
                 } else {
                     totalAmount.value = '';
                     tblSale.innerHTML = `<tr>

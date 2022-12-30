@@ -72,9 +72,9 @@ class Sales extends Controller
                         $result = $this->model->getSaleList($product['id']);
                         $data['id'] = $result['id'];
                         $data['name'] = $result['description'];
-                        $data['sale_price'] = $result['sale_price'];
+                        $data['sale_price'] = $product['price'];
                         $data['quantity'] = $product['quantity'];
-                        $subTotal = $result['sale_price'] * $product['quantity'];
+                        $subTotal = $data['sale_price'] * $product['quantity'];
                         array_push($array['products'], $data);
                         $subTotalPrice += $subTotal;
                     }

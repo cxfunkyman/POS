@@ -109,7 +109,7 @@
                         <div class="col-md-6 mb-3">
                             <div class="form-group">
                                 <label for="userPhoto">User Photo</label>
-                                <input id="userPhoto"  name="userPhoto" class="form-control" type="file">
+                                <input id="userPhoto" name="userPhoto" class="form-control" type="file">
                             </div>
                             <br>
                             <div id="containerPreview">

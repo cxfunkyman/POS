@@ -228,6 +228,8 @@ class Products extends Controller
             $result['id'] = $row['id'];
             $result['label'] = $row['description'];
             $result['stock'] = $row['quantity'];
+            $result['sale_price'] = $row['sale_price'];
+            $result['purchase_price'] = $row['purchase_price'];
             array_push($array, $result);
         }
 
@@ -249,11 +251,13 @@ class Products extends Controller
                 $result = $this->model->updateProduct($product['id']);
                 $data['id'] = $result['id'];
                 $data['name'] = $result['description'];
-                $data['purchase_price'] = $result['purchase_price'];
-                $data['sale_price'] = $result['sale_price'];
+                // $data['purchase_price'] = $product['purchase_price'];
+                // $data['sale_price'] = $product['sale_price'];
+                $data['purchase_price'] = number_format(((empty($product['price'])) ? 0 : $product['price']), 2, '.', '');
+                $data['sale_price'] = number_format(((empty($product['price'])) ? 0 : $product['price']), 2, '.', '');
                 $data['quantity'] = $product['quantity'];
-                $subTotalPurchase = $result['purchase_price'] * $product['quantity'];
-                $subTotalSale = $result['sale_price'] * $product['quantity'];
+                $subTotalPurchase = $data['purchase_price'] * $product['quantity'];
+                $subTotalSale = $data['sale_price'] * $product['quantity'];
                 $data['subTotalPurchase'] = number_format($subTotalPurchase, 2);
                 $data['subTotalSale'] = number_format($subTotalSale, 2);
                 array_push($array['products'], $data);

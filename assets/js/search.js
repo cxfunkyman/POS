@@ -61,7 +61,8 @@ document.addEventListener('DOMContentLoaded', function () {
         select: function (event, ui) {
             //Just for test
             //console.log(ui.item.id);
-            addLocalProduct(ui.item.id, 1, ui.item.stock);
+            const price = (cartKey === 'postPurchase') ? ui.item.purchase_price : ui.item.sale_price;
+            addLocalProduct(ui.item.id, 1, ui.item.stock, price);
             searchNameInput.value = '';
             searchNameInput.focus();
             return false;
@@ -107,7 +108,8 @@ function searchProduct(value) {
             if (!res.status) {
                 customAlert('warning', 'PRODUCT DOES NOT EXIST');
             } else {
-                addLocalProduct(res.data.id, 1, res.data.quantity);
+                const price = (cartKey === 'postPurchase') ? res.data.purchase_price : res.data.sale_price;
+                addLocalProduct(res.data.id, 1, res.data.quantity, price);
             }
             searchBarcodeInput.value = '';
             searchBarcodeInput.focus();
@@ -115,11 +117,11 @@ function searchProduct(value) {
     }
 }
 //Add products to localStorage
-function addLocalProduct(idProduct, quantity, currentStock) {
+function addLocalProduct(idProduct, quantity, currentStock, price) {
     if (localStorage.getItem(cartKey) == null) {
         cartList = [];
     } else {
-        if (cartKey === 'postSale') {
+        if (cartKey === 'postSale' || cartKey === 'postReserves') {
             let addedQuantity = 0;
             for (let i = 0; i < cartList.length; i++) {
                 if (cartList[i]['id'] == idProduct) {
@@ -129,7 +131,7 @@ function addLocalProduct(idProduct, quantity, currentStock) {
             //just for test
             //console.log(addedQuantity);
             //console.log(cartList.length);
-            if (addedQuantity > currentStock || currentStock == 0) {
+            if (parseInt(addedQuantity) > parseInt(currentStock) || parseInt(currentStock) == 0) {
                 customAlert('warning', 'STOCK UNAVAILABLE');
                 return;
             }
@@ -144,9 +146,17 @@ function addLocalProduct(idProduct, quantity, currentStock) {
             }
         }
     }
+    if (cartKey === 'postSale' || cartKey === 'postReserves') {
+        if (parseInt(currentStock) == 0) {
+            customAlert('warning', 'STOCK UNAVAILABLE');
+            return;
+        }
+    }
+    //const price = (cartKey === 'postSale') ? sale_price : purchase_price;
     cartList.push({
         id: idProduct,
-        quantity: quantity
+        quantity: quantity,
+        price: price
     })
     localStorage.setItem(cartKey, JSON.stringify(cartList));
     customAlert('success', 'PRODUCT ADDED');
@@ -194,7 +204,7 @@ function inputChangeQuantity() {
 }
 //function to eliminate product from the localStorage
 function listUpdateQuantityTbl(idProduct, quantity) {
-    if (cartKey === 'postSale') {
+    if (cartKey === 'postSale' || cartKey === 'postReserves') {
         const url = base_url + 'sales/verifyStock/' + idProduct;
         //instaciate the object XMLHttpRequest
         const http = new XMLHttpRequest();
@@ -219,9 +229,7 @@ function listUpdateQuantityTbl(idProduct, quantity) {
                 tblLoadProducts();
                 return;
                 // customAlert(res.type, res.msg)
-                // if (res.type == 'success') {
-                //     tblRecords.ajax.reload();
-                // }
+                //Just for testing
                 //console.log(this.responseText);
             }
         }
@@ -235,4 +243,29 @@ function listUpdateQuantityTbl(idProduct, quantity) {
         localStorage.setItem(cartKey, JSON.stringify(cartList));
         tblLoadProducts();
     }
+}
+
+//add event 'change' to edit the sale price field in the table and localStorage
+function changeSalePrice() {
+    let productList = document.querySelectorAll('.inputPrice');
+
+    for (const element of productList) {
+        element.addEventListener('change', function () {
+            let idProduct = element.getAttribute('data-id');
+            let price = element.value;
+            //for test.
+            //console.log(idProduct, quantity);
+            updateSalePrice(idProduct, price);
+        });
+    }
+}
+//function to eliminate product from the localStorage
+function updateSalePrice(idProduct, price) {
+    for (let i = 0; i < cartList.length; i++) {
+        if (cartList[i]['id'] == idProduct) {
+            cartList[i]['price'] = price;
+        }
+    }
+    localStorage.setItem(cartKey, JSON.stringify(cartList));
+    tblLoadProducts();
 }
